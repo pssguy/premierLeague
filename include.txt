@@ -1,0 +1,11 @@
+
+PremierSoccerStats is the first web site to be issued under the
+myTinyShinys umbrella
+
+Utilizing the latest interactive web technology combined with
+the longest established database on Premier League football, it offers users
+a rich experience for accessing more than 20 years of data 
+
+There will be regular articles highlighting interesting statistical aspects of the league
+alongside tweets by pssguy and others with relevant stimulating data
+

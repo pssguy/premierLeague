@@ -1,0 +1,128 @@
+
+
+/* chage link colors and dont underline tried a in general applied also to tabs*/
+a#link {
+   color: #cc0000;
+   text-decoration: none;
+}
+a#link:hover {
+  font-weight: bold;
+}
+
+li.active a{
+  color: #cc0000;
+   font-weight: bold;
+  
+}
+
+a {
+   color: #cc0000;
+   text-decoration: none;
+}
+a:hover {
+  font-weight: bold;
+  color: #cc0000;
+   text-decoration: none;
+}
+label.radio {
+display: inline-block;
+margin: 0 10 0 0; /* Invalid property value when looking in browser*/
+}
+
+/************* app specific golf app has more*****************/
+
+/*
+body {
+  
+  
+  background-color: #eeffff;
+}
+*/
+
+.table th, .table td {
+  font-size: 10px;
+/*  color: #cc0000; */
+  padding: 4px;
+  *text-align: center; /*; works but dont wnat everywhere */
+ 
+}
+
+tbody td.rt{ 
+    text-align: right;
+   
+} 
+tbody th.rt{ 
+    text-align: right;
+   
+} 
+
+/*#career {
+  background-color: #eeff00;
+  font-weight: bold 
+  
+  padding: 2px;
+  line-height: 12px;
+}*/
+
+#tell {
+  font-size: 10px;
+  
+}
+
+
+#team  {
+  width: 120px; 
+}
+#games  {
+  width: 90px;
+}
+#team2  {
+  width: 120px;
+}
+#games2  {
+  width: 90px;
+}
+/* standings */
+#games_4a  {
+  width: 90px;
+}
+#games_4b {
+  width: 90px;
+}
+
+#position_4a  {
+  width: 90px;
+}
+
+#contact {
+  text-align: center;
+  color: #cc0000;
+  margin: 20px; 
+}
+
+/*
+select {
+  width: 80px;
+}
+*/
+
+.selectized shiny-bound-input {
+  width: 80px;
+}
+
+label, input, button, select, textarea {
+font-size: 12px;
+font-weight: normal;
+/*line-height: px;*/
+}
+
+/* impact of using DT package */
+
+table.dataTable thead th {
+ text-align: center; 
+}
+}
+
+#brand {
+  color: #cc0000;
+}
