@@ -102,7 +102,11 @@ navbarMenu("Goal Details",
                                            ),
 
 navbarMenu("Head to Head",
-           tabPanel("Table", inputPanel(DT::dataTableOutput('hthTable'))),
+           tabPanel("Table", 
+                    fluidRow(
+                      column(7,inputPanel(DT::dataTableOutput('hthTable'))),
+                      column(5,inputPanel(DT::dataTableOutput('hthFixtures')))
+                      )),
            tabPanel("Chart", ggvisOutput("hthGraph"))
           
 ),
