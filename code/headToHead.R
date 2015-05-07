@@ -2,7 +2,42 @@
 
 ## add asparkline
 
-output$hthTable <- DT::renderDataTable({
+# output$hthTable <- DT::renderDataTable({
+#   
+#   # calc wins ? could put in global
+#   W <- hth %>%
+#     group_by(team,OppTeam) %>%
+#     filter(res=="Win") %>%
+#     summarise(W=n())
+#   D <- hth %>%
+#     group_by(team,OppTeam) %>%
+#     filter(res=="Draw") %>%
+#     summarise(D=n())
+#   L <- hth %>%
+#     group_by(team,OppTeam) %>%
+#     filter(res=="Loss") %>%
+#     summarise(L=n())
+#   
+#   table <- data.frame(hth %>%
+#                         group_by(team,OppTeam) %>%
+#                         summarise(GF=sum(GF),GA=sum(GA),Pts=sum(points),Pl=n()) %>%
+#                         mutate(GD=GF-GA,ppg=round(Pts/Pl,2)) %>%
+#                         left_join(W) %>%
+#                         left_join(D)      %>%
+#                         left_join(L))           
+#   table[is.na(table)]      <- 0    
+#   tbl <-table %>%
+#     arrange(desc(ppg),desc(Pl))  %>%
+#     filter(team==input$team_3) %>%
+#     select(Opponents=OppTeam,Pl,W,D,L,Pts,GF,GA,GD,ppg) 
+#   tbl$team <-NULL
+#   tbl %>% 
+#     DT::datatable(rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+#  # DT::datatable(tbl,rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+#  })
+
+# need to split into reactive as tabe is needed for selection (should change based on row clicked on really)
+info <- reactive({
   
   # calc wins ? could put in global
   W <- hth %>%
@@ -31,9 +66,49 @@ output$hthTable <- DT::renderDataTable({
     filter(team==input$team_3) %>%
     select(Opponents=OppTeam,Pl,W,D,L,Pts,GF,GA,GD,ppg) 
   tbl$team <-NULL
-  DT::datatable(tbl,options= list(paging = FALSE, searching = FALSE, info=FALSE))
- })
+  info=list(tbl=tbl)
+  return(info)
+})
 
+
+output$hthTable <- DT::renderDataTable({
+ 
+  info()$tbl %>% 
+    DT::datatable(rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+  # DT::datatable(tbl,rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+})
+
+
+output$hthFixtures <- DT::renderDataTable({
+  print("enter hth fixtures")
+  if (is.null(input$hthTable_selected)) return()
+  print(input$hthTable_selected) #1 so it is row
+  
+  s = input$hthTable_selected
+  print(s)
+  print(glimpse(info()$tbl))
+  team <- info()$tbl[s,]$Opponents
+  print(team)
+  
+  tm1 <-  teamGames %>% 
+    filter(TEAMNAME==input$team_3) %>% 
+    select(MATCHID,venue,TEAMNAME,GF=GOALS,gameDate)
+  
+  tm2 <-  teamGames %>% 
+    filter(TEAMNAME==team) %>% 
+    select(MATCHID,GA=GOALS)
+  
+  tm1 %>% 
+    inner_join(tm2,by=c("MATCHID")) %>% 
+    ungroup() %>% 
+    arrange(desc(gameDate)) %>% 
+    select(season=season.x,date=gameDate,venue,GF,GA) -> fixtures
+  
+  print(glimpse(fixtures))
+  
+  fixtures %>% 
+    DT::datatable()
+})
 
 
 observe({

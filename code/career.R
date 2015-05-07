@@ -1,4 +1,4 @@
-output$career <- renderDataTable({
+output$career <- DT::renderDataTable({
   
   if (!is.null(input$player)) {
     thePlayer <- input$player
