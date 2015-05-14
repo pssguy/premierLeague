@@ -73,6 +73,8 @@ return(info)
   source("code/playerGoals.R", local=TRUE)
   
   source("code/goalFirsts.R", local=TRUE)
+  
+  source("code/playerWith.R", local=TRUE)
 
 
                                      

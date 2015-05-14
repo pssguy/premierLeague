@@ -192,7 +192,14 @@ navbarMenu("Goal Summary",
                            column(6,plotOutput("goalDistribution"), offset = 1)
                          )
                                
-                )
+                ),
+               tabPanel("Played With",
+                        fluidRow(
+                          column(7,DT::dataTableOutput("playedWith")),
+                          column(5,DT::dataTableOutput("playedAgainst"))
+                        )
+               )
+                        
 #                 tabPanel("Opposition"
 #                          
 #                 ),
@@ -202,8 +209,8 @@ navbarMenu("Goal Summary",
 #                 tabPanel("Transfer Trail"
 #                          
 #                 )
-               )
-             ),
+               
+             )),
                                                                    
              tabPanel("Standings",
                        tabsetPanel(id="q",
