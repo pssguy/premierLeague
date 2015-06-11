@@ -13,7 +13,8 @@ shinyServer(function(input, output, session) {
     
     
    
-    tmYrChoice <- tmYrs[tmYrs$team==tm,]$season
+    tmYrChoice <- c("All Seasons",tmYrs[tmYrs$team==tm,]$season)
+    
     selectInput("season_3","",tmYrChoice,selected="2014/15")
   })
 
@@ -48,34 +49,34 @@ return(info)
   ## wil this work if they need stuff from reactive???
   ## players by club single year
   source("code/teamYear.R", local=TRUE)
-  ## front page current Leaders
-  source("code/currentLeaders.R", local=TRUE)
-  ## leading scorers by season/team/number of games
-  source("code/topScorers.R", local=TRUE)
-  ## team leaders by year goals assists etc
-  source("code/teamLeaders.R", local=TRUE)
-  # Goals For and Ag
-  source("code/teamGoals.R", local=TRUE)
-#   source("code/teamGoalsFor.R", local=TRUE)
-#   source("code/teamGoalsDiff.R", local=TRUE)
-  ## player by year
-  source("code/careerTots.R", local=TRUE) 
-  source("code/career.R", local=TRUE)
-  
-  
-  source("code/goalSummary.R", local=TRUE)
-  source("code/headToHead.R", local=TRUE)
-  
-  source("code/standings.R", local=TRUE)
-  
-  source("code/playerSeqs.R", local=TRUE)
-  
-  source("code/playerGoals.R", local=TRUE)
-  
-  source("code/goalFirsts.R", local=TRUE)
-  
-  source("code/playerWith.R", local=TRUE)
-
+#   ## front page current Leaders
+#   source("code/currentLeaders.R", local=TRUE)
+#   ## leading scorers by season/team/number of games
+#   source("code/topScorers.R", local=TRUE)
+#   ## team leaders by year goals assists etc
+#   source("code/teamLeaders.R", local=TRUE)
+#   # Goals For and Ag
+#   source("code/teamGoals.R", local=TRUE)
+# #   source("code/teamGoalsFor.R", local=TRUE)
+# #   source("code/teamGoalsDiff.R", local=TRUE)
+#   ## player by year
+#   source("code/careerTots.R", local=TRUE) 
+#   source("code/career.R", local=TRUE)
+#   
+#   
+#   source("code/goalSummary.R", local=TRUE)
+#   source("code/headToHead.R", local=TRUE)
+#   
+#   source("code/standings.R", local=TRUE)
+#   
+#   source("code/playerSeqs.R", local=TRUE)
+#   
+#   source("code/playerGoals.R", local=TRUE)
+#   
+#   source("code/goalFirsts.R", local=TRUE)
+#   
+#   source("code/playerWith.R", local=TRUE)
+# 
 
                                      
 
@@ -107,19 +108,19 @@ output$teamYearRow_out <- renderText({
         collapse = ' ')
 })
 
-observe({
-  input$teamYearRow
-  print(input$teamYearRow)
-  if (is.null(input$teamYearRow))  return()
-  print("again")
-  print(input$teamYearRow) # gets here fine
-  if (!is.null(input$teamYearRow)) updateTabsetPanel(session, inputId="tsp_Players", selected="panel1") #, selected= "panel1" made no diff
-  
-})
+# observe({
+#   input$teamYearRow
+#   print(input$teamYearRow)
+#   if (is.null(input$teamYearRow))  return()
+#   print("again")
+#   print(input$teamYearRow) # gets here fine
+#   if (!is.null(input$teamYearRow)) updateTabsetPanel(session, inputId="tsp_Players", selected="panel1") #, selected= "panel1" made no diff
+#   
+# })
 
 
 
-## need to action re datatable
+# ## need to action re datatable
 output$oneYear <- renderDataTable({
   
   if (is.null(input$row)) {
@@ -155,8 +156,8 @@ output$oneYear <- renderDataTable({
                  columnDefs= list(columnDefs=list(width="30%",columnDefs.targets= 0),list(className="rt",targets=list(4,5,6,7)))) # not working 
                  )  
 
-
-### team summary all time
+# 
+# ### team summary all time
 output$teamAllTime <- renderDataTable({
   print("enter table")
   if (!is.null(input$team_3)) {
@@ -311,91 +312,91 @@ output$twoTeams <- renderDataTable({dualTeamData()$wide},options= list(paging = 
 
 
 ## Problem
-observe({
-  print("enter league pos")
- 
-
-  
-  if (is.null(input$season_3)) {
-    theSeason <- "2014/15"
-  } else {
-    theSeason <- input$season_3
-  }
-  
-  if (is.null(input$team_3)) {
-    theTeam <- "Arsenal"
-  } else {
-    theTeam <- input$team_3
-  }
-  
-  print(theTeam)
-  print(theSeason)
-  graph <- standings %>%
-    filter(team==theTeam&season==theSeason)
-  
-  
-  graph <- cbind(graph, id = seq_len(nrow(graph)))
-  
-  # just need to add a tt and res for fill
-  all_values <- function(x) {
-    if(is.null(x)) return(NULL)
-    row <- graph[graph$id == x$id,"tt" ]
-    paste0(names(row), format(row), collapse = "<br />")
-  }
-  
-  pos1 <- standings %>%
-    filter(position==1&season==theSeason) %>%
-    select(season,leader=team,tmYrGameOrder,lpos=position,lpoints=cumPts)
-  
-  
-  
-  pos4 <- standings %>%
-    filter(position==4&season==theSeason) %>%
-    select(season,euro=team,tmYrGameOrder,epos=position,epoints=cumPts)
-  
-  ## need to vary in shiny
-  if (theSeason >"1994/95") {
-  pos18 <- standings %>%
-    filter(position==18&season==theSeason) %>%
-    select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-  } else if (theSeason=="1994/95") {
-    pos18 <- standings %>%
-      filter(position==19&season==theSeason) %>%
-      select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-  } else {
-    pos18 <- standings %>%
-      filter(position==20&season==theSeason) %>%
-      select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-  }
-  #str(pos1)
-  pos1 <- data.frame(pos1) # no good otherwise
-  pos4 <- data.frame(pos4)
-  pos18 <- data.frame(pos18)
-  
-  glimpse(pos1)
-  glimpse(pos4)
-  glimpse(pos18)
-  
-  graph %>%
-    inner_join(pos1) %>%
-    inner_join(pos4) %>%
-    inner_join(pos18) %>%
-    ggvis(~tmYrGameOrder,~cumPts,key := ~id) %>%
-    layer_lines() %>%
-    layer_points(fill = ~res) %>%
-    layer_lines( ~tmYrGameOrder,~lpoints,stroke := "green") %>%
-    layer_lines(~tmYrGameOrder,~epoints,stroke := "blue") %>%
-    layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
-    add_tooltip(all_values, "hover") %>%
-    add_axis("y",title="Points") %>%
-    add_axis("x",title="Games Played") %>%
-    add_legend("fill",title="") %>%
-    set_options(width = "auto", height = 400, resizable=FALSE) %>%
-           bind_shiny('posGraph')
-  
-  
-  
-})#,suspended = FALSE, autoDestroy = FALSE) leftover from trying something may be causing flakiness?
+# observe({
+#   print("enter league pos")
+#  
+#   if (is.null(input$season_3)) return()
+#   
+#   if (is.null(input$season_3)) {
+#     theSeason <- "2014/15"
+#   } else {
+#     theSeason <- input$season_3
+#   }
+#   
+#   if (is.null(input$team_3)) {
+#     theTeam <- "Arsenal"
+#   } else {
+#     theTeam <- input$team_3
+#   }
+#   
+#   print(theTeam)
+#   print(theSeason)
+#   graph <- standings %>%
+#     filter(team==theTeam&season==theSeason)
+#   
+#   
+#   graph <- cbind(graph, id = seq_len(nrow(graph)))
+#   
+#   # just need to add a tt and res for fill
+#   all_values <- function(x) {
+#     if(is.null(x)) return(NULL)
+#     row <- graph[graph$id == x$id,"tt" ]
+#     paste0(names(row), format(row), collapse = "<br />")
+#   }
+#   
+#   pos1 <- standings %>%
+#     filter(position==1&season==theSeason) %>%
+#     select(season,leader=team,tmYrGameOrder,lpos=position,lpoints=cumPts)
+#   
+#   
+#   
+#   pos4 <- standings %>%
+#     filter(position==4&season==theSeason) %>%
+#     select(season,euro=team,tmYrGameOrder,epos=position,epoints=cumPts)
+#   
+#   ## need to vary in shiny
+#   if (theSeason >"1994/95") {
+#   pos18 <- standings %>%
+#     filter(position==18&season==theSeason) %>%
+#     select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+#   } else if (theSeason=="1994/95") {
+#     pos18 <- standings %>%
+#       filter(position==19&season==theSeason) %>%
+#       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+#   } else {
+#     pos18 <- standings %>%
+#       filter(position==20&season==theSeason) %>%
+#       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+#   }
+#   #str(pos1)
+#   pos1 <- data.frame(pos1) # no good otherwise
+#   pos4 <- data.frame(pos4)
+#   pos18 <- data.frame(pos18)
+#   
+#   glimpse(pos1)
+#   glimpse(pos4)
+#   glimpse(pos18)
+#   
+#   graph %>%
+#     inner_join(pos1) %>%
+#     inner_join(pos4) %>%
+#     inner_join(pos18) %>%
+#     ggvis(~tmYrGameOrder,~cumPts,key := ~id) %>%
+#     layer_lines() %>%
+#     layer_points(fill = ~res) %>%
+#     layer_lines( ~tmYrGameOrder,~lpoints,stroke := "green") %>%
+#     layer_lines(~tmYrGameOrder,~epoints,stroke := "blue") %>%
+#     layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
+#     add_tooltip(all_values, "hover") %>%
+#     add_axis("y",title="Points") %>%
+#     add_axis("x",title="Games Played") %>%
+#     add_legend("fill",title="") %>%
+#     set_options(width = "auto", height = 400, resizable=FALSE) %>%
+#            bind_shiny('posGraph')
+#   
+#   
+#   
+# })#,suspended = FALSE, autoDestroy = FALSE) leftover from trying something may be causing flakiness?
 
 
 ## needs graph brushing

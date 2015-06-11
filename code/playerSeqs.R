@@ -17,7 +17,7 @@ playerSeqData <- reactive ({
   return(info)
 })
 
-output$plWorstSeqGl <- renderDataTable({
+output$plWorstSeqGl <- DT::renderDataTable({
   
   bestRun <- playerSeqData()$run %>%
     filter(value==0) %>%
@@ -28,12 +28,15 @@ output$plWorstSeqGl <- renderDataTable({
   df <- data.frame(playerSeqData()$temp)
   df$id <- as.integer(row.names(df))
   
-  df %>%
+ df <- df %>%
     filter(id %in% bestGames)  %>%
     select(TEAMNAME,Opponents,gameDate,Gls)
-},options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+  
+  
+  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+})
 
-output$plBestSeqGl <- renderDataTable({
+output$plBestSeqGl <- DT::renderDataTable({
   
   bestRun <- playerSeqData()$run %>%
     filter(value==1) %>%
@@ -44,12 +47,13 @@ output$plBestSeqGl <- renderDataTable({
   df <- data.frame(playerSeqData()$temp)
   df$id <- as.integer(row.names(df))
   
-  df %>%
+ df <- df %>%
     filter(id %in% bestGames)  %>%
-    select(TEAMNAME,Opponents,gameDate,Gls)
-},options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+    select(TEAMNAME,Opponents,gameDate,Gls) 
+ 
+    DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
 
-
+})
 ## try an observe with ggvis
 
 observe({
@@ -92,7 +96,7 @@ playerSeqAssData <- reactive ({
   return(info)
 })
 
-output$plWorstSeqAss <- renderDataTable({
+output$plWorstSeqAss <- DT::renderDataTable({
   
   bestRun <- playerSeqAssData()$run %>%
     filter(value==0) %>%
@@ -103,12 +107,16 @@ output$plWorstSeqAss <- renderDataTable({
   df <- data.frame(playerSeqAssData()$temp)
   df$id <- as.integer(row.names(df))
   
-  df %>%
+df <-  df %>%
     filter(id %in% bestGames)  %>%
     select(TEAMNAME,Opponents,gameDate,Assists)
-},options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+  
+  
+  
+  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+})
 
-output$plBestSeqAss <- renderDataTable({
+output$plBestSeqAss <- DT::renderDataTable({
   
   bestRun <- playerSeqData()$run %>%
     filter(value==1) %>%
@@ -116,13 +124,15 @@ output$plBestSeqAss <- renderDataTable({
   
   bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
   
-  df <- data.frame(playerSeqDataAss()$temp)
+  df <- data.frame(playerSeqAssData()$temp)
   df$id <- as.integer(row.names(df))
   
-  df %>%
+df <-  df %>%
     filter(id %in% bestGames)  %>%
     select(TEAMNAME,Opponents,gameDate,Assists)
-},options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+  
+  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+})
 
 
 ## try an observe with ggvis

@@ -1,5 +1,6 @@
 
 library(shiny)
+library(shinydashboard)
 library(doBy) # uses MASS which has a eselect conflict with dplyr
 library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
 library(ggvis)
@@ -14,7 +15,9 @@ library(leaflet)
 library(rCharts)
 library(shinythemes)
 library(DT)
+library(readr)
 
+positions <- read_csv("positions.csv")
 playerGame <- readRDS("playerGame.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")
@@ -108,3 +111,4 @@ GF_format = htmltools::withTags(table(
     )
   )
 ))
+
