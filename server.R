@@ -2,6 +2,32 @@
 
 shinyServer(function(input, output, session) {
   
+  output$playerPix <- renderUI({
+    if (!is.null(input$team_3)) {
+      tm <- input$team_3
+    } else {
+      tm <- "Arsenal"
+    }
+    names(playerGame)
+    playerName <- "Wayne Rooney"
+    thePlayer <- tolower(str_replace(playerName," ","-"))
+    ## stil need the id
+    #src1 <- "http://www.premierleague.com/content/dam/premierleague/shared-images/players/t/toby-alderweireld/55605-lsh.jpg"
+   ## tags$img(src=src1, width=200)
+    
+   # baseURL <- "http://www.premierleague.com"
+    u <- paste0("http://www.premierleague.com/en-gb/players/profile.career-history.html/",thePlayer)
+    u.get<- GET(u)
+    u.content=content(u.get, as="text")
+    u.html <- htmlParse(u.content)
+    
+    picLink <-xpathSApply(u.html, "//*/img[@class='heroimg']/@src")
+    #unname(picLink)
+    
+    src1 <- paste0("http://www.premierleague.com",unname(picLink))
+    tags$img(src=src1, width=200)
+  })
+  
   ## years available by team
   output$tmSeasonChoice <- renderUI({
    
@@ -11,11 +37,24 @@ shinyServer(function(input, output, session) {
       tm <- "Arsenal"
     }
     
+     "plain text"
     
-   
-    tmYrChoice <- c("All Seasons",tmYrs[tmYrs$team==tm,]$season)
+  
+  })
+  
+  output$tmSeasonChoice_2 <- renderUI({
     
-    selectInput("season_3","",tmYrChoice,selected="2014/15")
+    if (!is.null(input$team_3)) {
+      tm <- input$team_3
+    } else {
+      tm <- "Arsenal"
+    }
+    
+    
+    
+    tmYrChoice <- tmYrs[tmYrs$team==tm,]$season
+    
+    selectInput("season_a","",tmYrChoice,selected="2014/15")
   })
 
   ## need to decide whether to do some of this in global
@@ -312,96 +351,97 @@ output$twoTeams <- renderDataTable({dualTeamData()$wide},options= list(paging = 
 
 
 ## Problem
-# observe({
-#   print("enter league pos")
-#  
-#   if (is.null(input$season_3)) return()
-#   
-#   if (is.null(input$season_3)) {
-#     theSeason <- "2014/15"
-#   } else {
-#     theSeason <- input$season_3
-#   }
-#   
-#   if (is.null(input$team_3)) {
-#     theTeam <- "Arsenal"
-#   } else {
-#     theTeam <- input$team_3
-#   }
-#   
-#   print(theTeam)
-#   print(theSeason)
-#   graph <- standings %>%
-#     filter(team==theTeam&season==theSeason)
-#   
-#   
-#   graph <- cbind(graph, id = seq_len(nrow(graph)))
-#   
-#   # just need to add a tt and res for fill
-#   all_values <- function(x) {
-#     if(is.null(x)) return(NULL)
-#     row <- graph[graph$id == x$id,"tt" ]
-#     paste0(names(row), format(row), collapse = "<br />")
-#   }
-#   
-#   pos1 <- standings %>%
-#     filter(position==1&season==theSeason) %>%
-#     select(season,leader=team,tmYrGameOrder,lpos=position,lpoints=cumPts)
-#   
-#   
-#   
-#   pos4 <- standings %>%
-#     filter(position==4&season==theSeason) %>%
-#     select(season,euro=team,tmYrGameOrder,epos=position,epoints=cumPts)
-#   
-#   ## need to vary in shiny
-#   if (theSeason >"1994/95") {
-#   pos18 <- standings %>%
-#     filter(position==18&season==theSeason) %>%
-#     select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-#   } else if (theSeason=="1994/95") {
-#     pos18 <- standings %>%
-#       filter(position==19&season==theSeason) %>%
-#       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-#   } else {
-#     pos18 <- standings %>%
-#       filter(position==20&season==theSeason) %>%
-#       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
-#   }
-#   #str(pos1)
-#   pos1 <- data.frame(pos1) # no good otherwise
-#   pos4 <- data.frame(pos4)
-#   pos18 <- data.frame(pos18)
-#   
-#   glimpse(pos1)
-#   glimpse(pos4)
-#   glimpse(pos18)
-#   
-#   graph %>%
-#     inner_join(pos1) %>%
-#     inner_join(pos4) %>%
-#     inner_join(pos18) %>%
-#     ggvis(~tmYrGameOrder,~cumPts,key := ~id) %>%
-#     layer_lines() %>%
-#     layer_points(fill = ~res) %>%
-#     layer_lines( ~tmYrGameOrder,~lpoints,stroke := "green") %>%
-#     layer_lines(~tmYrGameOrder,~epoints,stroke := "blue") %>%
-#     layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
-#     add_tooltip(all_values, "hover") %>%
-#     add_axis("y",title="Points") %>%
-#     add_axis("x",title="Games Played") %>%
-#     add_legend("fill",title="") %>%
-#     set_options(width = "auto", height = 400, resizable=FALSE) %>%
-#            bind_shiny('posGraph')
-#   
-#   
-#   
-# })#,suspended = FALSE, autoDestroy = FALSE) leftover from trying something may be causing flakiness?
+observe({
+  print("enter league pos")
+ 
+  if (is.null(input$season_a)) return()
+  
+  if (is.null(input$season_a)) {
+    theSeason <- "2014/15"
+  } else {
+    theSeason <- input$season_a
+  }
+  
+  if (is.null(input$team_3)) {
+    theTeam <- "Arsenal"
+  } else {
+    theTeam <- input$team_3
+  }
+  
+  print(theTeam)
+  print(theSeason)
+  graph <- standings %>%
+    filter(team==theTeam&season==theSeason)
+  
+  
+  graph <- cbind(graph, id = seq_len(nrow(graph)))
+  
+  # just need to add a tt and res for fill
+  all_values <- function(x) {
+    if(is.null(x)) return(NULL)
+    row <- graph[graph$id == x$id,"tt" ]
+    paste0(names(row), format(row), collapse = "<br />")
+  }
+  
+  pos1 <- standings %>%
+    filter(position==1&season==theSeason) %>%
+    select(season,leader=team,tmYrGameOrder,lpos=position,lpoints=cumPts)
+  
+  
+  
+  pos4 <- standings %>%
+    filter(position==4&season==theSeason) %>%
+    select(season,euro=team,tmYrGameOrder,epos=position,epoints=cumPts)
+  
+  ## need to vary in shiny
+  if (theSeason >"1994/95") {
+  pos18 <- standings %>%
+    filter(position==18&season==theSeason) %>%
+    select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+  } else if (theSeason=="1994/95") {
+    pos18 <- standings %>%
+      filter(position==19&season==theSeason) %>%
+      select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+  } else {
+    pos18 <- standings %>%
+      filter(position==20&season==theSeason) %>%
+      select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
+  }
+  #str(pos1)
+  pos1 <- data.frame(pos1) # no good otherwise
+  pos4 <- data.frame(pos4)
+  pos18 <- data.frame(pos18)
+  
+  glimpse(pos1)
+  glimpse(pos4)
+  glimpse(pos18)
+  print("printed glimpses")
+  
+  graph %>%
+    inner_join(pos1) %>%
+    inner_join(pos4) %>%
+    inner_join(pos18) %>%
+    ggvis(~tmYrGameOrder,~cumPts,key := ~id) %>%
+    layer_lines() %>%
+    layer_points(fill = ~res) %>%
+    layer_lines( ~tmYrGameOrder,~lpoints,stroke := "green") %>%
+    layer_lines(~tmYrGameOrder,~epoints,stroke := "blue") %>%
+    layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
+    add_tooltip(all_values, "hover") %>%
+    add_axis("y",title="Points") %>%
+    add_axis("x",title="Games Played") %>%
+    add_legend("fill",title="") %>%
+    set_options(width = "auto", height = 400, resizable=FALSE) %>%
+           bind_shiny('posGraph')
+  
+  
+  
+})#,suspended = FALSE, autoDestroy = FALSE) leftover from trying something may be causing flakiness?
 
 
 ## needs graph brushing
-output$lineup <- renderDataTable({
-  print(paste0("lineup ",input$team_3))
+output$lineup <- DT::renderDataTable({
+ # print(paste0("lineup ",input$team_3))
   
 #   if(!is.null(input$team_3)) {
 #     tm <- input$team_3
@@ -411,14 +451,15 @@ output$lineup <- renderDataTable({
   
   matchDate <- standings[standings$team==input$team_3&standings$tmGameOrder==max(standings$tmGameOrder),]$gameDate
  
-  playerGame %>%
+df <-  playerGame %>%
     filter(TEAMNAME==input$team_3&gameDate==matchDate) %>%
     arrange(desc(gameDate),off,on) %>%
     select(name,st,on,off,Gls,Assists,CARD)
-  
-},options = list(paging = FALSE, searching = FALSE,
-                 columnDefs= list(columnDefs=list(width="30%",columnDefs.targets= 0),list(className="rt",targets=list(1,2,3,4,5,6))))
-)
+ 
+df <- DT::datatable(df,options = list(paging = FALSE, searching = FALSE) )
+# },options = list(paging = FALSE, searching = FALSE,
+#                  columnDefs= list(columnDefs=list(width="30%",columnDefs.targets= 0),list(className="rt",targets=list(1,2,3,4,5,6))))
+})
 
 
 

@@ -10,14 +10,15 @@ dashboardPage(skin="yellow",
     sidebarMenu(
       
       menuItem("Teams", tabName = "teams",icon = icon("table"),
-               menuSubItem("Player Summary",tabName = "playerSummary"),
+               menuSubItem("Player Summary",tabName = "tm_playerSummary"),
+               menuSubItem("League Position",tabName = "tm_leaguePosition"),
                menuSubItem("Test",tabName = "test")
                ),
       
       
       
       menuItem("Standings", tabName = "standings",icon = icon("table")),
-#      menuItem("Players", tabName = "players",icon = icon("table")),
+      menuItem("Players", tabName = "players",icon = icon("table")),
       
       menuItem("Info", tabName = "info", icon = icon("info")),
       
@@ -32,8 +33,37 @@ dashboardPage(skin="yellow",
     tabItems(
       
        tabItem("standings"),
+       tabItem("players",
+               box(
+                 status="warning",solidHeader = TRUE,title="test image",
+ 
+             htmlOutput("playerPix")   
+              )
+               
+               
+               ),
        tabItem("test"),
-       tabItem("playerSummary",
+       tabItem("tm_leaguePosition",
+               fluidRow(
+                 box(
+                   status="warning",solidHeader = TRUE,title="Select Team and Season",
+                   inputPanel(
+                     selectInput("team_3","",teamsChoice, selected="Arsenal"),
+                     uiOutput('tmSeasonChoice_2'))
+                 )
+               ),
+               fluidRow(
+                 box( width=6,
+                   status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result",
+                   ggvisOutput("posGraph")
+                 ),
+                 box( width=6,
+                      status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result",
+                      DT::dataTableOutput("lineup") # not sure why this is here
+                 )
+               )
+       ),
+       tabItem("tm_playerSummary",
                fluidRow(
                  box(
                      status="warning",solidHeader = TRUE,title="Select Team and Season",
