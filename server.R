@@ -2,14 +2,25 @@
 
 shinyServer(function(input, output, session) {
   
-  output$playerPix <- renderUI({
-    if (!is.null(input$team_3)) {
-      tm <- input$team_3
-    } else {
-      tm <- "Arsenal"
+  ## set up input menu in sidebar
+  output$a <- renderUI({
+    if (input$sbMenu=="players") {
+      selectInput("playerA", "Player", playerChoice) 
+    } else if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
+      selectInput("teamA", "team", teamsChoice)
     }
-    names(playerGame)
-    playerName <- "Wayne Rooney"
+    
+  })
+  
+  
+  
+  
+  output$playerPix <- renderUI({
+    if (is.null(input$playerA)) return()
+    print(input$playerA)
+    
+    playerName <- pgMini[pgMini$PLAYERID==input$playerA,]$name
+    
     thePlayer <- tolower(str_replace(playerName," ","-"))
     ## stil need the id
     #src1 <- "http://www.premierleague.com/content/dam/premierleague/shared-images/players/t/toby-alderweireld/55605-lsh.jpg"

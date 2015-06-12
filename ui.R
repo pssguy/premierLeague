@@ -4,10 +4,10 @@ dashboardPage(skin="yellow",
   dashboardHeader(title = "Premier League"),
   
   dashboardSidebar(
-    
+    uiOutput("a"),
    
     
-    sidebarMenu(
+    sidebarMenu(id = "sbMenu",
       
       menuItem("Teams", tabName = "teams",icon = icon("table"),
                menuSubItem("Player Summary",tabName = "tm_playerSummary"),
