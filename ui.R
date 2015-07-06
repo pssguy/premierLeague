@@ -55,12 +55,12 @@ dashboardPage(skin="yellow",
 #                ),
                fluidRow(
                  box( width=6,
-                   status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result",
+                   status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result, click for lineup",
                    ggvisOutput("posGraph")
                  ),
                  box( width=6,
-                      status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result",
-                      DT::dataTableOutput("lineup") # not sure why this is here
+                      status="success",solidHeader = TRUE,title="Team Lineup",
+                      DT::dataTableOutput("lineup") 
                  )
                )
        ),

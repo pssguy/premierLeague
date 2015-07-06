@@ -67,10 +67,17 @@ observe({
   pos4 <- data.frame(pos4)
   pos18 <- data.frame(pos18)
   
+  glimpse(graph)
   glimpse(pos1)
   glimpse(pos4)
   glimpse(pos18)
   print("printed glimpses")
+  
+  write_csv(graph,"graph_check.csv")
+  write_csv(pos1,"pos1_check.csv")
+  write_csv(pos4,"pos4_check.csv")
+  write_csv(pos18,"pos18_check.csv")
+  
   
   graph %>%
     inner_join(pos1) %>%
@@ -83,6 +90,7 @@ observe({
     layer_lines(~tmYrGameOrder,~epoints,stroke := "blue") %>%
     layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
     add_tooltip(all_values, "hover") %>%
+    handle_click(getLineups) %>% 
     add_axis("y",title="Points") %>%
     add_axis("x",title="Games Played") %>%
     add_legend("fill",title="") %>%
@@ -91,4 +99,4 @@ observe({
   
   
   
-})#,suspended = FALSE, autoDestroy = FALSE) leftover from trying something may be causing flakiness?
+})
