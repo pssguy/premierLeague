@@ -5,6 +5,7 @@ dashboardPage(skin="yellow",
   
   dashboardSidebar(
     uiOutput("a"),
+    uiOutput("teamYear_ui"),
    
     
     sidebarMenu(id = "sbMenu",
@@ -44,14 +45,14 @@ dashboardPage(skin="yellow",
                ),
        tabItem("test"),
        tabItem("tm_leaguePosition",
-               fluidRow(
-                 box(
-                   status="warning",solidHeader = TRUE,title="Select Team and Season",
-                   inputPanel(
-                     selectInput("team_3","",teamsChoice, selected="Arsenal"),
-                     uiOutput('tmSeasonChoice_2'))
-                 )
-               ),
+#                fluidRow(
+#                  box(
+#                    status="warning",solidHeader = TRUE,title="Select Team and Season",
+#                    inputPanel(
+#                      selectInput("team_3","",teamsChoice, selected="Arsenal"),
+#                      uiOutput('tmSeasonChoice_2'))
+#                  )
+#                ),
                fluidRow(
                  box( width=6,
                    status="success",solidHeader = TRUE,title="Positon by Round. Hover points for Result",
@@ -64,17 +65,19 @@ dashboardPage(skin="yellow",
                )
        ),
        tabItem("tm_playerSummary",
-               fluidRow(
-                 box(
-                     status="warning",solidHeader = TRUE,title="Select Team and Season",
-                     inputPanel(
-                     selectInput("team_3","",teamsChoice, selected="Arsenal"),
-                     uiOutput('tmSeasonChoice'))
-                 )
-                 ),
+               ## should be able to dispense with this
+#                fluidRow(
+#                  box(
+#                      status="warning",solidHeader = TRUE,title="Select Team and Season",
+#                      inputPanel(
+#                      selectInput("team_3","",teamsChoice, selected="Arsenal"),
+#                      uiOutput('tmSeasonChoice'))
+#                  )
+#                  ),
                fluidRow(
                  box(width=12,status="success",solidHeader = TRUE,title="Player Summary",
                      inputPanel(
+                      # uiOutput("teamYear_ui"),
                        radioButtons("withClub","Players",choices=c("All","Current"),inline = TRUE),
                        radioButtons("seasons","Seasons",choices=c("All","Single"), selected="Single",inline = TRUE)
                      ),

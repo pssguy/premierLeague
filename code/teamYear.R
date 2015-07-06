@@ -71,25 +71,37 @@
 #   
 # })  
 
+## first need to choose years for specific team - poss add to sidebar
+
+# output$teamYear_ui <- renderUI({
+#   print(input$teamA)
+#   yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
+# 
+#   selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
+# })
+
 
 # This works but try any simplify by ptting All in seasons selection
 output$teamYear <- DT::renderDataTable({
   print("enter teamYear")
-  if (!is.null(input$team_3)) {
-    theTeam <- input$team_3
-  } else {
-    theTeam <-"Arsenal"
-  }
-  if (!is.null(input$season_3)) {
-    theYear <- input$season_3
-  } else {
-    theYear <-"2014/15"
-  } 
+#   if (!is.null(input$team_3)) {
+#     theTeam <- input$team_3
+#   } else {
+#     theTeam <-"Arsenal"
+#   }
+#   if (!is.null(input$season_3)) {
+#     theYear <- input$season_3
+#   } else {
+#     theYear <-"2014/15"
+#   } 
+  
+  theTeam <- input$teamA
+  theYear <- input$teamYears
   
   if(input$seasons=="Single") {
  if (input$withClub=="All") {
    
-   print(glimpse(summary))
+ #  print(glimpse(summary))
    
   data.frame(summary %>%
     filter(TEAMNAME==theTeam&season==theYear) %>%
