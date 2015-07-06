@@ -91,41 +91,45 @@ output$hthTable <- DT::renderDataTable({
   
  
   info()$tbl %>% 
-    DT::datatable(rownames = FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+    select(-Pts) %>% 
+    DT::datatable(rownames=TRUE,selection='single',options= list(paging = FALSE, searching = FALSE, info=FALSE))
   # DT::datatable(tbl,rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
 })
 
 
-# output$hthFixtures <- DT::renderDataTable({
-#   print("enter hth fixtures")
-#   if (is.null(input$hthTable_selected)) return()
+output$hthFixtures <- DT::renderDataTable({
+  print("enter hth fixtures")
+  if(is.null(input$hthTable_rows_selected)) return()
+  
+  s = as.integer(input$hthTable_rows_selected)
 #   print(input$hthTable_selected) #1 so it is row
 #   
 #   s = input$hthTable_selected
-#   print(s)
-#   print(glimpse(info()$tbl))
-#   team <- info()$tbl[s,]$Opponents
-#   print(team)
-#   
-#   tm1 <-  teamGames %>% 
-#     filter(TEAMNAME==input$team_3) %>% 
-#     select(MATCHID,venue,TEAMNAME,GF=GOALS,gameDate)
-#   
-#   tm2 <-  teamGames %>% 
-#     filter(TEAMNAME==team) %>% 
-#     select(MATCHID,GA=GOALS)
-#   
-#   tm1 %>% 
-#     inner_join(tm2,by=c("MATCHID")) %>% 
-#     ungroup() %>% 
-#     arrange(desc(gameDate)) %>% 
-#     select(season=season.x,date=gameDate,venue,GF,GA) -> fixtures
-#   
-#   print(glimpse(fixtures))
-#   
-#   fixtures %>% 
-#     DT::datatable()
-# })
+  print(s)
+  print(glimpse(info()$tbl))
+  team <- info()$tbl[s,]$Opponents
+  print(team)
+  
+  tm1 <-  teamGames %>% 
+    filter(TEAMNAME==input$teamA) %>% 
+    select(MATCHID,venue,TEAMNAME,GF=GOALS,gameDate)
+  
+  tm2 <-  teamGames %>% 
+    filter(TEAMNAME==team) %>% 
+    select(MATCHID,GA=GOALS)
+  
+  tm1 %>% 
+    inner_join(tm2,by=c("MATCHID")) %>% 
+    ungroup() %>% 
+    arrange(desc(gameDate)) %>% 
+    select(season=season.x,date=gameDate,venue,GF,GA) -> fixtures
+  
+  print(glimpse(fixtures))
+  
+  fixtures %>% 
+    DT::datatable(rownames=TRUE,selection='single',options= list(pageLength=10,
+                                                                 paging = TRUE, searching = TRUE,info=FALSE))
+})
 
 
 # observe({
