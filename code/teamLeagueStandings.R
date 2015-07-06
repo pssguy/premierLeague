@@ -1,6 +1,6 @@
 ## Problem
 observe({
-  print("enter league pos")
+  #print("enter league pos")
   
   #   if (is.null(input$season_a)) return()
   #   
@@ -22,9 +22,9 @@ observe({
   
   theTeam <- input$teamA
   theSeason <- input$teamYears
-  print("team and season")
-  print(theTeam)
-  print(theSeason)
+#   print("team and season")
+#   print(theTeam)
+#   print(theSeason)
   graph <- standings %>%
     filter(team==theTeam&season==theSeason)
   
@@ -67,17 +67,17 @@ observe({
   pos4 <- data.frame(pos4)
   pos18 <- data.frame(pos18)
   
-  glimpse(graph)
-  glimpse(pos1)
-  glimpse(pos4)
-  glimpse(pos18)
-  print("printed glimpses")
-  
-  write_csv(graph,"graph_check.csv")
-  write_csv(pos1,"pos1_check.csv")
-  write_csv(pos4,"pos4_check.csv")
-  write_csv(pos18,"pos18_check.csv")
-  
+#   glimpse(graph)
+#   glimpse(pos1)
+#   glimpse(pos4)
+#   glimpse(pos18)
+#   print("printed glimpses")
+#   
+#   write_csv(graph,"graph_check.csv")
+#   write_csv(pos1,"pos1_check.csv")
+#   write_csv(pos4,"pos4_check.csv")
+#   write_csv(pos18,"pos18_check.csv")
+#   
   
   graph %>%
     inner_join(pos1) %>%

@@ -11,6 +11,12 @@ shinyServer(function(input, output, session) {
       
     } else if (input$sbMenu=="tm_leaguePosition") {
       selectInput("teamA", "team", teamsChoice)
+    }  else if (input$sbMenu=="tm_goals") {
+      selectInput("teamA", "team", teamsChoice)
+    }  else if (input$sbMenu=="tm_leaders") {
+      selectInput("teamA", "team", teamsChoice)
+    }  else if (input$sbMenu=="tm_hth") {
+      selectInput("teamA", "team", teamsChoice)
     }
     
   })
@@ -18,8 +24,12 @@ shinyServer(function(input, output, session) {
   output$teamYear_ui <- renderUI({
     print(input$teamA)
     yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
-    
+    if (input$sbMenu!="tm_goals") {
     selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
+    } else {
+      selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]) # need to readdress
+    #  return()
+    }
   })
   
   
@@ -108,14 +118,15 @@ return(info)
   ## players by club single year
   source("code/teamYear.R", local=TRUE)
   source("code/teamLeagueStandings.R", local=TRUE)
+  source("code/lineups.R", local=TRUE)
 #   ## front page current Leaders
 #   source("code/currentLeaders.R", local=TRUE)
 #   ## leading scorers by season/team/number of games
 #   source("code/topScorers.R", local=TRUE)
 #   ## team leaders by year goals assists etc
-#   source("code/teamLeaders.R", local=TRUE)
+   source("code/teamLeaders.R", local=TRUE)
 #   # Goals For and Ag
-#   source("code/teamGoals.R", local=TRUE)
+   source("code/teamGoals.R", local=TRUE)
 # #   source("code/teamGoalsFor.R", local=TRUE)
 # #   source("code/teamGoalsDiff.R", local=TRUE)
 #   ## player by year
@@ -124,7 +135,7 @@ return(info)
 #   
 #   
 #   source("code/goalSummary.R", local=TRUE)
-#   source("code/headToHead.R", local=TRUE)
+    source("code/headToHead.R", local=TRUE)
 #   
 #   source("code/standings.R", local=TRUE)
 #   
@@ -372,27 +383,7 @@ output$twoTeams <- renderDataTable({dualTeamData()$wide},options= list(paging = 
 
 
 
-## needs graph brushing
-output$lineup <- DT::renderDataTable({
- # print(paste0("lineup ",input$team_3))
-  
-#   if(!is.null(input$team_3)) {
-#     tm <- input$team_3
-#   } else {
-#     tm <- "Arsenal"
-#   }
-  
-  matchDate <- standings[standings$team==input$team_3&standings$tmGameOrder==max(standings$tmGameOrder),]$gameDate
- 
-df <-  playerGame %>%
-    filter(TEAMNAME==input$team_3&gameDate==matchDate) %>%
-    arrange(desc(gameDate),off,on) %>%
-    select(name,st,on,off,Gls,Assists,CARD)
- 
-df <- DT::datatable(df,options = list(paging = FALSE, searching = FALSE) )
-# },options = list(paging = FALSE, searching = FALSE,
-#                  columnDefs= list(columnDefs=list(width="30%",columnDefs.targets= 0),list(className="rt",targets=list(1,2,3,4,5,6))))
-})
+
 
 
 

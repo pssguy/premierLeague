@@ -1,21 +1,16 @@
 teamLeadersData <- reactive({
   
-  print("enter teamleaders")
+
+#   df <- leaders[leaders$TEAMNAME==input$teamA,]
+#   print(names(df))
+#  # df <- data.frame(df)
+#   df <- df[,-1]
+#   print(df)
   
-  if (!is.null(input$team_3)) {
-    theTeam <- input$team_3
-  } else {
-    theTeam=="Arsenal"
-  }
-  print(theTeam)
-  print("str")
-  print(str(leaders))
-  print("?str")
+  # needs to be tbl_df for dply action
+  df <- tbl_df(leaders[leaders$TEAMNAME==input$teamA,]) %>% 
+    select(-TEAMNAME)
   
-  df <- leaders[leaders$TEAMNAME==theTeam,]
-  df <- data.frame(df)
-  df <- df[,-1]
-  print(df)
   info=list(df=df)
   return(info)
 })
@@ -23,9 +18,10 @@ teamLeadersData <- reactive({
 output$teamLeaders <-  DT::renderDataTable({
   
  df <- teamLeadersData()$df %>%
-    select(Season=season,Starts=starts,Sub=sub,Goals=goals,Assists=assists,Points=points,Cards=cards)
+    select(Season=season,Starts=starts,Sub=sub,Goals=goals,Assists=assists,Points=points,Cards=cards) %>% 
+   arrange(desc(Season)) %>% 
  
- DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE,
+ DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE,sorting = FALSE,
                                 orderFixed=list(c(0,'desc'))))
   
 }
