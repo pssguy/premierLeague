@@ -4,19 +4,24 @@ shinyServer(function(input, output, session) {
   
   ## set up input menu in sidebar
   output$a <- renderUI({
-    if (input$sbMenu=="players") {
-      selectInput("playerA", "Player", playerChoice) 
-    } else if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
-     selectInput("teamA", "team", teamsChoice) 
+#     if (input$sbMenu=="players") {
+#       selectInput("playerA", "Player", playerChoice) 
+#     } else 
+    if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
+     selectInput("teamA", "Team", teamsChoice) 
       
     } else if (input$sbMenu=="tm_leaguePosition") {
-      selectInput("teamA", "team", teamsChoice)
+      selectInput("teamA", "Team", teamsChoice)
     }  else if (input$sbMenu=="tm_goals") {
-      selectInput("teamA", "team", teamsChoice)
+      selectInput("teamA", "Team", teamsChoice)
     }  else if (input$sbMenu=="tm_leaders") {
-      selectInput("teamA", "team", teamsChoice)
+      selectInput("teamA", "Team", teamsChoice)
     }  else if (input$sbMenu=="tm_hth") {
-      selectInput("teamA", "team", teamsChoice)
+      selectInput("teamA", "Team", teamsChoice)
+    } else if (input$sbMenu=="tm_seqs") {
+      selectInput("teamA", "Team", teamsChoice)
+    } else if (input$sbMenu=="pl_career") {
+      selectInput("playerA", "Player", playerChoice, selected="Ryan Giggs")
     }
     
   })
@@ -26,8 +31,9 @@ shinyServer(function(input, output, session) {
     yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
     if (input$sbMenu!="tm_goals") {
     selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
-    } else {
-      selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]) # need to readdress
+    } else { # looks promising
+      #print("here u are")
+      #selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]) # need to readdress
     #  return()
     }
   })
@@ -131,7 +137,7 @@ return(info)
 # #   source("code/teamGoalsDiff.R", local=TRUE)
 #   ## player by year
 #   source("code/careerTots.R", local=TRUE) 
-#   source("code/career.R", local=TRUE)
+  source("code/career.R", local=TRUE)
 #   
 #   
 #   source("code/goalSummary.R", local=TRUE)
@@ -147,7 +153,7 @@ return(info)
 #   
 #   source("code/playerWith.R", local=TRUE)
 # 
-
+  source("code/specials/scoredOn.R", local=TRUE)
                                      
 
 

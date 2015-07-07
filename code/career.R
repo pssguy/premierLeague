@@ -5,6 +5,8 @@ output$career <- DT::renderDataTable({
   } else {
     thePlayer<-"ROONEYX"
   }
+   if (is.null(input$playerA)) return
+  thePlayer <- input$playerA
   print(str(summary))
   print("summary done")
   #tbl <- careerData()$summary %>%
@@ -19,7 +21,7 @@ output$career <- DT::renderDataTable({
   maxApps <- max(tbl$Apps, na.rm=T)
   print(maxApps)
   tbl <- tbl[,-(1:5)]
-  DT::datatable(tbl,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+  DT::datatable(tbl,rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
 })
 
 

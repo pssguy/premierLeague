@@ -1,8 +1,4 @@
 
-
-
-
-
 dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Premier League"),
@@ -28,10 +24,17 @@ dashboardPage(
       
       
       menuItem("Standings", tabName = "standings",icon = icon("table")),
-      menuItem("Players", tabName = "players",icon = icon("table")),
+      
+      
+      menuItem("Players", tabName = "players",icon = icon("table"),
+               menuSubItem("Career Summary", tabName="pl_career", selected = TRUE)
+               
+               ),
+      
+      
       menuItem(
         "Specials", tabName = "specials",
-        menuSubItem("Scored On",tabName = "sp_scoredOn", selected = TRUE)
+        menuSubItem("Scored On",tabName = "sp_scoredOn")
       ),
       
       menuItem("Info", tabName = "info", icon = icon("info")),
@@ -56,7 +59,7 @@ dashboardPage(
         
         
       ),
-      tabItem("test"),
+     
       tabItem("tm_leaguePosition",
               
               fluidRow(
@@ -130,10 +133,18 @@ dashboardPage(
           width = 12
           
         )
-        
-        
-        
       ),
+        
+        
+        
+     
+      ### Players section
+      tabItem(
+        "pl_career",
+        box(width=12,title="Career",solidHeader = TRUE,status = 'success',
+            DT::dataTableOutput("career")  )
+      ),
+      
       
       ## specials
       tabItem(
@@ -172,7 +183,7 @@ dashboardPage(
       
       
       
-      ### Players section
+     
       tabItem("tm_playerSummary",
               
               fluidRow(
@@ -191,14 +202,7 @@ dashboardPage(
                 )
                 
               )),
-      #
-      #
-      #                            inputPanel(
-      #                              selectInput("team_3","",teamsChoice, selected="Arsenal"),
-      #
-      #                              uiOutput('tmSeasonChoice')
-      #                            )
-      #       ),
+     
       
       
       tabItem("info", includeMarkdown("info.md"))
