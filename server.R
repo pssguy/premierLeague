@@ -22,6 +22,8 @@ shinyServer(function(input, output, session) {
       selectInput("teamA", "Team", teamsChoice)
     } else if (input$sbMenu=="pl_career") {
       selectInput("playerA", "Player", playerChoice, selected="Ryan Giggs")
+    } else if (input$sbMenu=="pl_goals") {
+      selectInput("playerA", "Player", playerChoice, selected="Alan Shearer")
     }
     
   })
@@ -31,7 +33,10 @@ shinyServer(function(input, output, session) {
     yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
     if (input$sbMenu!="tm_goals") {
     selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
-    } else { # looks promising
+    } else if (input$sbMenu=="pl_goals"){
+      print("here u are")
+    }
+    else { # looks promising
       #print("here u are")
       #selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]) # need to readdress
     #  return()
@@ -136,18 +141,19 @@ return(info)
 # #   source("code/teamGoalsFor.R", local=TRUE)
 # #   source("code/teamGoalsDiff.R", local=TRUE)
 #   ## player by year
-  source("code/careerTots.R", local=TRUE) 
+ # source("code/careerTots.R", local=TRUE) rolled into career
   source("code/career.R", local=TRUE)
 #   
 #   
-#   source("code/goalSummary.R", local=TRUE)
+   source("code/goalSummary.R", local=TRUE)
     source("code/headToHead.R", local=TRUE)
 #   
 #   source("code/standings.R", local=TRUE)
 #   
 #   source("code/playerSeqs.R", local=TRUE)
 #   
-#   source("code/playerGoals.R", local=TRUE)
+   source("code/playerGoals.R", local=TRUE)
+  source("code/goalDistribution.R", local=TRUE)
 #   
 #   source("code/goalFirsts.R", local=TRUE)
 #   

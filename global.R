@@ -81,7 +81,7 @@ hth <-data.frame(hth %>%
 
 
 
-## Table Format
+## Table Formats
 
 
 GF_format = htmltools::withTags(table(
@@ -112,3 +112,31 @@ GF_format = htmltools::withTags(table(
   )
 ))
 
+
+PL_format = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan = 2, ''),
+      th(colspan = 3,align='center', 'Method'), # does not work
+      th(colspan = 3, 'Place'),
+      th(colspan = 6, 'Play')
+      ),
+      
+    tr(
+      th('Season'),
+      th('Total'),
+      th('Right'),
+      th('Left'),
+      th('Head'),
+      th('Six Yd'),
+      th('Pen Area'),
+      th('Long Range'), 
+      th('Open'),
+      th('Corner'),
+      th('Throw'),
+      th('IFK'),
+      th('DFK'),
+      th('Pen') 
+    )
+  )
+))

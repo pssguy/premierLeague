@@ -29,7 +29,8 @@ dashboardPage(
       
       menuItem(
         "Players", tabName = "players",icon = icon("table"),
-        menuSubItem("Career Summary", tabName = "pl_career", selected = TRUE)
+        menuSubItem("Career Summary", tabName = "pl_career"),
+        menuSubItem("Goal record", tabName = "pl_goals", selected = TRUE)
         
       ),
       
@@ -157,6 +158,28 @@ dashboardPage(
         )
       ),
       
+      tabItem(
+        "pl_goals",
+        box(
+          width = 12,title = "Goal Summary Table",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
+          DT::dataTableOutput("goalSummary")
+        ),
+        box(
+          width = 12,title = "Goal Charts",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
+          
+            radioButtons("method","",choices=c("Method","Place","Play"), inline=TRUE),
+          
+          ggvisOutput("playerGoals")
+        ),
+        box(
+          width = 12,title = "Goal Distribution",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          plotOutput("goalDistribution")
+        )
+        
+      ),
       
       ## specials
       tabItem("sp_scoredOn",
