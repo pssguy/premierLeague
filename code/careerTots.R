@@ -1,13 +1,14 @@
 # prob should put this and career into a reactive
 output$careerTots <- DT::renderDataTable({
-  print("enter table")
-  if (!is.null(input$player)) {
-    thePlayer <- input$player
-  } else {
-    thePlayer=="ROONEYX"
-  }
+#   print("enter table")
+#   if (!is.null(input$player)) {
+#     thePlayer <- input$player
+#   } else {
+#     thePlayer=="ROONEYX"
+#   }
   
-  
+  if (is.null(input$playerA)) return()
+  thePlayer <- input$playerA
   
   # break into team summary? - think this can be done by datata
   

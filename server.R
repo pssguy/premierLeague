@@ -136,7 +136,7 @@ return(info)
 # #   source("code/teamGoalsFor.R", local=TRUE)
 # #   source("code/teamGoalsDiff.R", local=TRUE)
 #   ## player by year
-#   source("code/careerTots.R", local=TRUE) 
+  source("code/careerTots.R", local=TRUE) 
   source("code/career.R", local=TRUE)
 #   
 #   

@@ -1,4 +1,5 @@
 
+
 dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Premier League"),
@@ -26,10 +27,11 @@ dashboardPage(
       menuItem("Standings", tabName = "standings",icon = icon("table")),
       
       
-      menuItem("Players", tabName = "players",icon = icon("table"),
-               menuSubItem("Career Summary", tabName="pl_career", selected = TRUE)
-               
-               ),
+      menuItem(
+        "Players", tabName = "players",icon = icon("table"),
+        menuSubItem("Career Summary", tabName = "pl_career", selected = TRUE)
+        
+      ),
       
       
       menuItem(
@@ -59,7 +61,7 @@ dashboardPage(
         
         
       ),
-     
+      
       tabItem("tm_leaguePosition",
               
               fluidRow(
@@ -134,56 +136,63 @@ dashboardPage(
           
         )
       ),
-        
-        
-        
-     
+      
+      
+      
+      
       ### Players section
       tabItem(
         "pl_career",
-        box(width=12,title="Career",solidHeader = TRUE,status = 'success',
-            DT::dataTableOutput("career")  )
+        box(
+          width = 12,title = "Career",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          DT::dataTableOutput("career")
+        )
+        ,
+        box(
+          width = 12,title = "By Season",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
+          
+          DT::dataTableOutput("careerYear")
+        )
       ),
       
       
       ## specials
-      tabItem(
-        "sp_scoredOn",
-        fluidRow(column(
-          width = 6,
-          box(
-            title = "Teams Scored On. Click for Details", solidHeader = TRUE,status = 'success',
-            width = 12,
-            DT::dataTableOutput("scoredOn")
-          )
-        ),
-        column(
-          width = 6,
-          box(
-            title = "", solidHeader = TRUE,status = 'success',
-            width = 12,
-            DT::dataTableOutput("scoredOn_dets")
-          )
-        )),
-        fluidRow(
-          column(width=8,offset=2,
-                 
-                 box(
-                   title = "Hover for Opponent.     Points are jittered to aid viewing", solidHeader = TRUE,status = 'success',
-                   width = 12,
-                   DT::dataTableOutput("scoredOnChart")
-                 )      
-                 )
-        )
-        
-        
-      ),
+      tabItem("sp_scoredOn",
+              fluidRow(
+                column(
+                  width = 6,
+                  box(
+                    title = "Teams Scored On. Click for Details", solidHeader = TRUE,status = 'success',
+                    width = 12,
+                    DT::dataTableOutput("scoredOn")
+                  )
+                ),
+                column(
+                  width = 6,
+                  box(
+                    title = "", solidHeader = TRUE,status = 'success',
+                    width = 12,
+                    DT::dataTableOutput("scoredOn_dets")
+                  )
+                )
+              ),
+              fluidRow(column(
+                width = 8,offset = 2,
+                
+                box(
+                  title = "Hover for Opponent.     Points are jittered to aid viewing", solidHeader = TRUE,status = 'success',
+                  width = 12,
+                  DT::dataTableOutput("scoredOnChart")
+                )
+              ))),
       
       
       
       
       
-     
+      
       tabItem("tm_playerSummary",
               
               fluidRow(
@@ -202,7 +211,7 @@ dashboardPage(
                 )
                 
               )),
-     
+      
       
       
       tabItem("info", includeMarkdown("info.md"))
