@@ -21,9 +21,11 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="tm_seqs") {
       selectInput("teamA", "Team", teamsChoice)
     } else if (input$sbMenu=="pl_career") {
-      selectInput("playerA", "Player", playerChoice, selected="Ryan Giggs")
+      selectizeInput("playerA", "Player", playerChoice, selected="GIGGSR", options=list(maxOptions=10000))
     } else if (input$sbMenu=="pl_goals") {
-      selectInput("playerA", "Player", playerChoice, selected="SHEAREA")
+      selectizeInput("playerA", "Player", playerChoice, selected="SHEAREA", options=list(maxOptions=10000))
+    } else if (input$sbMenu=="pl_glance") {
+      selectizeInput("playerA", "Player", playerChoice, selected="BENTD", options=list(maxOptions=10000))
     }
     
   })

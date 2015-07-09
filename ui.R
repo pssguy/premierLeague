@@ -170,12 +170,13 @@ dashboardPage(
     ),
     fluidRow(
       column(width = 3,
-             infoBoxOutput("goalsBox", width = 12))
-    ),
-    fluidRow(
+             infoBoxOutput("goalsBox", width = 12)),
       column(width = 3,
-             infoBoxOutput("assistsBox", width = 12))
+             infoBoxOutput("assistsBox", width = 12)),
+      column(width = 3,
+             infoBoxOutput("cardsBox", width = 12))
     )
+    
     
     
       ),
