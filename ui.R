@@ -1,5 +1,7 @@
 
 
+
+
 dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Premier League"),
@@ -26,9 +28,10 @@ dashboardPage(
       
       
       
-      menuItem("Standings", tabName = "standings",icon = icon("table"),
-               menuSubItem("By Round", tabName ="st_round")
-               ),
+      menuItem(
+        "Standings", tabName = "standings",icon = icon("table"),
+        menuSubItem("By Round", tabName = "st_round")
+      ),
       
       
       menuItem(
@@ -145,7 +148,8 @@ dashboardPage(
       ## Standings section
       tabItem(
         "st_round",
-        box( width=6,
+        box(
+          width = 6,
           title = "Standings",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           DT::dataTableOutput("standings")
@@ -158,27 +162,37 @@ dashboardPage(
       
       tabItem(
         "pl_glance",
+        
+        fluidRow(column(width = 4,
+                        htmlOutput("playerPic")
+                            
+                        ),
+                 column(width = 4,
+                         leafletOutput("playerBirthplace", height=200))),
+        hr(),
+        
         fluidRow(
           column(width = 3,
-                 infoBoxOutput("teamsBox", width = 12)),
-      
-        column(width = 3,
-               infoBoxOutput("seasonsBox", width = 12)),
-      
-      column(width = 3,
-             infoBoxOutput("appsBox", width = 12))
-    ),
-    fluidRow(
-      column(width = 3,
-             infoBoxOutput("goalsBox", width = 12)),
-      column(width = 3,
-             infoBoxOutput("assistsBox", width = 12)),
-      column(width = 3,
-             infoBoxOutput("cardsBox", width = 12))
-    )
-    
-    
-    
+                 infoBoxOutput("teamsBox", width = 12)
+                 ),
+          
+          column(width = 3,
+                 infoBoxOutput("seasonsBox", width = 12)),
+          
+          column(width = 3,
+                 infoBoxOutput("appsBox", width = 12))
+        ),
+        fluidRow(
+          column(width = 3,
+                 infoBoxOutput("goalsBox", width = 12)),
+          column(width = 3,
+                 infoBoxOutput("assistsBox", width = 12)),
+          column(width = 3,
+                 infoBoxOutput("cardsBox", width = 12))
+        )
+        
+        
+        
       ),
       
       
@@ -210,16 +224,18 @@ dashboardPage(
           width = 12,title = "Goal Charts",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
           
-            radioButtons("method","",choices=c("Method","Place","Play"), inline=TRUE),
+          radioButtons(
+            "method","",choices = c("Method","Place","Play"), inline = TRUE
+          ),
           
           ggvisOutput("playerGoals")
         )
         ,
-#         box(
-#           width = 12,title = "Goal Distribution",solidHeader = TRUE,status = 'success',
-#           collapsible = TRUE, collapsed = TRUE,
-#           plotOutput("goalDistribution")
-#         ),
+        #         box(
+        #           width = 12,title = "Goal Distribution",solidHeader = TRUE,status = 'success',
+        #           collapsible = TRUE, collapsed = TRUE,
+        #           plotOutput("goalDistribution")
+        #         ),
         box(
           width = 12,title = "Goal Sequences",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
