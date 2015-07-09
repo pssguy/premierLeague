@@ -1,7 +1,12 @@
 playerSeqData <- reactive ({
-  print("psd")
+  print("psd reactive")
+  
+  if (is.null(input$playerA)) return()
+  print("playerid")
+  print(input$playerA)
+  
   temp <- playerGame %>%
-    filter(PLAYERID==input$player&(START+subOn)>0) %>%  # 380 as sh
+    filter(PLAYERID==input$playerA&(START+subOn)>0) %>%  # 380 as sh
     arrange(gameDate) %>%
     select(PLAYERID,Gls,plGameOrder,TEAMNAME,gameDate,Opponents)
   
@@ -17,142 +22,157 @@ playerSeqData <- reactive ({
   return(info)
 })
 
-output$plWorstSeqGl <- DT::renderDataTable({
-  
-  bestRun <- playerSeqData()$run %>%
-    filter(value==0) %>%
-    filter(slength==max(slength)) 
-  
-  bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
-  
-  df <- data.frame(playerSeqData()$temp)
-  df$id <- as.integer(row.names(df))
-  
- df <- df %>%
-    filter(id %in% bestGames)  %>%
-    select(TEAMNAME,Opponents,gameDate,Gls)
-  
-  
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
-})
-
-output$plBestSeqGl <- DT::renderDataTable({
-  
-  bestRun <- playerSeqData()$run %>%
-    filter(value==1) %>%
-    filter(slength==max(slength)) 
-  
-  bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
-  
-  df <- data.frame(playerSeqData()$temp)
-  df$id <- as.integer(row.names(df))
-  
- df <- df %>%
-    filter(id %in% bestGames)  %>%
-    select(TEAMNAME,Opponents,gameDate,Gls) 
- 
-    DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
-
-})
+# output$plWorstSeqGl <- DT::renderDataTable({
+#   
+#   bestRun <- playerSeqData()$run %>%
+#     filter(value==0) %>%
+#     filter(slength==max(slength)) 
+#   
+#   bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
+#   
+#   df <- data.frame(playerSeqData()$temp)
+#   df$id <- as.integer(row.names(df))
+#   
+#  df <- df %>%
+#     filter(id %in% bestGames)  %>%
+#     select(TEAMNAME,Opponents,gameDate,Gls)
+#   
+#   
+#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+# })
+# 
+# output$plBestSeqGl <- DT::renderDataTable({
+#   
+#   bestRun <- playerSeqData()$run %>%
+#     filter(value==1) %>%
+#     filter(slength==max(slength)) 
+#   
+#   bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
+#   
+#   df <- data.frame(playerSeqData()$temp)
+#   df$id <- as.integer(row.names(df))
+#   
+#  df <- df %>%
+#     filter(id %in% bestGames)  %>%
+#     select(TEAMNAME,Opponents,gameDate,Gls) 
+#  
+#     DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+# 
+# })
 ## try an observe with ggvis
 
-observe({
-  
+# observe({
+#   
+#   print("enter best run")
+#   if (is.null(playerSeqData()$run)) return()
+#   playerSeqData()$run %>%
+#     filter(value==1) %>% # best are 211 215 and 285 289
+#     ggvis(~slength) %>%
+#     layer_histograms(width=0.5) %>%
+#     add_axis("x", title="Scoring Runs", format = 'd') %>% #  values=c(1:10) does not help
+#     add_axis("y", title="Count", format = 'd') %>%
+#     bind_shiny('bestRun')
+#   
+# })
+
+## look at ggplot alternatibve poss work but needs more work dygraph alternative??
+
+output$bestRunA <- renderPlot({
+  if (is.null(playerSeqData()$run)) return()
   playerSeqData()$run %>%
-    filter(value==1) %>% # best are 211 215 and 285 289
-    ggvis(~slength) %>%
-    layer_histograms(width=0.5) %>%
-    bind_shiny('bestRun')
-  
-})
-
-observe({
-  
-  playerSeqData()$run %>%
-    filter(value==0) %>% # best are 211 215 and 285 289
-    ggvis(~slength) %>%
-    layer_histograms(width=0.5) %>%
-    bind_shiny('worstRun')
-  
-})
-
-
-playerSeqAssData <- reactive ({
-  print("psd")
-  temp <- playerGame %>%
-    filter(PLAYERID==input$player&(START+subOn)>0) %>%  # 380 as sh
-    arrange(gameDate) %>%
-    select(PLAYERID,Assists,plGameOrder,TEAMNAME,gameDate,Opponents)
-  
-  temp$Assisted <- 0
-  temp$Assisted[temp$Assists>0] <- 1
-  #library(doBy)
-  run <- subSeq(temp$Assisted)
-  #   print(run)
-  #   print("rundone")
-  #   print(temp)
-  #   print("tempdun")
-  info=list(run=run,temp=temp)
-  return(info)
-})
-
-output$plWorstSeqAss <- DT::renderDataTable({
-  
-  bestRun <- playerSeqAssData()$run %>%
-    filter(value==0) %>%
-    filter(slength==max(slength)) 
-  
-  bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
-  
-  df <- data.frame(playerSeqAssData()$temp)
-  df$id <- as.integer(row.names(df))
-  
-df <-  df %>%
-    filter(id %in% bestGames)  %>%
-    select(TEAMNAME,Opponents,gameDate,Assists)
-  
-  
-  
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
-})
-
-output$plBestSeqAss <- DT::renderDataTable({
-  
-  bestRun <- playerSeqData()$run %>%
     filter(value==1) %>%
-    filter(slength==max(slength)) 
-  
-  bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
-  
-  df <- data.frame(playerSeqAssData()$temp)
-  df$id <- as.integer(row.names(df))
-  
-df <-  df %>%
-    filter(id %in% bestGames)  %>%
-    select(TEAMNAME,Opponents,gameDate,Assists)
-  
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+    ggplot(aes(x=slength) )+ 
+    geom_histogram(binwidth=1,fill="green", alpha=0.2)
 })
 
 
-## try an observe with ggvis
-
-observe({
-  
-  playerSeqAssData()$run %>%
-    filter(value==1) %>% # best are 211 215 and 285 289
-    ggvis(~slength) %>%
-    layer_histograms(width=0.5) %>%
-    bind_shiny('bestAssRun')
-  
-})
-
-observe({
-  
-  playerSeqAssData()$run %>%
-    filter(value==0) %>% # best are 211 215 and 285 289
-    ggvis(~slength) %>%
-    layer_histograms(width=0.5) %>%
-    bind_shiny('worstAssRun')
-  
-})
+# observe({
+#   
+#   playerSeqData()$run %>%
+#     filter(value==0) %>% # best are 211 215 and 285 289
+#     ggvis(~slength) %>%
+#     layer_histograms(width=0.5) %>%
+#     bind_shiny('worstRun')
+#   
+# })
+# 
+# 
+# playerSeqAssData <- reactive ({
+#   print("psd")
+#   temp <- playerGame %>%
+#     filter(PLAYERID==input$player&(START+subOn)>0) %>%  # 380 as sh
+#     arrange(gameDate) %>%
+#     select(PLAYERID,Assists,plGameOrder,TEAMNAME,gameDate,Opponents)
+#   
+#   temp$Assisted <- 0
+#   temp$Assisted[temp$Assists>0] <- 1
+#   #library(doBy)
+#   run <- subSeq(temp$Assisted)
+#   #   print(run)
+#   #   print("rundone")
+#   #   print(temp)
+#   #   print("tempdun")
+#   info=list(run=run,temp=temp)
+#   return(info)
+# })
+# 
+# output$plWorstSeqAss <- DT::renderDataTable({
+#   
+#   bestRun <- playerSeqAssData()$run %>%
+#     filter(value==0) %>%
+#     filter(slength==max(slength)) 
+#   
+#   bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
+#   
+#   df <- data.frame(playerSeqAssData()$temp)
+#   df$id <- as.integer(row.names(df))
+#   
+# df <-  df %>%
+#     filter(id %in% bestGames)  %>%
+#     select(TEAMNAME,Opponents,gameDate,Assists)
+#   
+#   
+#   
+#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+# })
+# 
+# output$plBestSeqAss <- DT::renderDataTable({
+#   
+#   bestRun <- playerSeqData()$run %>%
+#     filter(value==1) %>%
+#     filter(slength==max(slength)) 
+#   
+#   bestGames <- (bestRun$first[nrow(bestRun)]:bestRun$last[nrow(bestRun)])
+#   
+#   df <- data.frame(playerSeqAssData()$temp)
+#   df$id <- as.integer(row.names(df))
+#   
+# df <-  df %>%
+#     filter(id %in% bestGames)  %>%
+#     select(TEAMNAME,Opponents,gameDate,Assists)
+#   
+#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, ordering=FALSE,info=FALSE))
+# })
+# 
+# 
+# ## try an observe with ggvis
+# 
+# observe({
+#   
+#   playerSeqAssData()$run %>%
+#     filter(value==1) %>% # best are 211 215 and 285 289
+#     ggvis(~slength) %>%
+#     layer_histograms(width=0.5) %>%
+#     bind_shiny('bestAssRun')
+#   
+# })
+# 
+# observe({
+#   
+#   playerSeqAssData()$run %>%
+#     filter(value==0) %>% # best are 211 215 and 285 289
+#     ggvis(~slength) %>%
+#     layer_histograms(width=0.5) %>%
+#     bind_shiny('worstAssRun')
+#   
+# })

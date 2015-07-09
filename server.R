@@ -23,15 +23,16 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="pl_career") {
       selectInput("playerA", "Player", playerChoice, selected="Ryan Giggs")
     } else if (input$sbMenu=="pl_goals") {
-      selectInput("playerA", "Player", playerChoice, selected="Alan Shearer")
+      selectInput("playerA", "Player", playerChoice, selected="SHEAREA")
     }
     
   })
   
   output$teamYear_ui <- renderUI({
+    if (input$sbMenu=="tm_playerSummary"|input$sbMenu=="tm_leaguePosition") {
     print(input$teamA)
     yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
-    if (input$sbMenu!="tm_goals") {
+    
     selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
     } else if (input$sbMenu=="pl_goals"){
       print("here u are")
@@ -43,6 +44,21 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  output$c <- renderUI({
+    if (input$sbMenu=="st_round") {
+      selectInput("seasonA","Season",seasonChoice)
+    }
+  })
+  
+  output$standings_ui <- renderUI({ 
+    if (input$sbMenu=="st_round") {
+    if (input$seasonA<"1995/96") {
+      numericInput("gamesA","Games Played",min=1,max=42,step=1,value=42)
+    } else {
+      numericInput("gamesA","Games Played",min=1,max=38,step=1,value=currentRound)  
+    }
+    }
+  })
   
   output$playerPix <- renderUI({
     if (is.null(input$playerA)) return()
@@ -148,12 +164,12 @@ return(info)
    source("code/goalSummary.R", local=TRUE)
     source("code/headToHead.R", local=TRUE)
 #   
-#   source("code/standings.R", local=TRUE)
+   source("code/standings.R", local=TRUE)
 #   
-#   source("code/playerSeqs.R", local=TRUE)
+   source("code/playerSeqs.R", local=TRUE)
 #   
    source("code/playerGoals.R", local=TRUE)
-  source("code/goalDistribution.R", local=TRUE)
+ # source("code/goalDistribution.R", local=TRUE)
 #   
 #   source("code/goalFirsts.R", local=TRUE)
 #   
@@ -161,7 +177,8 @@ return(info)
 # 
   source("code/specials/scoredOn.R", local=TRUE)
                                      
-
+  source("code/playerAtAGlance.R", local=TRUE)
+  
 
 ## this is from https://demo.shinyapps.io/029-row-selection/ works but nt after sorting and is just row
 ## + has combo of rows

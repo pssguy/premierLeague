@@ -1,25 +1,37 @@
 output$standings <- DT::renderDataTable({
  
   
-  if (!is.null(input$season_4a)) {
-    year <- input$season_4a
-  } else {
-    year <- "2014/15"
-  }
-  if (!is.null(input$games_4a)) {
-    games <- input$games_4a
-  } else {
-    games <- currentRound 
-  }
+#   if (!is.null(input$season_4a)) {
+#     year <- input$season_4a
+#   } else {
+#     year <- "2014/15"
+#   }
+#   if (!is.null(input$games_4a)) {
+#     games <- input$games_4a
+#   } else {
+#     games <- currentRound 
+#   }
+  
+  year <- "2014/15"
+  games <- 38
+  
+  if(is.null(input$gamesA)) return()
+  
   
   df <-  data.frame(standings %>%
-                      filter(season==year&tmYrGameOrder==games) %>%
-                      select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos))
-  
-  df <- df[,c(-1)]
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE,info=FALSE,
-                                 
-                                 order=list(c(0,'asc'))))
+                      filter(season==input$seasonA&tmYrGameOrder==input$gamesA) %>%
+                      select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos)) %>% 
+    ungroup() %>% 
+    arrange(Pos) %>% 
+    select(-season) %>% 
+    DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+                                                  
+                                                  #order=list(c(0,'asc'))))
+#   print(names(df))
+#  # df <- df[,c(-1)]
+#   DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE,
+#                                  
+#                                  order=list(c(0,'asc'))))
                                 
   
 }
