@@ -1,7 +1,12 @@
+
+# having issue with this when ataglance plauer input is set to "" additional return category seems to help
+
 observe({
  # print("enter goal categories")
   
   if (is.null(input$playerA))
+    return()
+  if (input$playerA=="")
     return()
  # print(input$playerA)
   

@@ -34,7 +34,7 @@ career <- cbind(max,tot)  %>%
 
 
 
-names(bent)
+#names(bent)
 
 # teams <- length(unique(bent$TEAMNAME)) # 6
 # seasons <- length(unique(bent$season))  #11

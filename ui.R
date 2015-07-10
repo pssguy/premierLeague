@@ -192,7 +192,7 @@ dashboardPage(
           
           
         ),
-        hr(),
+      #  hr(),
         
         fluidRow(
           column(width = 3,
