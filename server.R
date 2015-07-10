@@ -62,29 +62,7 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  output$playerPix <- renderUI({
-    if (is.null(input$playerA)) return()
-    print(input$playerA)
-    
-    playerName <- pgMini[pgMini$PLAYERID==input$playerA,]$name
-    
-    thePlayer <- tolower(str_replace(playerName," ","-"))
-    ## stil need the id
-    #src1 <- "http://www.premierleague.com/content/dam/premierleague/shared-images/players/t/toby-alderweireld/55605-lsh.jpg"
-   ## tags$img(src=src1, width=200)
-    
-   # baseURL <- "http://www.premierleague.com"
-    u <- paste0("http://www.premierleague.com/en-gb/players/profile.career-history.html/",thePlayer)
-    u.get<- GET(u)
-    u.content=content(u.get, as="text")
-    u.html <- htmlParse(u.content)
-    
-    picLink <-xpathSApply(u.html, "//*/img[@class='heroimg']/@src")
-    #unname(picLink)
-    
-    src1 <- paste0("http://www.premierleague.com",unname(picLink))
-    tags$img(src=src1, width=200)
-  })
+ 
   
   ## years available by team
   output$tmSeasonChoice <- renderUI({
@@ -180,6 +158,9 @@ return(info)
   source("code/specials/scoredOn.R", local=TRUE)
                                      
   source("code/playerAtAGlance.R", local=TRUE)
+  source("code/playerPix.R", local=TRUE)
+  source("code/playerBirthplace.R", local=TRUE)
+  source("code/playerWiki.R", local=TRUE)
   
 
 ## this is from https://demo.shinyapps.io/029-row-selection/ works but nt after sorting and is just row

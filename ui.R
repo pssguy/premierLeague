@@ -2,6 +2,7 @@
 
 
 
+
 dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Premier League"),
@@ -163,18 +164,39 @@ dashboardPage(
       tabItem(
         "pl_glance",
         
-        fluidRow(column(width = 4,
-                        htmlOutput("playerPic")
-                            
-                        ),
-                 column(width = 4,
-                         leafletOutput("playerBirthplace", height=200))),
+        fluidRow(
+          column(
+            width = 4,
+            box(
+              width = 12,title = "In Action",solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = FALSE,
+              htmlOutput("playerPic")
+            )
+          ),
+          column(
+            width = 3,
+            box(
+              width = 12,title = "Birth Place",solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = FALSE,
+              leafletOutput("playerBirthplace", height = 200)
+            )
+          ),
+          column(
+            width = 5,
+            box(
+              width = 12,title = "Wikipedia",solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = TRUE,
+              uiOutput("playerWiki")
+            )
+          )
+          
+          
+        ),
         hr(),
         
         fluidRow(
           column(width = 3,
-                 infoBoxOutput("teamsBox", width = 12)
-                 ),
+                 infoBoxOutput("teamsBox", width = 12)),
           
           column(width = 3,
                  infoBoxOutput("seasonsBox", width = 12)),
