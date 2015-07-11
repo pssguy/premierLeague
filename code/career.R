@@ -3,8 +3,17 @@
 
 careerData <- reactive({
   
-  if (is.null(input$playerA)) return()
+   if (is.null(input$playerA)) return()
+#   print(values$playerId)
+#   print(input$playerA)
   thePlayer <- input$playerA
+  
+ # updateSelectizeInput(session, "playerA", choices = playerChoice, selected = input$playerA)
+  
+ # if (is.null(values$playerId)) return()
+ # print(values$playerId)
+ ## print(input$playerA)
+ # thePlayer <- values$playerId
   
   dfTeamYear <- summary %>%
     filter(PLAYERID==thePlayer) %>%
@@ -14,14 +23,14 @@ careerData <- reactive({
     arrange(desc(Season)) %>% 
     select(-(c(name,LASTNAME,PLAYERID,born,left)))
   
-  print(glimpse(dfTeamYear))
+  #print(glimpse(dfTeamYear))
   
   dfTeam <- dfTeamYear %>% 
     group_by(Team) %>%
     summarise(Apps=sum(Apps),St=sum(St),On=sum(On),Off=sum(Off),Bench=sum(Bench),Mins=sum(Mins),Goals=sum(Gls),
               Pens=sum(Pens),Assists=sum(Assists),Points=sum(Points),Y=sum(Y),R=sum(R),OG=sum(OG),MP=sum(MP))
   
-  print(names(dfTeam))
+ # print(names(dfTeam))
   
   dfCareer <- dfTeamYear %>% 
    

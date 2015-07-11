@@ -1,4 +1,8 @@
+## try setting reactive values here for keeping player
 
+# values <- reactiveValues()
+# values$playerID <- "BENTD" # set correctly initially but then overrides try putting in global
+# no still goes back to selected or whoever is first
 
 shinyServer(function(input, output, session) {
   
@@ -21,11 +25,11 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="tm_seqs") {
       selectInput("teamA", "Team", teamsChoice)
     } else if (input$sbMenu=="pl_career") {
-      selectizeInput("playerA", "Player", playerChoice, selected="GIGGSR", options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice,  options=list(maxOptions=10000))
     } else if (input$sbMenu=="pl_goals") {
-      selectizeInput("playerA", "Player", playerChoice, selected="SHEAREA", options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice, selected="Darren Bent", options=list(maxOptions=10000))
     } else if (input$sbMenu=="pl_glance") {
-      selectizeInput("playerA", "Player", playerChoice, selected="BENTD", options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice, selected="Darren Bent",  options=list(maxOptions=10000))
     }
     
   })
@@ -151,7 +155,7 @@ return(info)
    source("code/playerGoals.R", local=TRUE)
  # source("code/goalDistribution.R", local=TRUE)
 #   
-#   source("code/goalFirsts.R", local=TRUE)
+  source("code/goalFirsts.R", local=TRUE)
 #   
 #   source("code/playerWith.R", local=TRUE)
 # 

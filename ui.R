@@ -1,8 +1,5 @@
 
 
-
-
-
 dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Premier League"),
@@ -37,9 +34,9 @@ dashboardPage(
       
       menuItem(
         "Players", tabName = "players",icon = icon("table"),
-        menuSubItem("At A Glance", tabName = "pl_glance", selected = TRUE),
+        menuSubItem("At A Glance", tabName = "pl_glance"),
         menuSubItem("Career Summary", tabName = "pl_career"),
-        menuSubItem("Goal record", tabName = "pl_goals")
+        menuSubItem("Goal record", tabName = "pl_goals", selected = TRUE)
         
       ),
       
@@ -260,8 +257,13 @@ dashboardPage(
         #         ),
         box(
           width = 12,title = "Goal Sequences",solidHeader = TRUE,status = 'success',
-          collapsible = TRUE, collapsed = FALSE,
+          collapsible = TRUE, collapsed = TRUE,
           plotOutput("bestRunA")
+        ),
+        box(
+          width = 12,title = "Goal Firsts",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          DT::dataTableOutput("goalFirsts")
         )
         
       ),

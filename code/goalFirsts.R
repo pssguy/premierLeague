@@ -4,17 +4,23 @@ cats <- c("Head","Right","Left","6_Yd_Box","Pen_Area","Long_Range","Open","Corne
           "Direct_FK","Penalty","Throw")
 allCats <- data.frame(category=cats)
 
+
+ 
+
 output$goalFirsts <- DT::renderDataTable({
+  
+  if(is.null(input$playerA)) return()
+  
   print("enter goalFirsts")
   a <- goals %>%
-    left_join(playerGame, by="PLAYER_MATCH") %>%
-    filter(PLAYERID==input$player&(START+subOn)>0) %>%
-    select(METHOD,PLACE,PLAY,plGameOrderApp)
+    left_join(trueGames, by="PLAYER_MATCH") %>%
+    filter(PLAYERID==input$playerA) %>%
+    select(METHOD,PLACE,PLAY,trueGameOrder)
   
   if (nrow(a)>0) {
     b <- a %>%
-      gather(dummy,category,-plGameOrderApp) %>%
-      arrange(plGameOrderApp)
+      gather(dummy,category,-trueGameOrder) %>%
+      arrange(trueGameOrder)
     
     
     for (i in 1:length(cats)) {
@@ -23,7 +29,7 @@ output$goalFirsts <- DT::renderDataTable({
         tempdf <- data.frame(b %>%
                                filter(category==cats[i]) %>%
                                slice(1))
-        tempdf <- tempdf[,c("category","plGameOrderApp")]
+        tempdf <- tempdf[,c("category","trueGameOrder")]
         
         if (i!=1) {
           df <- rbind(df,tempdf)
@@ -31,16 +37,20 @@ output$goalFirsts <- DT::renderDataTable({
           df <- tempdf
         }
       }
-      allApps <- nrow(playerGame %>% filter(PLAYERID==input$player&(START+subOn)>0))
+      allApps <- nrow(trueGames %>% filter(PLAYERID==input$playerA))
       
-      a$since <- allApps- a$plGameOrderApp
+      print("checking apps") # example for chamakh
+      print(allApps) #92 which tallies with apps on front page wikipedia actualy has 93?
+      print(a$trueGameOrder) #[1] 128 111 101  93  92  91  79  41  15  14  12  12   8   4   2 (so for instance 92 games since left foot shows as -36)
+      
+      a$since <- allApps- a$trueGameOrder
       
       a <- a %>%
-        mutate(since=allApps-plGameOrderApp) %>%
+        mutate(since=allApps-trueGameOrder) %>%
         arrange(since)
       
       c <- a %>%
-        gather(dummy,category,-c(plGameOrderApp,since))
+        gather(dummy,category,-c(trueGameOrder,since))
       #i <- 2
       tempdf <- NULL
       for (i in 1:length(cats)) {
@@ -77,7 +87,7 @@ output$goalFirsts <- DT::renderDataTable({
         left_join(allGoals) %>%
         left_join(df) %>%
         left_join(dfSince) %>%
-        rename(Category=category,Tot=tot,First=plGameOrderApp,Since=since)
+        rename(Category=category,Tot=tot,First=trueGameOrder,Since=since)
       
       print("success")
       tbl$Tot <- ifelse(is.na(tbl$Tot),0,tbl$Tot)
