@@ -219,8 +219,14 @@ dashboardPage(
       tabItem(
         "pl_career",
         box(
-          width = 12,title = "Career",solidHeader = TRUE,status = 'success',
+          width = 12,title = "Game Summaries. Point size relates to Goals/Assists. Hover for details. Values of 99 indicate time of substitution unknown",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
+          ggvisOutput("careerChart")
+        )
+        ,
+        box(
+          width = 12,title = "Career",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
           DT::dataTableOutput("career")
         )
         ,
@@ -261,7 +267,7 @@ dashboardPage(
           plotOutput("bestRunA")
         ),
         box(
-          width = 12,title = "Goal Firsts",solidHeader = TRUE,status = 'success',
+          width = 6,title = "Goal Firsts",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           DT::dataTableOutput("goalFirsts")
         )

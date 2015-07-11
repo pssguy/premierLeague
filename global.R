@@ -1,6 +1,9 @@
 
 library(shiny)
 library(shinydashboard)
+library(httr)
+library(rvest)
+library(XML)
 library(doBy) # uses MASS which has a eselect conflict with dplyr
 library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
 library(ggvis)
@@ -16,6 +19,7 @@ library(rCharts)
 library(shinythemes)
 library(DT)
 library(readr)
+library(ggmap)
 
 positions <- read_csv("positions.csv")
 playerGame <- readRDS("playerGame.rds")
@@ -140,3 +144,16 @@ PL_format = htmltools::withTags(table(
     )
   )
 ))
+
+
+# set initial values and hpe do not return to
+#values <- reactiveValues()
+#values$playerID <- "BENTD"
+
+
+### calc truegames played - plgameorder inc bench
+
+trueGames <- playerGame %>% 
+  filter((START+subOn)>0) %>% 
+  group_by(PLAYERID) %>% 
+  mutate(trueGameOrder=row_number())

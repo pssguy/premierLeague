@@ -15,6 +15,14 @@ careerData <- reactive({
  ## print(input$playerA)
  # thePlayer <- values$playerId
   
+  dfChart <- playerGame %>% 
+    filter(PLAYERID==thePlayer) %>% 
+    select(date=gameDate,Opponents,on,off,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID) %>% 
+    mutate(points=Goals+Assists)
+  
+  print(glimpse(dfChart))
+  
+  
   dfTeamYear <- summary %>%
     filter(PLAYERID==thePlayer) %>%
     mutate(apps=St+On,Gls=StGls+subGls,Pens=startPens+subPens,Points=Gls+Assists,janAge=as.integer(str_sub(season,1,4)),byear=as.integer(str_sub(born,1,4)),age=janAge-byear) %>%
@@ -40,10 +48,40 @@ careerData <- reactive({
   print(names(dfCareer))
  
   
-  info=list(dfTeamYear=dfTeamYear,dfTeam=dfTeam,dfCareer=dfCareer)
+  info=list(dfTeamYear=dfTeamYear,dfTeam=dfTeam,dfCareer=dfCareer,dfChart=dfChart)
   return(info)
  
   
+  
+})
+
+
+observe({
+  
+  if(is.null(careerData())) return()
+  print("enter observe")
+  print(glimpse(careerData()$dfChart))
+  
+  df <- careerData()$dfChart
+  
+  df <- cbind(df, id = seq_len(nrow(df)))
+  
+  all_values <- function(x) {
+    if(is.null(x)) return(NULL)
+    row <- df[df$id == x$id,c("date","Opponents","on","off","Goals","Assists") ]
+    paste0( names(row),": ",format(row), collapse = "<br />") 
+  }
+  
+  
+  df %>% 
+    ggvis(~plGameOrder, ~mins, key := ~id) %>%
+    layer_points(fill = ~Team, size = ~ points) %>% 
+    add_tooltip(all_values,"hover") %>% 
+    
+    add_axis("y", title="Minutes Played", format='d') %>% # attempt to enforxe 0 , values=c(0,15,30,45,60,75,90)
+    add_axis("x", title="Match Day Squad Game Order", format='d') %>% 
+    hide_legend("size") %>% 
+    bind_shiny("careerChart")
   
 })
 
