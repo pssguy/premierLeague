@@ -1,17 +1,5 @@
-output$standings <- DT::renderDataTable({
- 
-  
-#   if (!is.null(input$season_4a)) {
-#     year <- input$season_4a
-#   } else {
-#     year <- "2014/15"
-#   }
-#   if (!is.null(input$games_4a)) {
-#     games <- input$games_4a
-#   } else {
-#     games <- currentRound 
-#   }
-  
+output$st_round <- DT::renderDataTable({
+
   year <- "2014/15"
   games <- 38
   
@@ -26,39 +14,34 @@ output$standings <- DT::renderDataTable({
     select(-season) %>% 
     DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
                                                   
-                                                  #order=list(c(0,'asc'))))
-#   print(names(df))
-#  # df <- df[,c(-1)]
-#   DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE,
-#                                  
-#                                  order=list(c(0,'asc'))))
-                                
-  
+
 }
 )
 
 
-output$leaders <- DT::renderDataTable({
+output$st_position <- DT::renderDataTable({
   
+#   
+#   if (!is.null(input$season_4a)) {
+#     year <- input$season_4a
+#   } else {
+#     year <- "2014/15"
+#   }
+#   if (!is.null(input$games_4b)) {
+#     games <- input$games_4b
+#   } else {
+#     games <- currentRound 
+#   }
+#   if (!is.null(input$position_4a)) {
+#     pos <- input$position_4a
+#   } else {
+#     pos <- 1 
+#   }
   
-  if (!is.null(input$season_4a)) {
-    year <- input$season_4a
-  } else {
-    year <- "2014/15"
-  }
-  if (!is.null(input$games_4b)) {
-    games <- input$games_4b
-  } else {
-    games <- currentRound 
-  }
-  if (!is.null(input$position_4a)) {
-    pos <- input$position_4a
-  } else {
-    pos <- 1 
-  }
-  
+  if(is.null(input$gamesA)) return()
+  filter(season==input$seasonA&tmYrGameOrder==input$gamesA) 
   df <-  data.frame(standings %>%
-                      filter(tmYrGameOrder==games&position==pos) %>%
+                      filter(tmYrGameOrder==input$gamesA&position==input$posA) %>%
                       select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos))
   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
                                  

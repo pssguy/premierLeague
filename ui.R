@@ -9,6 +9,7 @@ dashboardPage(
     uiOutput("teamYear_ui"),
     uiOutput("c"),
     uiOutput("standings_ui"),
+    uiOutput("position_ui"),
     
     
     sidebarMenu(
@@ -28,7 +29,8 @@ dashboardPage(
       
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
-        menuSubItem("By Round", tabName = "st_round")
+        menuSubItem("By Round", tabName = "st_round"),
+        menuSubItem("By Position", tabName = "st_position", selected = TRUE)
       ),
       
       
@@ -36,7 +38,7 @@ dashboardPage(
         "Players", tabName = "players",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "pl_glance"),
         menuSubItem("Career Summary", tabName = "pl_career"),
-        menuSubItem("Goal record", tabName = "pl_goals", selected = TRUE)
+        menuSubItem("Goal record", tabName = "pl_goals")
         
       ),
       
@@ -115,7 +117,7 @@ dashboardPage(
                   width = 7,
                   
                   box(
-                    title = "Head to Head", solidHeader = TRUE,status = 'success',
+                    title = "Head to Head Click for fixture details", solidHeader = TRUE,status = 'success',
                     width = 12,
                     
                     DT::dataTableOutput("hthTable")
@@ -150,7 +152,16 @@ dashboardPage(
           width = 6,
           title = "Standings",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
-          DT::dataTableOutput("standings")
+          DT::dataTableOutput("st_round")
+        )
+      ),
+      tabItem(
+        "st_position",
+        box(
+          width = 6,
+          title = "Standings",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          DT::dataTableOutput("st_position")
         )
       ),
       
@@ -288,7 +299,7 @@ dashboardPage(
                 column(
                   width = 6,
                   box(
-                    title = "", solidHeader = TRUE,status = 'success',
+                    title = "Goals by Opponent", solidHeader = TRUE,status = 'success',
                     width = 12,
                     DT::dataTableOutput("scoredOn_dets")
                   )

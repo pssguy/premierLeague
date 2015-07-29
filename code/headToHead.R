@@ -38,7 +38,7 @@
 
 # need to split into reactive as tabe is needed for selection (should change based on row clicked on really)
 info <- reactive({
-  
+  print("enter htoh reactive")
   if (is.null(input$teamA)) return()
   print("inputteamA")
   print(input$teamA)
@@ -86,13 +86,14 @@ info <- reactive({
 
 
 output$hthTable <- DT::renderDataTable({
-  if(is.null(input$teamA)) return()
+  if(is.null(info()$tbl)) return()
   print("enter hthTable")
   
+  print(glimpse(info()$tbl))
  
   info()$tbl %>% 
     select(-Pts) %>% 
-    DT::datatable(rownames=TRUE,selection='single',options= list(paging = FALSE, searching = FALSE, info=FALSE))
+    DT::datatable(rownames=TRUE,selection='single',options= list(paging = FALSE, searching = FALSE,info=FALSE))
   # DT::datatable(tbl,rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
 })
 

@@ -22,9 +22,9 @@ observe({
   
   theTeam <- input$teamA
   theSeason <- input$teamYears
-#   print("team and season")
-#   print(theTeam)
-#   print(theSeason)
+  print("team and season")
+  print(theTeam)
+  print(theSeason)
   graph <- standings %>%
     filter(team==theTeam&season==theSeason)
   
