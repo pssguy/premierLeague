@@ -157,3 +157,5 @@ trueGames <- playerGame %>%
   filter((START+subOn)>0) %>% 
   group_by(PLAYERID) %>% 
   mutate(trueGameOrder=row_number())
+
+print("end global")

@@ -90,11 +90,13 @@ output$hthTable <- DT::renderDataTable({
   print("enter hthTable")
   
   print(glimpse(info()$tbl))
- 
+  
+ write_csv(info()$tbl,"problem.csv")
+ print(str(info()$tbl))
   info()$tbl %>% 
     select(-Pts) %>% 
     DT::datatable(rownames=TRUE,selection='single',options= list(paging = FALSE, searching = FALSE,info=FALSE))
-  # DT::datatable(tbl,rownames = checkboxRows(., checked=c(1)), escape = -1,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+  
 })
 
 
@@ -132,6 +134,8 @@ output$hthFixtures <- DT::renderDataTable({
                                                                  paging = TRUE, searching = TRUE,info=FALSE))
 })
 
+
+## look tams tebotho add lineups for 
 
 # observe({
 #   

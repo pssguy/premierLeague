@@ -5,16 +5,7 @@ data <- reactive({
   
   if(is.null(input$playerA)) return()
   
-#   updateSelectizeInput(session, "playerA", choices = playerChoice, selected = input$playerA, options=list(maxOptions=10000), server =TRUE)
-#   updateSelectizeInput(session, "playerB", choices = playerChoice, selected = input$playerA, options=list(maxOptions=10000))
-#   
-  
-  
-#   print("id checks")
-#   print(values$playerId)
-#   print(input$playerA)
-#   values$playerId <- input$playerA
-#   print(values$playerId)
+
   
   basic <- summary %>%
     filter(PLAYERID==input$playerA)

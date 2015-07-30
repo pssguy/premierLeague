@@ -5,11 +5,13 @@ dashboardPage(
   dashboardHeader(title = "Premier League"),
   
   dashboardSidebar(
+    #selectInput("teamA", "Team", teamsChoice),
     uiOutput("a"),
     uiOutput("teamYear_ui"),
     uiOutput("c"),
     uiOutput("standings_ui"),
     uiOutput("position_ui"),
+   # uiOutput("tests_ui"),
     
     
     sidebarMenu(
@@ -17,7 +19,8 @@ dashboardPage(
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
-        menuSubItem("Player Summary",tabName = "tm_playerSummary"),
+        menuSubItem("At A Glance", tabName = "tm_glance"),
+        menuSubItem("Player Summary",tabName = "tm_playerSummary", selected = TRUE),
         menuSubItem("League Position",tabName = "tm_leaguePosition"),
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
@@ -30,7 +33,7 @@ dashboardPage(
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
         menuSubItem("By Round", tabName = "st_round"),
-        menuSubItem("By Position", tabName = "st_position", selected = TRUE)
+        menuSubItem("By Position", tabName = "st_position")
       ),
       
       
@@ -70,6 +73,38 @@ dashboardPage(
         
         
       ),
+      
+      tabItem("tm_glance",
+fluidRow(
+box(title="Finishing Positions,",width=3,solidHeader = TRUE,status = 'success',
+ggvisOutput("seasonsHist")
+),
+box(title="Most Appearances,",width=3,solidHeader = TRUE,status = 'success',
+    DT::dataTableOutput("mostGames")
+)
+              )
+),
+      
+      
+      tabItem("tm_playerSummary",
+              
+              fluidRow(
+                box(
+                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary",
+                  inputPanel(
+                    # uiOutput("teamYear_ui"),
+                    radioButtons(
+                      "withClub","Players",choices = c("All","Current"),inline = TRUE
+                    ),
+                    radioButtons(
+                      "seasons","Seasons",choices = c("All","Single"), selected = "Single",inline = TRUE
+                    )
+                  ),
+                  DT::dataTableOutput('teamYear')
+                )
+                
+              )),
+      
       
       tabItem("tm_leaguePosition",
               
@@ -129,7 +164,7 @@ dashboardPage(
                   
                   box(
                     title = "Fixtures", solidHeader = TRUE,status = 'success',
-                    width = 12,
+                    width = 12, collapsible = T,collapsed =T,
                     
                     DT::dataTableOutput("hthFixtures")
                   )
@@ -320,26 +355,7 @@ dashboardPage(
       
       
       
-      tabItem("tm_playerSummary",
-              
-              fluidRow(
-                box(
-                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary",
-                  inputPanel(
-                    # uiOutput("teamYear_ui"),
-                    radioButtons(
-                      "withClub","Players",choices = c("All","Current"),inline = TRUE
-                    ),
-                    radioButtons(
-                      "seasons","Seasons",choices = c("All","Single"), selected = "Single",inline = TRUE
-                    )
-                  ),
-                  DT::dataTableOutput('teamYear')
-                )
-                
-              )),
-      
-      
+ 
       
       tabItem("info", includeMarkdown("info.md"))
       

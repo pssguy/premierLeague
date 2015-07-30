@@ -23,7 +23,7 @@ output$goalSummary <- DT::renderDataTable({
   
   df <- df %>%
     arrange(desc(Season)) %>%  # this puts career at top usefully
-    DT::datatable(
+    DT::datatable(class='compact stripe hover row-border',
       rownames = FALSE,container = PL_format,options = list(
         paging = FALSE, searching = FALSE, ordering = FALSE,info = FALSE
       )

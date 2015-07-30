@@ -25,15 +25,20 @@ output$lineup <- DT::renderDataTable({
     filter(TEAMNAME == input$teamA & gameDate == matchDate) %>%
     arrange(desc(gameDate),off,on) %>%
     select(name,st,on,off,Gls,Assists,CARD) 
- #print(glimpse(df))
+
+ ## get rid of 0 for goals and assists
+ df[df$Gls==0,]$Gls <- ""
+ df[df$Assists==0,]$Assists <- ""
+ 
 df  %>% 
-     DT::datatable(
+     DT::datatable(class='compact stripe hover row-border',colnames = c('Player', 'Start', 'On', 'Off', 'Goals', 'Assists', 'Card'),
       rownames = FALSE,options = list(
         paging = FALSE,
         searching = FALSE,
+        info = FALSE,
         order = list(list(1, 'desc'), list(2, 'desc')),
         columnDefs = list(list(
-          className = 'dt-center', targets = c(1,6)
+          className = 'dt-center', targets = c(1,2,3,4,5,6)
         ))
       )
      )
