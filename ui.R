@@ -84,11 +84,11 @@ fluidRow(
 #     
 #     htmlOutput("teamPic")
 #   ),
-box(title="Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
+box(title="EPL Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
 ggvisOutput("seasonsHist")
-)
-
-
+),
+#box(width=3,htmlOutput("teamPic")), # a logo really
+box(width=3,plotOutput("birthChoropleth"))
 ),
               
 fluidRow(
