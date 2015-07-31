@@ -9,7 +9,7 @@ df <-  df %>%
   
 #DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE), container = GF_format)
 
-DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+DT::datatable(df,class='compact stripe hover row-border',rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE))
 
 })
 

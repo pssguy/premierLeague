@@ -76,13 +76,36 @@ dashboardPage(
       
       tabItem("tm_glance",
 fluidRow(
-box(title="Finishing Positions,",width=3,solidHeader = TRUE,status = 'success',
+ # box(width=3,htmlOutput("teamPic")),
+  box(width=6,htmlOutput("squadPhoto")),
+  
+#   box(
+#     status = "warning",solidHeader = TRUE,title = "test image",
+#     
+#     htmlOutput("teamPic")
+#   ),
+box(title="Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
 ggvisOutput("seasonsHist")
-),
-box(title="Most Appearances,",width=3,solidHeader = TRUE,status = 'success',
-    DT::dataTableOutput("mostGames")
 )
-              )
+
+
+),
+              
+fluidRow(
+  
+  box(title="Most Appearances",width=3,solidHeader = TRUE,status = 'success',
+      DT::dataTableOutput("mostGames")
+  ),
+  box(title="Most Goals",width=3,solidHeader = TRUE,status = 'success',
+      DT::dataTableOutput("mostGoals")
+  ),
+  box(title="Most Assists (max 2 per goal)",width=3,solidHeader = TRUE,status = 'success',
+      DT::dataTableOutput("mostAssists")
+  ),
+  box(title="Most Cards",width=3,solidHeader = TRUE,status = 'success',
+      DT::dataTableOutput("mostCards")
+  )
+)
 ),
       
       

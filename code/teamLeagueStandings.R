@@ -1,24 +1,10 @@
 ## Problem
 observe({
-  #print("enter league pos")
-  
-  #   if (is.null(input$season_a)) return()
-  #   
-  #   if (is.null(input$season_a)) {
-  #     theSeason <- "2014/15"
-  #   } else {
-  #     theSeason <- input$season_a
-  #   }
-  #   
-  #   if (is.null(input$team_3)) {
-  #     theTeam <- "Arsenal"
-  #   } else {
-  #     theTeam <- input$team_3
-  #   }
+ 
   
   if (is.null(input$teamA)) return()
-  #   print(input$teamA)
-  #   print(input$teamYears)
+    print(input$teamA)
+    print(input$teamYears)
   
   theTeam <- input$teamA
   theSeason <- input$teamYears
@@ -67,17 +53,7 @@ observe({
   pos4 <- data.frame(pos4)
   pos18 <- data.frame(pos18)
   
-#   glimpse(graph)
-#   glimpse(pos1)
-#   glimpse(pos4)
-#   glimpse(pos18)
-#   print("printed glimpses")
-#   
-#   write_csv(graph,"graph_check.csv")
-#   write_csv(pos1,"pos1_check.csv")
-#   write_csv(pos4,"pos4_check.csv")
-#   write_csv(pos18,"pos18_check.csv")
-#   
+  
   
   graph %>%
     inner_join(pos1) %>%
