@@ -76,19 +76,19 @@ dashboardPage(
       
       tabItem("tm_glance",
 fluidRow(
- # box(width=3,htmlOutput("teamPic")),
-  box(width=6,htmlOutput("squadPhoto")),
-  
-#   box(
-#     status = "warning",solidHeader = TRUE,title = "test image",
-#     
-#     htmlOutput("teamPic")
-#   ),
+ tabBox(
+   tabPanel("Squad Photo",htmlOutput("squadPhoto")),
+ tabPanel("Where in the World",plotOutput("birthChoropleth"))
+),
 box(title="EPL Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
 ggvisOutput("seasonsHist")
 ),
-#box(width=3,htmlOutput("teamPic")), # a logo really
-box(width=3,plotOutput("birthChoropleth"))
+box(title="Favourite Line-Up",width=3,solidHeader = TRUE,status = 'success',
+    h5(textOutput("lineupCount")),
+    hr(),
+textOutput("lineupText"))
+
+
 ),
               
 fluidRow(
@@ -265,7 +265,7 @@ fluidRow(
                  infoBoxOutput("teamsBox", width = 12)),
           
           column(width = 3,
-                 infoBoxOutput("seasonsBox", width = 12)),
+                 infoBoxOutput("seasonsBoxPlayer", width = 12)),
           
           column(width = 3,
                  infoBoxOutput("appsBox", width = 12))

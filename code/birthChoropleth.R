@@ -30,4 +30,4 @@ chart <-  test %>%
 # df <- read_csv("problem.csv")
 country_choropleth(df,num_colors=1)
    
-},width=200,height=200)
+},width=400,height=300)

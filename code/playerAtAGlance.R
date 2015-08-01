@@ -12,6 +12,7 @@ data <- reactive({
   
   teams <- length(unique(basic$TEAMNAME)) # 6
   seasons <- length(unique(basic$season))
+ 
   
 bySeason <- summary %>%
   filter(PLAYERID==input$playerA) %>% 
@@ -36,18 +37,8 @@ career <- cbind(max,tot)  %>%
 
 
 
-#names(bent)
 
-# teams <- length(unique(bent$TEAMNAME)) # 6
-# seasons <- length(unique(bent$season))  #11
-# #apps <- sum(bent$St) + sum(bent$On)  #276
-# #goals <- sum(bent$StGls)+ sum(bent$subGls) #106
-# assists <- sum(bent$Assists) #27
-# #cards <- sum(bent$Y) + sum(bent$R) #12
-# 
-# bent %>% 
-#   group_by(season) %>% 
-#   mutate(maxApp=)
+
 
 info=list(teams=teams,seasons=seasons,career=career)
 return(info)
@@ -57,7 +48,7 @@ return(info)
 output$appsBox <- renderInfoBox({
     infoBox(
     "Appearances",data()$career$showApps, icon = icon("futbol-o"), #user-times
-    color = "light-blue", subtitle = " Tot - Max"
+    color = "light-blue", subtitle = " Tot - Max(Year)"
   )
 })
 output$teamsBox <- renderInfoBox({
@@ -69,22 +60,23 @@ output$teamsBox <- renderInfoBox({
 output$goalsBox <- renderInfoBox({
   infoBox(
     "Goals",data()$career$showGoals, icon = icon("bullseye"),
-    color = "green", subtitle = " Tot - Max"
+    color = "green", subtitle = " Tot - Max(Year)"
   )
 })
 output$assistsBox <- renderInfoBox({
   infoBox(
     "Assists",data()$career$showAssists, icon = icon("heart"),
-    color = "green", subtitle = " Tot - Max"
+    color = "green", subtitle = " Tot - Max(Year)"
   )
 })
 output$cardsBox <- renderInfoBox({
   infoBox(
     "Cards",data()$career$showCards, icon = icon("book"),
-    color = "orange", subtitle = " Tot - Max"
+    color = "orange", subtitle = " Tot - Max(Year)"
   )
 })
-output$seasonsBox <- renderInfoBox({
+output$seasonsBoxPlayer <- renderInfoBox({
+ 
   infoBox(
     "Seasons",data()$seasons, icon = icon("calendar"),
     color = "light-blue"
