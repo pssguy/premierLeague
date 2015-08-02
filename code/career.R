@@ -20,7 +20,7 @@ careerData <- reactive({
     select(date=gameDate,Opponents,on,off,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID) %>% 
     mutate(points=Goals+Assists)
   
-  print(glimpse(dfChart))
+#  print(glimpse(dfChart))
   
   
   dfTeamYear <- summary %>%
@@ -45,7 +45,7 @@ careerData <- reactive({
     summarise(Apps=sum(Apps),St=sum(St),On=sum(On),Off=sum(Off),Bench=sum(Bench),Mins=sum(Mins),Goals=sum(Gls),
               Pens=sum(Pens),Assists=sum(Assists),Points=sum(Points),Y=sum(Y),R=sum(R),OG=sum(OG),MP=sum(MP))
   dfCareer$Team <- "Career"
-  print(names(dfCareer))
+#  print(names(dfCareer))
  
   
   info=list(dfTeamYear=dfTeamYear,dfTeam=dfTeam,dfCareer=dfCareer,dfChart=dfChart)

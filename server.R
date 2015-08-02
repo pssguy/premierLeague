@@ -1,8 +1,9 @@
 ## try setting reactive values here for keeping player
+## needs to have an observeevent as well
+values <- reactiveValues()
+ values$playerID <- "BENTD" 
+ values$TEAMNAME <- "Arsenal" 
 
-# values <- reactiveValues()
-# values$playerID <- "BENTD" # set correctly initially but then overrides try putting in global
-# no still goes back to selected or whoever is first
 
 shinyServer(function(input, output, session) {
   
@@ -12,29 +13,51 @@ shinyServer(function(input, output, session) {
     #       selectInput("playerA", "Player", playerChoice) 
     #     } else 
     if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
-      selectInput("teamA", "Team", teamsChoice) 
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice) 
       
     } else if (input$sbMenu=="tm_leaguePosition") {
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     }  else if (input$sbMenu=="tm_goals") {
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     }  else if (input$sbMenu=="tm_glance") { # like tm_goals should just be team input
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     }  else if (input$sbMenu=="tm_leaders") {
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     }  else if (input$sbMenu=="tm_hth") {
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     } else if (input$sbMenu=="tm_seqs") {
-      selectInput("teamA", "Team", teamsChoice)
+      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
     } else if (input$sbMenu=="pl_career") {
-      selectizeInput("playerA", "Player", playerChoice,  options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice, selected=values$playerID, options=list(maxOptions=10000))
     } else if (input$sbMenu=="pl_goals") {
-      selectizeInput("playerA", "Player", playerChoice, selected="Darren Bent", options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice,selected=values$playerID,  options=list(maxOptions=10000))
     } else if (input$sbMenu=="pl_glance") {
-      selectizeInput("playerA", "Player", playerChoice, selected="Darren Bent",  options=list(maxOptions=10000))
+      selectizeInput("playerA", "Player", playerChoice,selected=values$playerID,   options=list(maxOptions=10000))
     }
     
   })
+  
+  ## try observe for players - seems to work in terms of calling correct data but does not update
+  ## the actual. possibly use a values?
+  
+  observeEvent(input$playerA,{
+    
+    values$playerID <- input$playerA
+  
+  })
+  
+  observeEvent(input$teamA,{
+    
+    values$TEAMNAME <- input$teamA
+    
+  })
+#   
+#   observeEvent(input$playerB,{
+#     print("enter input$PlayerA in observeEvent")
+#     print(input$playerB)
+#     
+#     updateSelectizeInput(session,"playerA", "Player", playerChoice,selected=input$playerB,   options=list(maxOptions=10000))
+#   })
   
   output$teamYear_ui <- renderUI({
     if (input$sbMenu=="tm_playerSummary"|input$sbMenu=="tm_leaguePosition") {
@@ -126,48 +149,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  
-  ## wil this work if they need stuff from reactive???
-  ## players by club single year
-  source("code/teamYear.R", local=TRUE)
-  source("code/teamLeagueStandings.R", local=TRUE)
-  source("code/lineups.R", local=TRUE)
-  #   ## front page current Leaders
-  #   source("code/currentLeaders.R", local=TRUE)
-  #   ## leading scorers by season/team/number of games
-  #   source("code/topScorers.R", local=TRUE)
-  #   ## team leaders by year goals assists etc
-  source("code/teamLeaders.R", local=TRUE)
-  #   # Goals For and Ag
-  source("code/teamGoals.R", local=TRUE)
-  # #   source("code/teamGoalsFor.R", local=TRUE)
-  # #   source("code/teamGoalsDiff.R", local=TRUE)
-  #   ## player by year
-  # source("code/careerTots.R", local=TRUE) rolled into career
-  source("code/career.R", local=TRUE)
-  #   
-  #   
-  source("code/goalSummary.R", local=TRUE)
-  source("code/headToHead.R", local=TRUE)
-  #   
-  source("code/standings.R", local=TRUE)
-  #   
-  source("code/playerSeqs.R", local=TRUE)
-  #   
-  source("code/playerGoals.R", local=TRUE)
-  # source("code/goalDistribution.R", local=TRUE)
-  #   
-  source("code/goalFirsts.R", local=TRUE)
-  #   
-  #   source("code/playerWith.R", local=TRUE)
-  # 
-  source("code/specials/scoredOn.R", local=TRUE)
-  
-  source("code/playerAtAGlance.R", local=TRUE)
-  source("code/playerPix.R", local=TRUE)
-  source("code/playerBirthplace.R", local=TRUE)
-  source("code/playerWiki.R", local=TRUE)
-  source("code/teamAtAGlance.R", local=TRUE)
+
   
   
   ## this is from https://demo.shinyapps.io/029-row-selection/ works but nt after sorting and is just row
@@ -517,6 +499,54 @@ shinyServer(function(input, output, session) {
       select(Season=season,Date=gameDate,Opponents=OppTeam,Venue=venue)
     
   })
+  
+  
+  ## wil this work if they need stuff from reactive???
+  ## players by club single year
+  source("code/teamYear.R", local=TRUE)
+  source("code/teamLeagueStandings.R", local=TRUE)
+  source("code/lineups.R", local=TRUE)
+  #   ## front page current Leaders
+  #   source("code/currentLeaders.R", local=TRUE)
+  #   ## leading scorers by season/team/number of games
+  #   source("code/topScorers.R", local=TRUE)
+  #   ## team leaders by year goals assists etc
+  source("code/teamLeaders.R", local=TRUE)
+  #   # Goals For and Ag
+  source("code/teamGoals.R", local=TRUE)
+  # #   source("code/teamGoalsFor.R", local=TRUE)
+  # #   source("code/teamGoalsDiff.R", local=TRUE)
+  #   ## player by year
+  # source("code/careerTots.R", local=TRUE) rolled into career
+  source("code/career.R", local=TRUE)
+  #   
+  #   
+  source("code/goalSummary.R", local=TRUE)
+  source("code/headToHead.R", local=TRUE)
+  #   
+  source("code/standings.R", local=TRUE)
+  #   
+  source("code/playerSeqs.R", local=TRUE)
+  #   
+  source("code/playerGoals.R", local=TRUE)
+  # source("code/goalDistribution.R", local=TRUE)
+  #   
+  source("code/goalFirsts.R", local=TRUE)
+  #   
+  #   source("code/playerWith.R", local=TRUE)
+  # 
+  source("code/specials/scoredOn.R", local=TRUE)
+  
+  source("code/playerAtAGlance.R", local=TRUE)
+  source("code/playerPix.R", local=TRUE)
+  source("code/playerBirthplace.R", local=TRUE)
+  source("code/playerWiki.R", local=TRUE)
+  source("code/teamAtAGlance.R", local=TRUE)
+  source("code/teamPix.R", local=TRUE)
+  source("code/birthChoropleth.R", local=TRUE)
+  source("code/topLineup.R", local=TRUE)
+  
+  
   
 }) # end
 

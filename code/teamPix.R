@@ -7,7 +7,7 @@ output$teamPic <- renderUI({
   id <- teamCodes[teamCodes$TEAMNAME==input$teamA,]$TEAMID
  
   src1 <- paste0("http://www.premiersoccerstats.com/teamBadges/",id,".png")
-  tags$img(src=src1, width=200)
+  tags$img(src=src1, width=55)
 
 })
 
