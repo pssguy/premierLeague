@@ -62,7 +62,7 @@ output$mostGames <- DT::renderDataTable({
   if(is.null(teamData())) return()
   teamData()$mostGames %>% 
     select(Player=name,Apps=n) %>% 
-    DT::datatable(class='compact stripe hover row-border',options= list(
+    DT::datatable(selection='single',class='compact stripe hover row-border',options= list(
       pageLength = 5,lengthChange=FALSE,paging = TRUE, searching = FALSE, info=FALSE,sorting = FALSE))
   
 })
@@ -127,4 +127,27 @@ observeEvent(teamData(),{
     add_axis("x", title="Position", format='d') %>% 
     bind_shiny('seasonsHist')
   
+})
+
+## look at an observeevent for clicking on a row and jumping to a players
+## record - or failing that at least have that as default when switching to player tab
+
+observeEvent(input$mostGames_rows_selected,{
+    s = as.integer(input$mostGames_rows_selected)
+    values$playerID <- teamData()$mostGames$PLAYERID[s]
+  })
+
+observeEvent(input$mostGoals_rows_selected,{
+   s = as.integer(input$mostGoals_rows_selected)
+  values$playerID <- teamData()$mostGoals$PLAYERID[s]
+  })
+
+observeEvent(input$mostAssists_rows_selected,{
+  s = as.integer(input$mostAssists_rows_selected)
+  values$playerID <- teamData()$mostAssists$PLAYERID[s]
+})
+
+observeEvent(input$mostCards_rows_selected,{
+  s = as.integer(input$mostCards_rows_selected)
+  values$playerID <- teamData()$mostCards$PLAYERID[s]
 })

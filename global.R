@@ -20,6 +20,9 @@ library(shinythemes)
 library(DT)
 library(readr)
 library(ggmap)
+library(rgdal)
+library(choroplethr)
+library(choroplethrMaps)
 
 positions <- read_csv("positions.csv")
 playerGame <- readRDS("playerGame.rds")
@@ -37,6 +40,10 @@ teamGames <- readRDS("teamGames.rds")
 
 
 
+teamCodes <- teamGames %>% 
+  ungroup() %>% 
+  select(TEAMNAME,TEAMID) %>% 
+  unique()
 
 
 pgMini <- playerGame %>%
@@ -157,5 +164,11 @@ trueGames <- playerGame %>%
   filter((START+subOn)>0) %>% 
   group_by(PLAYERID) %>% 
   mutate(trueGameOrder=row_number())
+
+
+# standard map data for world
+mapData <- readOGR(dsn=".",
+                   layer = "ne_50m_admin_0_countries", 
+                   encoding = "UTF-8",verbose=FALSE)
 
 print("end global")
