@@ -545,6 +545,7 @@ shinyServer(function(input, output, session) {
   source("code/teamPix.R", local=TRUE)
   source("code/birthChoropleth.R", local=TRUE)
   source("code/topLineup.R", local=TRUE)
+  source("code/playerTransfers.R", local=TRUE)
   
   
   

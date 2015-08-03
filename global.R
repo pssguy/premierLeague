@@ -24,7 +24,7 @@ library(rgdal)
 library(choroplethr)
 library(choroplethrMaps)
 
-positions <- read_csv("positions.csv")
+positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")

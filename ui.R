@@ -250,9 +250,9 @@ fluidRow(
           column(
             width = 5,
             box(
-              width = 12,title = "Wikipedia",solidHeader = TRUE,status = 'success',
-              collapsible = TRUE, collapsed = TRUE,
-              uiOutput("playerWiki")
+              width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = FALSE,
+             ggvisOutput("playerTransfers")
             )
           )
           
@@ -269,6 +269,7 @@ fluidRow(
           
           column(width = 3,
                  infoBoxOutput("appsBox", width = 12))
+          
         ),
         fluidRow(
           column(width = 3,
@@ -277,8 +278,16 @@ fluidRow(
                  infoBoxOutput("assistsBox", width = 12)),
           column(width = 3,
                  infoBoxOutput("cardsBox", width = 12))
+        ),
+      fluidRow(
+        column(width = 5,offset=3,
+               box(
+          width = 12,title = "Wikipedia",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
+          uiOutput("playerWiki")
         )
-        
+        )
+      )
         
         
       ),
