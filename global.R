@@ -37,7 +37,7 @@ Play <- readRDS("Play.rds")
 Place <- readRDS("Place.rds")
 Method<- readRDS("Method.rds")
 teamGames <- readRDS("teamGames.rds")
-
+playerGeos <- read_csv("playerGeos.csv")
 
 
 teamCodes <- teamGames %>% 
@@ -45,10 +45,11 @@ teamCodes <- teamGames %>%
   select(TEAMNAME,TEAMID) %>% 
   unique()
 
-
-pgMini <- playerGame %>%
+## playerid name and lat/lon
+pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
   select(PLAYERID,name) %>% 
-  unique()
+  unique() %>% 
+  left_join(playerGeos,by=c("PLAYERID"="playerID"))
 
     
 playerChoice <- pgMini$PLAYERID

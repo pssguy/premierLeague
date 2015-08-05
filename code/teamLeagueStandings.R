@@ -3,6 +3,7 @@ observe({
  
   
   if (is.null(input$teamA)) return()
+  if (is.null(input$teamYears)) return()
     print(input$teamA)
     print(input$teamYears)
   

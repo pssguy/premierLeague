@@ -23,8 +23,8 @@ output$teamYear <- DT::renderDataTable({
     select(PLAYERID,Player=name,pos,Age=age,Apps=apps,St,On,Off,Bench,Mins=mins,Goals=Gls,Pens,Assists,Points,Y,R)) -> tbl
 
   tbl <- tbl[,-(1:5)]
-  DT::datatable(tbl,class='compact stripe hover row-border',rownames=FALSE,options = list(paging = FALSE, searching = FALSE,
-                                                  order = list(list(9, 'desc')),columnDefs= list(list(visible=FALSE,targets=list(0)),list(className = 'dt-center', targets = 2),list(width="20%",columnDefs.targets= list(1)))))
+  DT::datatable(tbl,class='compact stripe hover row-border',rownames=TRUE,options = list(paging = FALSE, searching = FALSE,
+                                                  order = list(list(9, 'desc')),columnDefs= list(list(visible=FALSE,targets=list(1)),list(className = 'dt-center', targets = 2),list(width="20%",columnDefs.targets= list(1)))))
  } else {
    data.frame(summary %>%
                 filter(TEAMNAME==theTeam&season==theYear&is.na(left)) %>%

@@ -19,8 +19,8 @@ dashboardPage(
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
-        menuSubItem("At A Glance", tabName = "tm_glance"),
-        menuSubItem("Player Summary",tabName = "tm_playerSummary", selected = TRUE),
+        menuSubItem("At A Glance", tabName = "tm_glance", selected=TRUE),
+        menuSubItem("Player Summary",tabName = "tm_playerSummary"),
         menuSubItem("League Position",tabName = "tm_leaguePosition"),
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
