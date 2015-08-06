@@ -21,7 +21,7 @@ output$teamLeaders <-  DT::renderDataTable({
     select(Season=season,Starts=starts,Sub=sub,Goals=goals,Assists=assists,Points=points,Cards=cards) %>% 
    arrange(desc(Season)) %>% 
  
- DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE,sorting = FALSE,
+ DT::datatable(rownames=FALSE, extensions = 'ColReorder', options= list(dom = 'Rlfrtip',paging = FALSE, searching = FALSE, info=FALSE,sorting = FALSE,
                                 orderFixed=list(c(0,'desc'))))
   
 }

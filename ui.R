@@ -50,6 +50,15 @@ dashboardPage(
         "Specials", tabName = "specials",
         menuSubItem("Scored On",tabName = "sp_scoredOn")
       ),
+      menuItem(
+        "Other Dashboards",
+        menuSubItem("Climate",href = "https://mytinyshinys.shinyapps.io/climate"),
+        menuSubItem("Cricket",href = "https://mytinyshinys.shinyapps.io/cricket"),
+        menuSubItem("MainlyMaps",href = "https://mytinyshinys.shinyapps.io/mainlyMaps"),
+        menuSubItem("MLB",href = "https://mytinyshinys.shinyapps.io/mlbCharts"),
+        
+        menuSubItem("WikiGuardian",href = "https://mytinyshinys.shinyapps.io/wikiGuardian")
+      ),
       
       menuItem("Info", tabName = "info", icon = icon("info")),
       
@@ -78,7 +87,22 @@ dashboardPage(
 fluidRow(
  tabBox(
    tabPanel("Squad Photo",htmlOutput("squadPhoto")),
- tabPanel("Where in the World",plotOutput("birthChoropleth"))
+ tabPanel("Where in the World",plotOutput("birthChoropleth")),
+ tabPanel("Twitter",
+          tags$body(includeScript("twitter.js"),
+                    
+                    uiOutput("teamTwitter")
+#                     a("Fun", class="twitter-timeline",
+#                       href="https://twitter.com/pssGuy/timelines/530058458880409600",
+#                       "data-widget-id" = "530058992483958785",
+#                       height="300",
+#                       "data-chrome" ="nofooter transparent noheader")
+                    
+                    
+                    )
+                    
+                   
+)
 ),
 box(title="EPL Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
 ggvisOutput("seasonsHist")
@@ -93,7 +117,7 @@ textOutput("lineupText"))
               
 fluidRow(
   
-  box(title="Most Appearances",width=3,solidHeader = TRUE,status = 'success',
+  box(title="Most Apps (click row for player)",width=3,solidHeader = TRUE,status = 'success',
       DT::dataTableOutput("mostGames")
   ),
   box(title="Most Goals",width=3,solidHeader = TRUE,status = 'success',
@@ -113,9 +137,9 @@ fluidRow(
               
               fluidRow(
                 box(
-                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary",
+                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary (click on player and the Players tab for his info)",
                   inputPanel(
-                    # uiOutput("teamYear_ui"),
+                   
                     radioButtons(
                       "withClub","Players",choices = c("All","Current"),inline = TRUE
                     ),
@@ -187,7 +211,7 @@ fluidRow(
                   
                   box(
                     title = "Fixtures", solidHeader = TRUE,status = 'success',
-                    width = 12, collapsible = T,collapsed =T,
+                    width = 12, collapsible = T,collapsed =F,
                     
                     DT::dataTableOutput("hthFixtures")
                   )

@@ -514,7 +514,7 @@ shinyServer(function(input, output, session) {
   source("code/teamLeaders.R", local=TRUE)
   #   # Goals For and Ag
   source("code/teamGoals.R", local=TRUE)
-  # #   source("code/teamGoalsFor.R", local=TRUE)
+  # #   source("code/teamGoalsFor.R", local=TRUE)  ## do not show these they will confuse
   # #   source("code/teamGoalsDiff.R", local=TRUE)
   #   ## player by year
   # source("code/careerTots.R", local=TRUE) rolled into career
@@ -546,8 +546,50 @@ shinyServer(function(input, output, session) {
   source("code/birthChoropleth.R", local=TRUE)
   source("code/topLineup.R", local=TRUE)
   source("code/playerTransfers.R", local=TRUE)
+  source("code/teamTwitter.R", local=TRUE)
   
+  ## look at an observeevent for clicking on a row and jumping to a players
+  ## record - or failing that at least have that as default when switching to player tab
   
+  observeEvent(input$mostGames_rows_selected,{
+    s = as.integer(input$mostGames_rows_selected)
+    values$playerID <- teamData()$mostGames$PLAYERID[s]
+    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  })
+  
+  observeEvent(input$mostGoals_rows_selected,{
+    s = as.integer(input$mostGoals_rows_selected)
+    values$playerID <- teamData()$mostGoals$PLAYERID[s]
+    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  })
+  
+  observeEvent(input$mostAssists_rows_selected,{
+    s = as.integer(input$mostAssists_rows_selected)
+    values$playerID <- teamData()$mostAssists$PLAYERID[s]
+    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  })
+  
+  observeEvent(input$mostCards_rows_selected,{
+    s = as.integer(input$mostCards_rows_selected)
+    values$playerID <- teamData()$mostCards$PLAYERID[s]
+  })
+  
+  observeEvent(input$teamYear_rows_selected,{
+    s = as.integer(input$teamYear_rows_selected)
+    print("printing s")
+    
+tbl <-    data.frame(summary %>%
+                 filter(TEAMNAME==input$teamA&season==input$teamYears)) #%>%
+                 
+#                  mutate(pos=str_sub(POSITION,1,1),apps=St+On,Gls=StGls+subGls,Pens=startPens+subPens,Points=Gls+Assists,janAge=as.integer(str_sub(as.character(season),1,4)),byear=as.integer(str_sub(as.character(born),1,4)),age=janAge-byear) %>%
+#                  select(PLAYERID,Player=name,pos,Age=age,Apps=apps,St,On,Off,Bench,Mins=mins,Goals=Gls,Pens,Assists,Points,Y,R)) -> tbl
+#     
+print(tbl$PLAYERID) # cazorla is 27t
+    print(s) # All Single default hit row 2 but s= 27(perhaps the sorting). However did give CAZORLS  which was what was after
+   print(tbl$PLAYERID[s])
+    values$playerID <- tbl$PLAYERID[s]
+    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  })
   
 }) # end
 
