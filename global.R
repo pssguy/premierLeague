@@ -23,6 +23,7 @@ library(ggmap)
 library(rgdal)
 library(choroplethr)
 library(choroplethrMaps)
+library(taucharts)
 
 positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds")
@@ -47,9 +48,10 @@ teamCodes <- teamGames %>%
 
 ## playerid name and lat/lon
 pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
-  select(PLAYERID,name) %>% 
+  select(PLAYERID,name,city,COUNTRY) %>% 
   unique() %>% 
-  left_join(playerGeos,by=c("PLAYERID"="playerID"))
+  left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
+  mutate(place=paste0(city," ",COUNTRY))
 
     
 playerChoice <- pgMini$PLAYERID

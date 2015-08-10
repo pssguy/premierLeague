@@ -76,7 +76,7 @@ observe({
   df %>% 
     ggvis(~plGameOrder, ~mins, key := ~id) %>%
     layer_points(fill = ~Team, size = ~ points) %>% 
-    add_tooltip(all_values,"click") %>% 
+    add_tooltip(all_values,"hover") %>% 
     
     add_axis("y", title="Minutes Played", format='d') %>% # attempt to enforxe 0 , values=c(0,15,30,45,60,75,90)
     add_axis("x", title="Match Day Squad Game Order", format='d') %>% 

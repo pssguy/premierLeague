@@ -5,6 +5,7 @@ dashboardPage(
   dashboardHeader(title = "Premier League"),
   
   dashboardSidebar(
+    includeCSS("custom.css"),
     #selectInput("teamA", "Team", teamsChoice),
     uiOutput("a"),
     uiOutput("teamYear_ui"),
@@ -87,22 +88,23 @@ dashboardPage(
 fluidRow(
  tabBox(
    tabPanel("Squad Photo",htmlOutput("squadPhoto")),
- tabPanel("Where in the World",plotOutput("birthChoropleth")),
- tabPanel("Twitter",
-          tags$body(includeScript("twitter.js"),
-                    
-                    uiOutput("teamTwitter")
-#                     a("Fun", class="twitter-timeline",
-#                       href="https://twitter.com/pssGuy/timelines/530058458880409600",
-#                       "data-widget-id" = "530058992483958785",
-#                       height="300",
-#                       "data-chrome" ="nofooter transparent noheader")
-                    
-                    
-                    )
-                    
-                   
-)
+ #tabPanel("Where in the World",plotOutput("birthChoropleth")),
+ tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet"))
+#  tabPanel("Twitter",
+#           tags$body(includeScript("twitter.js"),
+#                     
+#                     uiOutput("teamTwitter")
+# #                     a("Fun", class="twitter-timeline",
+# #                       href="https://twitter.com/pssGuy/timelines/530058458880409600",
+# #                       "data-widget-id" = "530058992483958785",
+# #                       height="300",
+# #                       "data-chrome" ="nofooter transparent noheader")
+#                     
+#                     
+#                     )
+#                     
+#                    
+# )
 ),
 box(title="EPL Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
 ggvisOutput("seasonsHist")
@@ -327,7 +329,7 @@ fluidRow(
         )
         ,
         box(
-          width = 12,title = "Career",solidHeader = TRUE,status = 'success',
+          width = 12,title = "By Club",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
           DT::dataTableOutput("career")
         )

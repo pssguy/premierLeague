@@ -1,8 +1,8 @@
 
 
 
-observeEvent(input$playerA,{ # this works ok but when wanting to type in is an issue - maybe not just this file
-#observe({
+#observeEvent(input$playerA,{ # this works ok but when wanting to type in is an issue - maybe not just this file
+observe({
   print("checking not empty")
   print(input$playerA)
   if(is.null(input$playerA)) return()

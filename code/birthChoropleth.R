@@ -1,33 +1,77 @@
+## for now just do point locations
 
-
-output$birthChoropleth <- renderPlot({
+output$teamLeaflet <- renderLeaflet({
   if(is.null(input$teamA)) return()
-  print("enter choropleth")
-  test <-playerGame %>% 
-    filter(TEAMNAME==input$teamA&(START+subOn)>0) %>% 
-    group_by(COUNTRY) %>% 
-    tally() %>% 
+  print("enter team birthplaces")
+  print(input$teamA)
+  temp <-  summary %>% 
     ungroup() %>% 
-    arrange(desc(n))
+    filter(TEAMNAME==input$teamA) %>% 
+    mutate(Apps=St+On) %>% 
+    select(name,PLAYERID,Apps) %>% 
+    group_by(name,PLAYERID) %>% 
+    summarize(Apps=sum(Apps)) %>% 
+    ungroup()
   
+  temp <-temp %>% 
+    left_join(pgMini)
   
+  temp$lon <-  jitter(temp$lon, amount=0.5)
+  temp$lat <-  jitter(temp$lat, amount=0.5)
   
-  test[test$COUNTRY=="England",]$COUNTRY <- "united kingdom"
-  test[test$COUNTRY=="Wales",]$COUNTRY <- "united kingdom"
-  test[test$COUNTRY=="Scotland",]$COUNTRY <- "united kingdom"
-  test[test$COUNTRY=="N. Ireland",]$COUNTRY <- "united kingdom"
+  temp$popup <-
+    sprintf(
+      "<table cellpadding='4' style='line-height:1'><tr>
+      <th> %1$s  </th></tr>
+<tr align='center'><td> %2$s</td></tr>
+      
+      <tr align='center'><td>Apps: %3$s</td></tr>
+        </table>",
+      temp$name,
+      temp$place,
+      temp$Apps
+    )
+  binpalEPL <-
+    colorBin(c("#FFFF00","#FF8000","#FF0000"), temp$Apps,  pretty = TRUE)
   
-chart <-  test %>% 
-    group_by(COUNTRY) %>% 
-    summarize(ct=sum(n)) %>% 
-    mutate(pc=round(100*ct/sum(ct),1),region=tolower(COUNTRY)) %>% 
-    rename(value=pc) %>% 
-    select(region,value) %>% 
-    unique(.) 
+  temp %>%    leaflet() %>%
+    addTiles() %>%
+    setView(2,49,zoom=3) %>% 
+    addCircleMarkers(
+      radius = 3,fillOpacity = 0.5,popup =  ~ popup,color = ~ binpalEPL(Apps)
+    )
+  ## legend not working
+  
+})
 
-# print(glimpse(chart))
-# write_csv(chart,"problem.csv")
-# df <- read_csv("problem.csv")
-country_choropleth(df,num_colors=1)
-   
-},width=400,height=300)
+# output$birthChoropleth <- renderPlot({
+#   if(is.null(input$teamA)) return()
+#   print("enter choropleth")
+#   test <-playerGame %>% 
+#     filter(TEAMNAME==input$teamA&(START+subOn)>0) %>% 
+#     group_by(COUNTRY) %>% 
+#     tally() %>% 
+#     ungroup() %>% 
+#     arrange(desc(n))
+#   
+#   
+#   
+#   test[test$COUNTRY=="England",]$COUNTRY <- "united kingdom"
+#   test[test$COUNTRY=="Wales",]$COUNTRY <- "united kingdom"
+#   test[test$COUNTRY=="Scotland",]$COUNTRY <- "united kingdom"
+#   test[test$COUNTRY=="N. Ireland",]$COUNTRY <- "united kingdom"
+#   
+# chart <-  test %>% 
+#     group_by(COUNTRY) %>% 
+#     summarize(ct=sum(n)) %>% 
+#     mutate(pc=round(100*ct/sum(ct),1),region=tolower(COUNTRY)) %>% 
+#     rename(value=pc) %>% 
+#     select(region,value) %>% 
+#     unique(.) 
+# 
+# # print(glimpse(chart))
+# # write_csv(chart,"problem.csv")
+# # df <- read_csv("problem.csv")
+# country_choropleth(df,num_colors=1)
+#    
+# },width=400,height=300)

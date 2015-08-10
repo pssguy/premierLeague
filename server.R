@@ -13,26 +13,26 @@ shinyServer(function(input, output, session) {
     #       selectInput("playerA", "Player", playerChoice) 
     #     } else 
     if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice) 
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
       
     } else if (input$sbMenu=="tm_leaguePosition") {
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_goals") {
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_glance") { # like tm_goals should just be team input
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_leaders") {
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_hth") {
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs") {
-      selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice)
+      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="pl_career") {
-      selectizeInput("playerA", "Player", playerChoice, selected=values$playerID, options=list(maxOptions=10000))
+      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice), selected=values$playerID,  options=list(maxOptions=10000)))
     } else if (input$sbMenu=="pl_goals") {
-      selectizeInput("playerA", "Player", playerChoice,selected=values$playerID,  options=list(maxOptions=10000))
+      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice), selected=values$playerID, options=list(maxOptions=10000))) # was selected=values$playerID, for all these
     } else if (input$sbMenu=="pl_glance") {
-      selectizeInput("playerA", "Player", playerChoice,selected=values$playerID,   options=list(maxOptions=10000))
+      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
     }
     
   })
@@ -62,11 +62,11 @@ shinyServer(function(input, output, session) {
   output$teamYear_ui <- renderUI({
     if (input$sbMenu=="tm_playerSummary"|input$sbMenu=="tm_leaguePosition") {
       print(input$teamA)
-      yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = FALSE) # thinka bout + inc all
+      yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = T) # thinka bout + inc all
       
-      selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)])
+      inputPanel(selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]))
     } else if (input$sbMenu=="pl_goals"){
-      print("here u are")
+      #print("here u are")
     }
     else { # looks promising
       #print("here u are")
@@ -77,16 +77,16 @@ shinyServer(function(input, output, session) {
   
   output$c <- renderUI({
     if (input$sbMenu=="st_round") {
-      selectInput("seasonA","Season",seasonChoice)
+      inputPanel(selectInput("seasonA","Season",seasonChoice))
     }
   })
   
   output$standings_ui <- renderUI({ 
     if (input$sbMenu=="st_round") {
       if (input$seasonA<"1995/96") {
-        numericInput("gamesA","Games Played",min=1,max=42,step=1,value=42)
+        inputPanel(numericInput("gamesA","Games Played",min=1,max=42,step=1,value=42))
       } else {
-        numericInput("gamesA","Games Played",min=1,max=38,step=1,value=currentRound)  
+        inputPanel(numericInput("gamesA","Games Played",min=1,max=38,step=1,value=currentRound))  
       }
     }
   })
