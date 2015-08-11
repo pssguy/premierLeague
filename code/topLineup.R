@@ -16,12 +16,12 @@ lineupData <- eventReactive(input$teamA,{
     arrange(PLAYERID) %>% 
     do(data.frame(x=paste0(.$PLAYERID, collapse="_")))
   
- #print(glimpse(test))
+ print(glimpse(test))
   # count of lineups
   y <- sort(table(test$x))
   
   together <-y[[length(y)]]
-#  print(together)
+  print(together)
   # now extract names
   eleven <-names(y[length(y)])
   
@@ -32,7 +32,7 @@ lineupData <- eventReactive(input$teamA,{
   lineup <-gather(v)
   lineup$key <- NULL
   
-#  print(glimpse(lineup))
+  print(glimpse(lineup))
   
   colnames(lineup)[1] <- "PLAYERID"
   
@@ -45,6 +45,7 @@ lineupData <- eventReactive(input$teamA,{
   print(str(lineup))
   
   lineupText <- paste(lineup$name,collapse=", ")
+  print("lineup in data")
   print(lineupText)
   
   info=list(together=together,lineupText=lineupText)
@@ -59,6 +60,7 @@ output$lineupCount <- renderText({
 output$lineupText <- renderText({
   print("enter lineup")
   print(lineupData()$lineupText)
+  print("just printed lineup in rendertext")
   lineupData()$lineupText
 })
 
