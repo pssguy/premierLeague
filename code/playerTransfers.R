@@ -9,15 +9,25 @@ observe({
   if(input$playerA=="")return()
   print("transferfee in")
   print(input$playerA)
+   
+  ## crash occurs here as BIRTHDATE not found and this is true in UpdatingSQL it is set to NULL
+  ## not sure why it even there
+#   transfers <-  playerGame %>% 
+#     filter(PLAYERID==input$playerA&PERMANENT==1) %>% 
+#     
+#     select(name,joined,FEE,TEAMNAME,BIRTHDATE) %>% 
+#     unique() %>% 
+#     mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
+#     rename(Fee=FEE,Team=TEAMNAME,Date=joined)
+#   
   
   transfers <-  playerGame %>% 
     filter(PLAYERID==input$playerA&PERMANENT==1) %>% 
     
-    select(name,joined,FEE,TEAMNAME,BIRTHDATE) %>% 
+    select(name,joined,FEE,TEAMNAME) %>% 
     unique() %>% 
     mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
     rename(Fee=FEE,Team=TEAMNAME,Date=joined)
-  
   print(transfers)
   
   transfers <- cbind(transfers, id = seq_len(nrow(transfers)))

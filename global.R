@@ -13,6 +13,7 @@ library(stringr)
 library(markdown)
 library(tidyr)
 library(shinyBS)
+library(scales)
 library(ggplot2)
 library(leaflet)
 library(rCharts)
@@ -24,6 +25,7 @@ library(rgdal)
 library(choroplethr)
 library(choroplethrMaps)
 library(taucharts)
+
 
 positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds")

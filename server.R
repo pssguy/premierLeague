@@ -64,7 +64,7 @@ shinyServer(function(input, output, session) {
       print(input$teamA)
       yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = T) # thinka bout + inc all
       
-      inputPanel(selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]))
+      inputPanel(selectInput("teamYears","Season",yrs, selected=yrs[1]))
     } else if (input$sbMenu=="pl_goals"){
       #print("here u are")
     }

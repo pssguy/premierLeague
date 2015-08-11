@@ -68,8 +68,8 @@ observe({
     layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
     add_tooltip(all_values, "hover") %>%
     handle_click(getLineups) %>% 
-    add_axis("y",title="Points") %>%
-    add_axis("x",title="Games Played. Lines also shown for 1st,4th and final Relegation Position") %>%
+    add_axis("y",title="Points",format='d') %>%
+    add_axis("x",title="Games Played. Lines also shown for 1st,4th and final Relegation Position",format='d') %>%
     add_legend("fill",title="") %>%
     set_options(width = "auto", height = 400, resizable=FALSE) %>%
     bind_shiny('posGraph')

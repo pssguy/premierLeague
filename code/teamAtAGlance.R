@@ -118,14 +118,51 @@ output$glanceTest <- renderText({
   input$teamZ
 })
 
-observeEvent(teamData(),{
-  
-  teamData()$test %>% 
-    ggvis(~final_Pos) %>% 
-    set_options(width=220,height=220) %>% 
-    add_axis("y", title="Seasons", format='d') %>% 
-    add_axis("x", title="Position", format='d') %>% 
-    bind_shiny('seasonsHist')
-  
-})
+## look at ggplot alternative
+# observeEvent(teamData(),{
+#   
+# df <-  teamData()$test %>% 
+#     filter(season!="2015/16") 
+# print(glimpse(df))
+# 
+# write_csv(df,"problem.csv")
+# 
+# df  %>% 
+#     
+#     ggvis(~final_Pos) %>% 
+#     set_options(width=220,height=220) %>% 
+#     add_axis("y", title="Seasons", format='d') %>% 
+#     add_axis("x", title="Position", format='d') %>% 
+#     bind_shiny('seasonsHist')
+#   
+# })
 
+
+output$seasonsHist <- renderPlot({
+  if(is.null(teamData())) return
+  
+df <-  teamData()$test 
+write_csv(df,"problem.csv")
+# condition for showing bolder color ie current season
+cond <- df$season =="2015/16"
+#set pretty scales - function does not work
+## set p
+maxSeason <-df %>% 
+  group_by(final_Pos) %>% 
+  tally()
+
+theMax <- max(maxSeason$n)
+
+seq(0,8)
+
+
+ggplot(df, aes(x=final_Pos)) +
+  geom_histogram(data=subset(df,cond==FALSE), binwidth=0.5, fill="blue", alpha=0.2) +
+  geom_histogram(data=subset(df,cond==TRUE), binwidth=0.5, fill="blue") +
+  scale_x_continuous(breaks=df$final_Pos+0.25, labels=df$final_Pos) +
+ # scale_y_continuous(breaks=pretty_breaks()) +
+  scale_y_discrete(breaks= seq(0,theMax)) +
+  theme_bw() +
+  xlab("Position (2015/6 in bold)") +
+  ylab("Seasons")
+}, height=300)

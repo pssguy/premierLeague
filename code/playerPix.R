@@ -11,6 +11,7 @@ output$playerPic <- renderUI({
   u <- paste0("http://www.premierleague.com/en-gb/players/profile.career-history.html/",thePlayer)
   print(u)
     u.get<- GET(u)
+    print("OK to here")
     u.content=content(u.get, as="text")
     u.html <- htmlParse(u.content)
 #    print(u.html)

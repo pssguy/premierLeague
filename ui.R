@@ -106,10 +106,11 @@ fluidRow(
 #                    
 # )
 ),
-box(title="EPL Finishing Positions",width=3,solidHeader = TRUE,status = 'success',
-ggvisOutput("seasonsHist")
+box(title="EPL Finishing Positions",width=4,height=375,solidHeader = TRUE,status = 'success',
+#ggvisOutput("seasonsHist")
+plotOutput("seasonsHist")
 ),
-box(title="Favourite Line-Up",width=3,solidHeader = TRUE,status = 'success',
+box(title="Favourite Line-Up",width=2,solidHeader = TRUE,status = 'success',
     h5(textOutput("lineupCount")),
     hr(),
 textOutput("lineupText"))
@@ -308,7 +309,7 @@ fluidRow(
       fluidRow(
         column(width = 5,offset=3,
                box(
-          width = 12,title = "Wikipedia",solidHeader = TRUE,status = 'success',
+          width = 12,title = "Wikipedia (includes non-EPL data)",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
           uiOutput("playerWiki")
         )
