@@ -110,7 +110,7 @@ box(title="EPL Finishing Positions",width=4,height=375,solidHeader = TRUE,status
 #ggvisOutput("seasonsHist")
 plotOutput("seasonsHist")
 ),
-box(title="Favourite Line-Up",width=2,solidHeader = TRUE,status = 'success',
+box(title="Top LineUp",width=2,solidHeader = TRUE,status = 'success',
     h5(textOutput("lineupCount")),
     hr(),
 textOutput("lineupText"))

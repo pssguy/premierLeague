@@ -14,7 +14,9 @@ lineupData <- eventReactive(input$teamA,{
     filter(TEAMNAME==input$teamA&START>0) %>% 
     group_by(TEAMMATCHID) %>% 
     arrange(PLAYERID) %>% 
-    do(data.frame(x=paste0(.$PLAYERID, collapse="_")))
+    do(data.frame(x=paste0(.$PLAYERID, collapse="/")))
+  
+  write_csv(test,"testproblem.csv") # alook 11 at this stage
   
  print(glimpse(test))
   # count of lineups
@@ -25,7 +27,7 @@ lineupData <- eventReactive(input$teamA,{
   # now extract names
   eleven <-names(y[length(y)])
   
-  z <-str_split_fixed(eleven,"_",n=11)
+  z <-str_split_fixed(eleven,"/",n=11)
   v <-data.frame(z)
   
   
@@ -36,11 +38,17 @@ lineupData <- eventReactive(input$teamA,{
   
   colnames(lineup)[1] <- "PLAYERID"
   
+  write_csv(lineup,"lineupproblem.csv")
  
   lineup <- lineup %>% 
     left_join(teamEver) %>% 
     select(name) %>% 
     unique()
+  
+  write_csv(lineup,"lineup2problem.csv")
+  
+  
+  
   print(glimpse(lineup))
   print(str(lineup))
   

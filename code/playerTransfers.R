@@ -39,7 +39,7 @@ observe({
   }
   print("still OK")
   
-  write_csv(transfers,"problem.csv")
+  #write_csv(transfers,"problem.csv")
   
   transfers   %>% 
     ggvis(~Date,~Cost, key:= ~id) %>% 

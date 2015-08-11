@@ -142,7 +142,7 @@ output$seasonsHist <- renderPlot({
   if(is.null(teamData())) return
   
 df <-  teamData()$test 
-write_csv(df,"problem.csv")
+#write_csv(df,"problem.csv")
 # condition for showing bolder color ie current season
 cond <- df$season =="2015/16"
 #set pretty scales - function does not work
