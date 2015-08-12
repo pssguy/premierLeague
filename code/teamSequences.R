@@ -180,3 +180,23 @@ output$tm_noLosses <- renderPlot({
     ggtitle("Undefeated")
   
 }, height=200)
+
+output$tmWinSeq <- DT::renderDataTable({
+  if(is.null(resData)) return()
+  
+  longW <- resData()$W %>% 
+    filter(slength==max(slength)) %>% 
+    tail(1)
+  
+  standings %>% 
+    ungroup() %>% 
+    filter(team==input$teamA&tmGameOrder>=longW$first&tmGameOrder<=longW$last) %>% 
+    mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ ",OppTeam),paste0("v ",OppTeam))) %>% 
+    select(Opponents,Score,Date=gameDate) %>% 
+    DT::datatable(class='compact stripe hover row-border',
+                  rownames=FALSE,
+                  
+                  options= list(paging = FALSE, searching = FALSE, info=FALSE,
+                                columnDefs = list(list(className = 'dt-center', targets = 1))))
+  
+})
