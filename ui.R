@@ -20,13 +20,13 @@ dashboardPage(
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
-        menuSubItem("At A Glance", tabName = "tm_glance", selected=TRUE),
+        menuSubItem("At A Glance", tabName = "tm_glance"),
         menuSubItem("Player Summary",tabName = "tm_playerSummary"),
         menuSubItem("League Position",tabName = "tm_leaguePosition"),
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Sequences",tabName = "tm_seqs")
+        menuSubItem("Sequences",tabName = "tm_seqs", selected=TRUE)
       ),
       
       
@@ -223,12 +223,20 @@ fluidRow(
       
       tabItem(
         "tm_seqs",
-        box(
-          title = "Maybe look at index.rmd", solidHeader = TRUE,status =
-            'success',
-          width = 12
-          
-        )
+#         box(
+#           title = "Wins", solidHeader = TRUE,status =
+#             'success',
+#           width = 3,
+#           plotOutput("tm_wins")
+#           
+#         )
+fluidRow(column(width=2,plotOutput("tm_wins")),
+         column(width=2,plotOutput("tm_noWins")),
+         column(width=2,plotOutput("tm_draws")),
+         column(width=2,plotOutput("tm_noDraws")),
+         column(width=2,plotOutput("tm_losses")),
+         column(width=2,plotOutput("tm_noLosses"))
+)
       ),
       ## Standings section
       tabItem(

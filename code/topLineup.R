@@ -16,7 +16,7 @@ lineupData <- eventReactive(input$teamA,{
     arrange(PLAYERID) %>% 
     do(data.frame(x=paste0(.$PLAYERID, collapse="/")))
   
-  write_csv(test,"testproblem.csv") # alook 11 at this stage
+#  write_csv(test,"testproblem.csv") # alook 11 at this stage
   
  print(glimpse(test))
   # count of lineups
@@ -38,14 +38,14 @@ lineupData <- eventReactive(input$teamA,{
   
   colnames(lineup)[1] <- "PLAYERID"
   
-  write_csv(lineup,"lineupproblem.csv")
+#  write_csv(lineup,"lineupproblem.csv")
  
   lineup <- lineup %>% 
     left_join(teamEver) %>% 
     select(name) %>% 
     unique()
   
-  write_csv(lineup,"lineup2problem.csv")
+ # write_csv(lineup,"lineup2problem.csv")
   
   
   

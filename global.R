@@ -4,7 +4,7 @@ library(shinydashboard)
 library(httr)
 library(rvest)
 library(XML)
-library(doBy) # uses MASS which has a eselect conflict with dplyr
+library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
 library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
 library(ggvis)
 library(RSQLite)

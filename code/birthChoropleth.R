@@ -13,8 +13,12 @@ output$teamLeaflet <- renderLeaflet({
     summarize(Apps=sum(Apps)) %>% 
     ungroup()
   
+  write_csv(temp,"tempProblem.csv")
+  
   temp <-temp %>% 
     left_join(pgMini)
+  
+  write_csv(temp,"tempProblem2.csv") # no obv issue with Barnsley
   
   temp$lon <-  jitter(temp$lon, amount=0.5)
   temp$lat <-  jitter(temp$lat, amount=0.5)
@@ -31,6 +35,8 @@ output$teamLeaflet <- renderLeaflet({
       temp$place,
       temp$Apps
     )
+  
+  write_csv(temp,"tempProblem3.csv")
   binpalEPL <-
     colorBin(c("#FFFF00","#FF8000","#FF0000"), temp$Apps,  pretty = TRUE)
   
