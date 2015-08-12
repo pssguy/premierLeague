@@ -242,6 +242,18 @@ fluidRow(column(width=4,
              solidHeader = TRUE,status = 'success',
              collapsible = TRUE, collapsed = TRUE,
              DT::dataTableOutput("tmWinSeq"))
+),
+column(width=4,
+       box(width=12,title = "Most Recent Record Run - Draws",
+           solidHeader = TRUE,status = 'success',
+           collapsible = TRUE, collapsed = TRUE,
+           DT::dataTableOutput("tmDrawSeq"))
+),
+column(width=4,
+       box(width=12,title = "Most Recent Record Run - Defeats",
+           solidHeader = TRUE,status = 'success',
+           collapsible = TRUE, collapsed = TRUE,
+           DT::dataTableOutput("tmLossSeq"))
 )
 ),
 fluidRow(column(width=4,
@@ -249,6 +261,18 @@ fluidRow(column(width=4,
                     solidHeader = TRUE,status = 'success',
                     collapsible = TRUE, collapsed = TRUE,
                     DT::dataTableOutput("tmNoWinSeq"))
+),
+column(width=4,
+       box(width=12,title = "Most Recent Record Run - No Draws",
+           solidHeader = TRUE,status = 'success',
+           collapsible = TRUE, collapsed = TRUE,
+           DT::dataTableOutput("tmNoDrawSeq"))
+),
+column(width=4,
+       box(width=12,title = "Most Recent Record Run - Undefeated",
+           solidHeader = TRUE,status = 'success',
+           collapsible = TRUE, collapsed = TRUE,
+           DT::dataTableOutput("tmNoLossSeq"))
 )
 )
       ),
