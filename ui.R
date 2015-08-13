@@ -285,13 +285,13 @@ tabItem(
 #            column(width=2,plotOutput("tm_noDraws")),
 #            column(width=2,plotOutput("tm_losses")),
 #            column(width=2,plotOutput("tm_noLosses"))
-  )#,
-#   fluidRow(column(width=4,
-#                   box(width=12,title = "Most Recent Record Run - Wins",
-#                       solidHeader = TRUE,status = 'success',
-#                       collapsible = TRUE, collapsed = TRUE,
-#                       DT::dataTableOutput("tmWinSeq"))
-#   ),
+  ),
+  fluidRow(column(width=6,
+                  box(width=12,title = "Most Recent Record Run - Goals For",
+                      solidHeader = TRUE,status = 'success',
+                      collapsible = TRUE, collapsed = TRUE,
+                      DT::dataTableOutput("tmSeqGF"))
+  ))
 #   column(width=4,
 #          box(width=12,title = "Most Recent Record Run - Draws",
 #              solidHeader = TRUE,status = 'success',
@@ -323,7 +323,7 @@ tabItem(
 #              collapsible = TRUE, collapsed = TRUE,
 #              DT::dataTableOutput("tmNoLossSeq"))
 #   )
-#   )
+  
 ),
       ## Standings section
       tabItem(
