@@ -26,7 +26,8 @@ dashboardPage(
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Sequences",tabName = "tm_seqs", selected=TRUE)
+        menuSubItem("Sequences-Results",tabName = "tm_seqs"),
+        menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals", selected=TRUE)
       ),
       
       
@@ -272,6 +273,58 @@ column(width=4,
 )
 )
       ),
+tabItem(
+  "tm_seqs_goals",
+  radioButtons(
+    "seqVenueB","Venue",choices = c("All","Home","Away"),inline = TRUE
+  ),
+  fluidRow(column(width=3,plotOutput("tm_goalFor"))
+#   fluidRow(column(width=2,plotOutput("tm_goalFor")),
+#            column(width=2,plotOutput("tm_noWins")),
+#            column(width=2,plotOutput("tm_draws")),
+#            column(width=2,plotOutput("tm_noDraws")),
+#            column(width=2,plotOutput("tm_losses")),
+#            column(width=2,plotOutput("tm_noLosses"))
+  )#,
+#   fluidRow(column(width=4,
+#                   box(width=12,title = "Most Recent Record Run - Wins",
+#                       solidHeader = TRUE,status = 'success',
+#                       collapsible = TRUE, collapsed = TRUE,
+#                       DT::dataTableOutput("tmWinSeq"))
+#   ),
+#   column(width=4,
+#          box(width=12,title = "Most Recent Record Run - Draws",
+#              solidHeader = TRUE,status = 'success',
+#              collapsible = TRUE, collapsed = TRUE,
+#              DT::dataTableOutput("tmDrawSeq"))
+#   ),
+#   column(width=4,
+#          box(width=12,title = "Most Recent Record Run - Defeats",
+#              solidHeader = TRUE,status = 'success',
+#              collapsible = TRUE, collapsed = TRUE,
+#              DT::dataTableOutput("tmLossSeq"))
+#   )
+#   ),
+#   fluidRow(column(width=4,
+#                   box(width=12,title = "Most Recent Record Run - No Wins",
+#                       solidHeader = TRUE,status = 'success',
+#                       collapsible = TRUE, collapsed = TRUE,
+#                       DT::dataTableOutput("tmNoWinSeq"))
+#   ),
+#   column(width=4,
+#          box(width=12,title = "Most Recent Record Run - No Draws",
+#              solidHeader = TRUE,status = 'success',
+#              collapsible = TRUE, collapsed = TRUE,
+#              DT::dataTableOutput("tmNoDrawSeq"))
+#   ),
+#   column(width=4,
+#          box(width=12,title = "Most Recent Record Run - Undefeated",
+#              solidHeader = TRUE,status = 'success',
+#              collapsible = TRUE, collapsed = TRUE,
+#              DT::dataTableOutput("tmNoLossSeq"))
+#   )
+#   )
+),
       ## Standings section
       tabItem(
         "st_round",
