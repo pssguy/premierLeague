@@ -223,13 +223,9 @@ fluidRow(
       
       tabItem(
         "tm_seqs",
-#         box(
-#           title = "Wins", solidHeader = TRUE,status =
-#             'success',
-#           width = 3,
-#           plotOutput("tm_wins")
-#           
-#         )
+        radioButtons(
+          "seqVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
+        ),
 fluidRow(column(width=2,plotOutput("tm_wins")),
          column(width=2,plotOutput("tm_noWins")),
          column(width=2,plotOutput("tm_draws")),
