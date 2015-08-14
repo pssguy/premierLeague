@@ -551,6 +551,7 @@ shinyServer(function(input, output, session) {
   source("code/teamTwitter.R", local=TRUE)
   source("code/teamSequences.R", local=TRUE)
   source("code/teamSequencesGoals.R", local=TRUE)
+  source("code/headlines.R", local=TRUE)
   
   ## look at an observeevent for clicking on a row and jumping to a players
   ## record - or failing that at least have that as default when switching to player tab

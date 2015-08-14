@@ -5,7 +5,8 @@
   goalSeqData <- reactive({
 #   print("enter teamWins")
 #   print(input$seqVenue)
-#   if(is.null(input$teamA)) return()
+   if(is.null(input$teamA)) return()
+    if(is.null(input$seqVenueB)) return()
 #   if (input$seqVenue=="All") {
 #   W <-standings %>% 
 #     ungroup() %>% 
@@ -112,6 +113,7 @@ output$tm_goalFor <- renderPlot({
   ggplot(For, aes(x=slength,y=n)) +
     geom_bar(data=subset(For,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
     geom_bar(data=subset(For,cond==TRUE),stat="identity", width=0.7, fill="blue") +
+    scale_x_continuous(breaks = pretty_breaks()) +
     theme_bw() +
     xlab("Sequence") +
     ylab("Count") +
@@ -244,13 +246,15 @@ output$tm_goalFor <- renderPlot({
 # 
  output$tmSeqGF <- DT::renderDataTable({
   if(is.null(goalSeqData())) return()
-
- 
-  # could put in reactive but not sure worthwhile
+print(input$seqVenueB)
+ print(goalSeqData()$GF)
+  # think need to restrict this - but why no issue with results``   
   long <- goalSeqData()$GF %>% 
     filter(value==1) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
+  
+  print(long)
  
   if (input$seqVenueB=="Home") {
 tbl <-  standings %>% 

@@ -18,6 +18,8 @@ dashboardPage(
     sidebarMenu(
       id = "sbMenu",
       
+      menuItem("Front Page",tabName="frontPage", selected=TRUE),
+      
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "tm_glance"),
@@ -27,7 +29,7 @@ dashboardPage(
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
         menuSubItem("Sequences-Results",tabName = "tm_seqs"),
-        menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals", selected=TRUE)
+        menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
       
       
@@ -73,7 +75,19 @@ dashboardPage(
   ),
   dashboardBody(
     tabItems(
-      tabItem("standings"),
+      #tabItem("standings"),
+      
+      ## Front Page
+      tabItem("frontPage",
+              
+              box(width=4,
+                status = "success",solidHeader = TRUE,title = "Current Sequences",
+                
+                DT::dataTableOutput("teamSeqCurrent")
+              )),
+      
+      
+      ## Player Section
       tabItem(
         "players",
         box(
