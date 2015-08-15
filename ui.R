@@ -109,9 +109,16 @@ dashboardPage(
               )
               ),
               column(width=8,
+                     box(width=12,
+                         status = "success",solidHeader = TRUE,title = "This Month's App",
+                         collapsible = T,collapsed =F,
+                         helpText("made an impressisve debut as West Ham's youngest ever Premier League Player"),
+                         selectInput("teamC", "Team",teamsChoice,selected="West Ham U" ),
+                         ggvisOutput("ageRecord")
+                     ),
               box(width=12,
                   status = "success",solidHeader = TRUE,title = "Team Leaders (Ties not shown)",
-                  
+                  collapsible = T,collapsed =T,
                   DT::dataTableOutput("teamLeadersCurrent")
               )
               )
