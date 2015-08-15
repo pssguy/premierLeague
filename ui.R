@@ -64,6 +64,7 @@ dashboardPage(
         menuSubItem("WikiGuardian",href = "https://mytinyshinys.shinyapps.io/wikiGuardian")
       ),
       
+      
       menuItem("Info", tabName = "info", icon = icon("info")),
       
       menuItem("", icon = icon("twitter-square"),
@@ -79,12 +80,36 @@ dashboardPage(
       
       ## Front Page
       tabItem("frontPage",
-              
-              box(width=4,
+              fluidRow(
+              column(width=4,
+              box(width=12,
                 status = "success",solidHeader = TRUE,title = "Current Sequences",
                 
                 DT::dataTableOutput("teamSeqCurrent")
-              )),
+              ),
+              box(width=12,
+                  status = "success",solidHeader = TRUE,title = "Twitter Feed",
+                  tags$body(includeScript("twitter.js"),
+                            
+                            
+                            a("Soccer", class="twitter-timeline",
+                              width="320",
+                              href="https://twitter.com/pssGuy/timelines/524678699061641216",
+                              "data-widget-id" = "524686407298596864",
+                              "data-chrome" ="nofooter transparent noheader")
+                            )
+                  
+              )
+              ),
+              column(width=8,
+              box(width=12,
+                  status = "success",solidHeader = TRUE,title = "Team Leaders (Ties not shown)",
+                  
+                  DT::dataTableOutput("teamLeadersCurrent")
+              )
+              )
+              )  
+              ),
       
       
       ## Player Section
