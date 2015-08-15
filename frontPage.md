@@ -1,18 +1,20 @@
-#### Latest Mini-App ####
 
 
+Using the latest technology to bring you
 
-That was some jump and shows that Crouch is still contributing at age 34
+  * Unique Tables
+  * Interactive Charts
+  * Distinctive Analyses
+  * Trivia Tweets
+  
+Just select tabs to explore this
+Asite and connect to other dashboards from myTinyShinys 
 
-Small-Sample-Size, but at time of writing his league goals per 90 mins is the highest for several years
- 
-
-![Crouch goals per 90 mins](crouch.png "Crouch goals per 90 mins")
-
+  
+   *Based on data  up to and including 10th Aug 2015*
+  
 
 
-A fully interactive version can be accessed in the MiniApps section
-or [here](https://pssguy.shinyapps.io/eplLatest/)
 
 
 

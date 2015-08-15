@@ -82,13 +82,20 @@ dashboardPage(
       tabItem("frontPage",
               fluidRow(
               column(width=4,
+                     box(width=12,
+                         status = "warning",solidHeader = TRUE,title = "Not Just Another EPL site ",
+                         collapsible = T,collapsed =F,
+                         includeMarkdown("frontPage.md")
+                     ),
+                     
               box(width=12,
                 status = "success",solidHeader = TRUE,title = "Current Sequences",
-                
+                collapsible = T,collapsed =T,
                 DT::dataTableOutput("teamSeqCurrent")
               ),
               box(width=12,
                   status = "success",solidHeader = TRUE,title = "Twitter Feed",
+                  collapsible = T,collapsed =T,
                   tags$body(includeScript("twitter.js"),
                             
                             
