@@ -1,39 +1,35 @@
 ### Inspiration
-James Curley's package of [historical soccer data](https://github.com/jalapic/engsoccerdata)
-  James P. Curley (2015. engsoccerdata: English Soccer Data 1871-2015. R package version 0.1.4 
+
+Upgrading the venerable premiersoccerstats site to take advantage of 
+shiny framework and plethora of R packages to produce a much more interactive
+and rich experience
 
   ---
 
 ### Method
 
-Enter team of choice. Drill-down by clicking on chart points or selecting table rows
+Use tabs in sidebar to access tables and charts for teams/players etc
 
 
   ---
   
-### R packages used
-* engsoccerdata
-* ggvis
-* dplyr
-* shiny
-* shinydashboard
-* DT
-* ggplot2
-* tidyr
-* markdown
+### Points to Note
 
+ * Some data has been scraped and may have to be withdrawn in time
+ * Up to 2 assists are allowed per goal. This is not the official value
+ but more accurately reflects players creative contributions and is
+ additionally available from the beginning of the EPL
+ * Data is not updated in real-time but broadly works to a weekly timetable
+    Follow the [pssguy twitter account](https://twitter.com/pssGuy) for update
+ 
    ---
    
 ### Priorities
 
-1. Add Other Leagues
-2. Add Lineups for individual matches in EPL
-3. Improve, if possible, sidebar inputs
-4. Add some sequence data
+Plans are listed in the [github issues](https://github.com/pssguy/premierLeague/issues)
+and suggestions are welcome 
 
    ---
    
-### Code
 
-  TBA
 

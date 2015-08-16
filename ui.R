@@ -106,6 +106,11 @@ dashboardPage(
                               "data-chrome" ="nofooter transparent noheader")
                             )
                   
+              ),
+              box(width=12,
+                  status = "success",solidHeader = TRUE,title = "What's New",
+                  collapsible = T,collapsed =T,
+                  includeMarkdown("whatsNew.md")
               )
               ),
               column(width=8,
