@@ -89,9 +89,14 @@ dashboardPage(
                      ),
                      
               box(width=12,
-                status = "success",solidHeader = TRUE,title = "Current Sequences",
+                status = "success",solidHeader = TRUE,title = "Current Team Sequences",
                 collapsible = T,collapsed =T,
                 DT::dataTableOutput("teamSeqCurrent")
+              ),
+              box(width=12,
+                  status = "success",solidHeader = TRUE,title = "Player Milestones",
+                  collapsible = T,collapsed =T,
+                  DT::dataTableOutput("playerMilestones")
               ),
               box(width=12,
                   status = "success",solidHeader = TRUE,title = "Twitter Feed",
@@ -117,7 +122,8 @@ dashboardPage(
                      box(width=12,
                          status = "success",solidHeader = TRUE,title = "This Month's App",
                          collapsible = T,collapsed =F,
-                         helpText("made an impressisve debut as West Ham's youngest ever Premier League Player"),
+                         helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
+                                  never played an EPL game again. Hover for Details"),
                          selectInput("teamC", "Team",teamsChoice,selected="West Ham U" ),
                          ggvisOutput("ageRecord")
                      ),
