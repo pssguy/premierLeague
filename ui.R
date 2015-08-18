@@ -120,7 +120,7 @@ dashboardPage(
               ),
               column(width=8,
                      box(width=12,
-                         status = "success",solidHeader = TRUE,title = "This Month's App",
+                         status = "success",solidHeader = TRUE,title = "Latest App",
                          collapsible = T,collapsed =F,
                          helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
                                   never played an EPL game again. Hover for Details"),
@@ -509,8 +509,9 @@ tabItem(
           collapsible = TRUE, collapsed = TRUE,
           DT::dataTableOutput("goalSummary")
         ),
+        fluidRow(column(width=6,
         box(
-          width = 12,title = "Goal Charts",solidHeader = TRUE,status = 'success',
+          width = 12,title = "Goals By Year",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
           
           radioButtons(
@@ -519,16 +520,33 @@ tabItem(
           
           ggvisOutput("playerGoals")
         )
-        ,
-        #         box(
-        #           width = 12,title = "Goal Distribution",solidHeader = TRUE,status = 'success',
-        #           collapsible = TRUE, collapsed = TRUE,
-        #           plotOutput("goalDistribution")
-        #         ),
+        ),
+        column(width=6,
+               box(
+                 width = 12,title = "Goals Distribution (Points are jittered)",solidHeader = TRUE,status = 'success',
+                 collapsible = TRUE, collapsed = TRUE,
+                 
+                 
+                 plotOutput("playerGoalDistribution")
+               )
+  
+        )
+        ),
+ fluidRow(column(width=6,
         box(
           width = 12,title = "Goal Sequences",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
-          plotOutput("bestRunA")
+          plotOutput("gameGoal")
+        )
+ ),
+ column(width=6,
+        box(
+          width = 12,title = "No Goal Sequences",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = TRUE,
+          plotOutput("gameNoGoal")
+        )
+ )
+ 
         ),
         box(
           width = 6,title = "Goal Firsts",solidHeader = TRUE,status = 'success',

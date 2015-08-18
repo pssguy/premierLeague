@@ -46,7 +46,7 @@ df   %>%
     layer_points(fill =~name) %>% 
     add_legend("fill", title="") %>% 
     add_axis("x", title="") %>% 
-    add_axis("y", title="Age") %>% 
+    add_axis("y", title="Age",title_offset=50) %>% 
     add_tooltip(all_values,"hover") %>% 
   set_options(height = 300) %>% 
     bind_shiny("ageRecord")
@@ -217,7 +217,7 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     left_join(tyCards,by="team")
   
   ## need to correct for teams that have no cards
-  tyAll[is.na(tyAll$cards)]$name <- ""
+#  tyAll[is.na(tyAll$cards)]$name <- ""
   tyAll$cards <-ifelse(is.na(tyAll$cards),0,tyAll$cards)
   tyAll$name <-ifelse(is.na(tyAll$name),"",tyAll$name)
   
