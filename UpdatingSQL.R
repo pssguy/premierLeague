@@ -1198,6 +1198,226 @@ Goals_team_ag <- Play_team_ag %>%
 #glimpse(Goals_team_ag)
 
 playerGame <- tbl_df(playerGame) # helps with snippets
+
+
+## create the milestones (can put back into server if it has any interactivity
+)
+
+#latest info
+tw <- 
+  playerGame %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(Goals=sum(Gls)) 
+
+# previous data - may need to set date or from season maxround then gpo back one
+lw <- 
+  playerGame %>% 
+  filter(gameDate<"2015-08-14") %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(Goals=sum(Gls))
+
+dd <- diff_data(tw,lw) #s
+write_diff(dd, "diff.csv")
+res <- read_csv("diff.csv") #Balotell still just 21
+
+
+df <- separate(data=res,col= Goals,into=c("New","Old"),sep="->", extra="drop")
+
+# remove all na rows
+df <- df[!is.na(df$Old),] # now down to 23 who scored
+
+df$Old <- as.integer(ifelse(is.na(df$Old),0,df$Old))
+df$New <- as.integer(df$New)
+
+
+## could also set it to ten presulably even if 11
+deb <- df %>% 
+  filter(New>0&Old<=0) 
+
+ten <-df %>% 
+  filter(New>9&Old<=9) %>% 
+  mutate(New=10)
+
+twentyFive <-df %>% 
+  filter(New>24&Old<=24)  %>% 
+  mutate(New=25)
+fifty <-df %>% 
+  filter(New>49&Old<=9)  %>% 
+  mutate(New=50)
+hundred <-df %>% 
+  filter(New>99&Old<=99)  %>% 
+  mutate(New=100)
+hundredfifty <-df %>% 
+  filter(New>149&Old<=149)  %>% 
+  mutate(New=150)
+twohundred <-df %>% 
+  filter(New>199&Old<=199)  %>% 
+  mutate(New=200)
+threehundred <-df %>% 
+  filter(New>299&Old<=299)  %>% 
+  mutate(New=300)
+twohundredfifty <-df %>% 
+  filter(New>249&Old<=249)  %>% 
+  mutate(New=250)
+
+milestoneGoals <-bind_rows(deb,ten,twentyFive,fifty,hundred,hundredfifty,twohundred,twohundredfifty,threehundred) %>% 
+  arrange(desc(New)) %>% 
+  mutate(category="Goals") %>% 
+  select(category,name,New)
+
+## assists
+
+tw <- 
+  playerGame %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(Assts=sum(Assists)) 
+
+# previous data - may need to set date or from season maxround then gpo back one
+lw <- 
+  playerGame %>% 
+  filter(gameDate<"2015-08-14") %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(Assts=sum(Assists))
+
+dd <- diff_data(tw,lw) 
+write_diff(dd, "diff.csv")
+
+res <- read_csv("diff.csv") #Balotell still just 21
+
+
+df <- separate(data=res,col= Assts,into=c("New","Old"),sep="->", extra="drop")
+
+# remove all na rows
+df <- df[!is.na(df$Old),] # now down to 23 who scored
+
+df$Old <- as.integer(ifelse(is.na(df$Old),0,df$Old))
+df$New <- as.integer(df$New)
+
+
+## could also set it to ten presulably even if 11
+deb <- df %>% 
+  filter(New>0&Old<=0) 
+
+ten <-df %>% 
+  filter(New>9&Old<=9) %>% 
+  mutate(New=10)
+
+twentyFive <-df %>% 
+  filter(New>24&Old<=24)  %>% 
+  mutate(New=25)
+fifty <-df %>% 
+  filter(New>49&Old<=9)  %>% 
+  mutate(New=50)
+hundred <-df %>% 
+  filter(New>99&Old<=99)  %>% 
+  mutate(New=100)
+hundredfifty <-df %>% 
+  filter(New>149&Old<=149)  %>% 
+  mutate(New=150)
+twohundred <-df %>% 
+  filter(New>199&Old<=199)  %>% 
+  mutate(New=200)
+threehundred <-df %>% 
+  filter(New>299&Old<=299)  %>% 
+  mutate(New=300)
+twohundredfifty <-df %>% 
+  filter(New>249&Old<=249)  %>% 
+  mutate(New=250)
+
+milestoneAssists <-bind_rows(deb,ten,twentyFive,fifty,hundred,hundredfifty,twohundred,twohundredfifty,threehundred) %>% 
+  arrange(desc(New)) %>% 
+  mutate(category="Assists") %>% 
+  select(category,name,New)
+
+## apps
+
+
+# previous data - may need to set date or from season maxround then gpo back one
+lw <- 
+  playerGame %>% 
+  filter(gameDate<"2015-08-14"&(START+subOn)>0) %>% 
+  group_by(PLAYERID,name) %>% 
+  tally()
+
+
+tw <- # 10 more
+  playerGame %>% 
+  filter((START+subOn)>0) %>% 
+  group_by(PLAYERID,name) %>% 
+  tally() 
+
+newIds <- setdiff(tw$PLAYERID,lw$PLAYERID)
+newName <- setdiff(tw$name,lw$name)
+
+newPlayers <- data.frame(PLAYERID=newIds,name=newName,n=0)
+lw <- rbind(lw,newPlayers)
+
+
+dd <- diff_data(tw,lw) #s
+write_diff(dd, "diff.csv")
+res <- read_csv("diff.csv") #Balotell still just 21
+
+
+df <- separate(data=res,col= n,into=c("New","Old"),sep="->", extra="drop")
+
+# remove all na rows
+df <- df[!is.na(df$Old),] # now down to 23 who scored
+
+df$Old <- as.integer(ifelse(is.na(df$Old),0,df$Old))
+df$New <- as.integer(df$New)
+
+
+## could also set it to ten presulably even if 11
+deb <- df %>% 
+  filter(New>0&Old<=0) 
+
+ten <-df %>% 
+  filter(New>9&Old<=9) %>% 
+  mutate(New=10)
+
+# twentyFive <-df %>% 
+#   filter(New>24&Old<=24)  %>% 
+#   mutate(New=25)
+fifty <-df %>% 
+  filter(New>49&Old<=9)  %>% 
+  mutate(New=50)
+hundred <-df %>% 
+  filter(New>99&Old<=99)  %>% 
+  mutate(New=100)
+twohundred <-df %>% 
+  filter(New>199&Old<=199)  %>% 
+  mutate(New=200)
+twohundred <-df %>% 
+  filter(New>199&Old<=199)  %>% 
+  mutate(New=200)
+threehundred <-df %>% 
+  filter(New>299&Old<=299)  %>% 
+  mutate(New=300)
+fourhundred <-df %>% 
+  filter(New>399&Old<=399)  %>% 
+  mutate(New=400)
+fivehundred <-df %>% 
+  filter(New>499&Old<=499)  %>% 
+  mutate(New=500)
+sixhundred <-df %>% 
+  filter(New>599&Old<=599)  %>% 
+  mutate(New=600)
+sevenhundred <-df %>% 
+  filter(New>699&Old<=699)  %>% 
+  mutate(New=700)
+
+milestoneApps <-bind_rows(deb,fifty,hundred,twohundred,threehundred,fourhundred,fivehundred,sixhundred,sevenhundred) %>% 
+  arrange(desc(New)) %>% 
+  mutate(category="Apps") %>% 
+  select(category,name,New)
+
+milestones <- bind_rows(milestoneGoals,milestoneAssists,milestoneApps) %>% 
+  arrange(desc(New)) %>% 
+  rename(count=New) %>% 
+  select(name,category,count)
+
+
+
 print("endGlobal")
 
 
@@ -1214,5 +1434,6 @@ saveRDS(Play,"Play.rds")
 saveRDS(Method,"Method.rds")
 saveRDS(Place,"Place.rds")
 saveRDS(teamGames,"teamGames.rds")
+write_csv(milestones,"milestones.csv")
 
 #Sys.time() # takes 15 secs- seems quicker in browser
