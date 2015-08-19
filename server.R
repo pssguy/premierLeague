@@ -2,8 +2,8 @@
 ## needs to have an observeevent as well
 values <- reactiveValues()
  values$playerID <- "BENTD" 
- values$TEAMNAME <- "Arsenal" 
-
+ #values$TEAMNAME <- "Arsenal" 
+ values$TEAMNAME <- NULL
 
 shinyServer(function(input, output, session) {
   
@@ -13,28 +13,30 @@ shinyServer(function(input, output, session) {
     #       selectInput("playerA", "Player", playerChoice) 
     #     } else 
     if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
       
     } else if (input$sbMenu=="tm_leaguePosition") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_goals") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_glance") { # like tm_goals should just be team input
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_leaders") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_hth") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs_goals") {
-      inputPanel(selectInput("teamA", "Team",selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="pl_career") {
-      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice), selected=values$playerID,  options=list(maxOptions=10000)))
+      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID,  options=list(maxOptions=10000)))
     } else if (input$sbMenu=="pl_goals") {
-      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice), selected=values$playerID, options=list(maxOptions=10000))) # was selected=values$playerID, for all these
+      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID, options=list(maxOptions=10000))) # was selected=values$playerID, for all these
     } else if (input$sbMenu=="pl_glance") {
-      inputPanel(selectizeInput("playerA", "Player", c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+    } else if (input$sbMenu=="pl_seqs_goals") {
+      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
     }
     
   })
@@ -66,20 +68,20 @@ shinyServer(function(input, output, session) {
       print(input$teamA)
       yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = T) # thinka bout + inc all
       
-      inputPanel(selectInput("teamYears","Season",yrs, selected=yrs[1]))
+      inputPanel(selectInput("teamYears",label=NULL,yrs, selected=yrs[1]))
     } else if (input$sbMenu=="pl_goals"){
       #print("here u are")
     }
     else { # looks promising
       #print("here u are")
-      #selectInput("teamYears","Season",yrs, selected=yrs[length(yrs)]) # need to readdress
+      #selectInput("teamYears",label=NULL,yrs, selected=yrs[length(yrs)]) # need to readdress
       #  return()
     }
   })
   
   output$c <- renderUI({
     if (input$sbMenu=="st_round") {
-      inputPanel(selectInput("seasonA","Season",seasonChoice))
+      inputPanel(selectInput("seasonA",label=NULL,seasonChoice))
     }
   })
   
@@ -431,20 +433,20 @@ shinyServer(function(input, output, session) {
   
   
   
-  output$goalDistribution <- renderPlot({
-    goals %>%
-      left_join(playerGame, by="PLAYER_MATCH") %>%
-      filter(PLAYERID==input$player) %>%
-      select(METHOD,PLACE,PLAY,plGameOrderApp)  %>%
-      ggplot(aes(x=METHOD,y=PLACE))+
-      geom_point()+
-      geom_jitter(aes(colour=PLAY),position=position_jitter(width=0.25, height=0.25))+
-      scale_y_discrete(limits=c("6_Yd_Box","Pen_Area","Long_Range"),labels=c("6yd Box","Pen Area","Long Range"))+
-      scale_colour_brewer(palette="Set1")+
-      ggtitle("Method, Place and Play of Goals Scored")
-    
-  })
-  
+#   output$goalDistribution <- renderPlot({
+#     goals %>%
+#       left_join(playerGame, by="PLAYER_MATCH") %>%
+#       filter(PLAYERID==input$player) %>%
+#       select(METHOD,PLACE,PLAY,plGameOrderApp)  %>%
+#       ggplot(aes(x=METHOD,y=PLACE))+
+#       geom_point()+
+#       geom_jitter(aes(colour=PLAY),position=position_jitter(width=0.25, height=0.25))+
+#       scale_y_discrete(limits=c("6_Yd_Box","Pen_Area","Long_Range"),labels=c("6yd Box","Pen Area","Long Range"))+
+#       scale_colour_brewer(palette="Set1")+
+#       ggtitle("Method, Place and Play of Goals Scored")
+#     
+#   })
+#   
   
   
   
@@ -553,6 +555,7 @@ shinyServer(function(input, output, session) {
   source("code/teamSequencesGoals.R", local=TRUE)
   source("code/headlines.R", local=TRUE)
   source("code/playerMilestones.R", local=TRUE)
+  source("code/playerGoalDistribution.R", local=TRUE)
   
   ## look at an observeevent for clicking on a row and jumping to a players
   ## record - or failing that at least have that as default when switching to player tab

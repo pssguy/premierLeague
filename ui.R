@@ -45,8 +45,8 @@ dashboardPage(
         "Players", tabName = "players",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "pl_glance"),
         menuSubItem("Career Summary", tabName = "pl_career"),
-        menuSubItem("Goal record", tabName = "pl_goals")
-        
+        menuSubItem("Goal Details", tabName = "pl_goals"),
+        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
       ),
       
       
@@ -531,30 +531,28 @@ tabItem(
                )
   
         )
+        )
         ),
- fluidRow(column(width=6,
-        box(
-          width = 12,title = "Goal Sequences",solidHeader = TRUE,status = 'success',
-          collapsible = TRUE, collapsed = TRUE,
-          plotOutput("gameGoal")
-        )
- ),
- column(width=6,
-        box(
-          width = 12,title = "No Goal Sequences",solidHeader = TRUE,status = 'success',
-          collapsible = TRUE, collapsed = TRUE,
-          plotOutput("gameNoGoal")
-        )
- )
- 
-        ),
-        box(
-          width = 6,title = "Goal Firsts",solidHeader = TRUE,status = 'success',
-          collapsible = TRUE, collapsed = FALSE,
-          DT::dataTableOutput("goalFirsts")
-        )
-        
-      ),
+        tabItem(
+          "pl_seqs_goals",
+          radioButtons(
+            "seqPlVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
+          ),
+          fluidRow(
+            column(width=3,plotOutput("gameGoal")),
+          column(width=3,plotOutput("gameNoGoal")),
+column(width=3,plotOutput("gameGoalStarter")),
+column(width=3,plotOutput("gameNoGoalStarter"))
+),
+fluidRow(
+  column(width=5,offset=1,plotOutput("gameGoalSeq")),
+  column(width=6,offset=1,plotOutput("gameGoalSeqStarter"))
+  
+)
+
+                   
+          ),
+
       
       ## specials
       tabItem("sp_scoredOn",
