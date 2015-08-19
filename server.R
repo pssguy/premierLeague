@@ -37,6 +37,8 @@ shinyServer(function(input, output, session) {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
     } else if (input$sbMenu=="pl_seqs_goals") {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+    }else if (input$sbMenu=="pl_opponent") {
+      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
     }
     
   })
@@ -556,6 +558,7 @@ shinyServer(function(input, output, session) {
   source("code/headlines.R", local=TRUE)
   source("code/playerMilestones.R", local=TRUE)
   source("code/playerGoalDistribution.R", local=TRUE)
+  source("code/playerByOpponent.R", local=TRUE)
   
   ## look at an observeevent for clicking on a row and jumping to a players
   ## record - or failing that at least have that as default when switching to player tab

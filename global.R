@@ -25,6 +25,7 @@ library(rgdal)
 library(choroplethr)
 library(choroplethrMaps)
 library(taucharts)
+library(daff)
 
 
 positions <- read_csv("positions.csv") ##
@@ -40,6 +41,7 @@ Play <- readRDS("Play.rds")
 Place <- readRDS("Place.rds")
 Method<- readRDS("Method.rds")
 teamGames <- readRDS("teamGames.rds")
+milestones<- read_csv("milestones.csv")
 playerGeos <- read_csv("playerGeos.csv")
 
 

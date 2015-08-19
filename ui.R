@@ -28,8 +28,8 @@ dashboardPage(
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Sequences-Results",tabName = "tm_seqs"),
-        menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
+        menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
+        #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
       
       
@@ -46,7 +46,8 @@ dashboardPage(
         menuSubItem("At A Glance", tabName = "pl_glance"),
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
-        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
+        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
+        menuSubItem("By Opposition",tabName = "pl_opponent")
       ),
       
       
@@ -553,7 +554,15 @@ fluidRow(
                    
           ),
 
-      
+tabItem(
+  "pl_opponent",   
+  box(
+    width = 8,title = "Summary By Opponent",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("playerByOpponent")
+     )
+  
+),
       ## specials
       tabItem("sp_scoredOn",
               fluidRow(
