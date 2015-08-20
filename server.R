@@ -4,6 +4,7 @@ values <- reactiveValues()
  values$playerID <- "BENTD" 
  #values$TEAMNAME <- "Arsenal" 
  values$TEAMNAME <- NULL
+ values$Opponents <- NULL
 
 shinyServer(function(input, output, session) {
   
@@ -560,8 +561,8 @@ shinyServer(function(input, output, session) {
   source("code/playerGoalDistribution.R", local=TRUE)
   source("code/playerByOpponent.R", local=TRUE)
   
-  ## look at an observeevent for clicking on a row and jumping to a players
-  ## record - or failing that at least have that as default when switching to player tab
+  ##  observeevent for clicking on a row and jumping to a players
+  ## record 
   
   observeEvent(input$mostGames_rows_selected,{
     s = as.integer(input$mostGames_rows_selected)

@@ -33,7 +33,7 @@ df <-  df %>%
     mutate(showAge=paste0(year," yrs ",days," days")) %>% 
     mutate(showApps=paste0(Apps," career Apps"))
 
-print(glimpse(df))
+#print(glimpse(df))
   
   all_values <- function(x) {
     if(is.null(x)) return(NULL)

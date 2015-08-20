@@ -1,12 +1,14 @@
 
 
-output$playerByOpponent <- DT::renderDataTable({
+pboData <- reactive({
+  
+  print("enter reactive")
   
   if(is.null(input$playerA)) return()
   
   player <- playerGame %>% 
     filter(PLAYERID==input$playerA)
-  
+  #filter(PLAYERID=="ROONEYX")
   
   squad <-player %>% 
     group_by(Opponents) %>% 
@@ -38,17 +40,17 @@ output$playerByOpponent <- DT::renderDataTable({
     tally() %>% 
     rename(Off=n)
   
-  red <- player %>% 
+  R <- player %>% 
     filter(CARD>"a"&CARD!="Y") %>% 
     group_by(Opponents) %>% 
     tally() %>% 
-    rename(red=n)
+    rename(R=n)
   
-  yellow <- player %>% 
+  Y <- player %>% 
     filter(CARD=="Y") %>% 
     group_by(Opponents) %>% 
     tally() %>% 
-    rename(yellow=n)
+    rename(Y=n)
   
   
   goals <- player %>% 
@@ -71,19 +73,19 @@ output$playerByOpponent <- DT::renderDataTable({
     filter(res=="Win") %>%
     group_by(Opponents) %>% 
     tally() %>% 
-    rename(wins=n)
+    rename(W=n)
   
   draws <- results %>% 
     filter(res=="Draw") %>%
     group_by(Opponents) %>% 
     tally() %>% 
-    rename(draws=n)
+    rename(D=n)
   
   losses <- results %>% 
     filter(res=="Loss") %>%
     group_by(Opponents) %>% 
     tally() %>% 
-    rename(losses=n)
+    rename(L=n)
   
   byOpponent <-
     squad %>% 
@@ -93,18 +95,62 @@ output$playerByOpponent <- DT::renderDataTable({
     left_join(bench) %>% 
     left_join(goals) %>% 
     left_join(assists) %>% 
-    left_join(red) %>% 
-    left_join(yellow) %>% 
+    left_join(R) %>% 
+    left_join(Y) %>% 
     left_join(wins) %>% 
     left_join(draws) %>% 
     left_join(losses) 
   
   byOpponent[is.na(byOpponent)]<-0
   
-  byOpponent %>% 
-    mutate(apps=starts+on) %>% 
-    select(Opponents,apps,starts:losses) %>% 
-    DT::datatable(class='compact stripe hover row-border',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+ 
   
+  byOpponent <-  byOpponent %>% 
+    mutate(apps=starts+on) %>% 
+    select(Opponents,apps,starts:L)
+  
+  print(glimpse(byOpponent))
+  
+  info=list(byOpponent=byOpponent)
+  return(info)
+ 
+}) 
+  
+    
+    output$playerByOpponent <- DT::renderDataTable({
+      print("enter pbo")
+      if(is.null(pboData())) return()
+      print("entered pbo")
+      pboData()$byOpponent %>% 
+            DT::datatable(selection='single',class='compact stripe hover row-border',
+                  colnames = c('Opponents', 'Apps', 'St', 'On', 'Off', 'Bnch', 'Gls','Ass','R','Y','W','D','L'),
+                  rownames=FALSE,options = list(
+      searching = FALSE,info = FALSE,
+      pageLength = 15
+    ))
+  
+  
+})
+
+# click to give more info
+
+observeEvent(input$playerByOpponent_rows_selected,{
+  s = as.integer(input$playerByOpponent_rows_selected)
+  print(pboData()$byOpponent$Opponents[s])
+  print(input$playerA)
+  values$Opponents <- pboData()$byOpponent$Opponents[s]
+#   values$playerID <- teamData()$mostGames$PLAYERID[s]
+#   updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+})
+
+output$plOpponentSummary <- DT::renderDataTable({
+  if (is.null(values$Opponents)) return()
+  playerGame %>% 
+    filter(PLAYERID==input$playerA&Opponents==values$Opponents) %>% 
+    arrange(desc(gameDate)) %>% 
+    inner_join(standings,by = c("gameDate" = "gameDate","Opponents"="OppTeam")) %>% 
+    mutate(res=paste0(GF,"-",GA)) %>%
+    select(gameDate,TEAMNAME,res,st,on,off,Gls,Assists,CARD) %>% 
+    DT::datatable(class='compact stripe hover row-border',colnames = c('Date', 'Team','Res ', 'St', 'On', 'Off', 'Gls', 'Ass','Card'),rownames=FALSE,options= list(pageLength = 8, searching = FALSE,info=FALSE))
   
 })

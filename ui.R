@@ -18,7 +18,7 @@ dashboardPage(
     sidebarMenu(
       id = "sbMenu",
       
-      menuItem("Front Page",tabName="frontPage", selected=TRUE),
+      menuItem("Front Page",tabName="frontPage"),
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
@@ -47,7 +47,7 @@ dashboardPage(
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
         menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
-        menuSubItem("By Opposition",tabName = "pl_opponent")
+        menuSubItem("By Opposition",tabName = "pl_opponent", selected=TRUE)
       ),
       
       
@@ -557,10 +557,15 @@ fluidRow(
 tabItem(
   "pl_opponent",   
   box(
-    width = 8,title = "Summary By Opponent",solidHeader = TRUE,status = 'success',
+    width = 7,title = "Summary By Opponent",solidHeader = TRUE,status = 'success',
     collapsible = TRUE, collapsed = FALSE,
     DT::dataTableOutput("playerByOpponent")
-     )
+     ),
+  box(
+    width = 5,title = "Games By Selected Opponent",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("plOpponentSummary")
+  )
   
 ),
       ## specials

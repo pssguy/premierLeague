@@ -3,12 +3,12 @@
 
 #observeEvent(input$playerA,{ # this works ok but when wanting to type in is an issue - maybe not just this file
 observe({
-  print("checking not empty")
-  print(input$playerA)
+  #print("checking not empty")
+  #print(input$playerA)
   if(is.null(input$playerA)) return()
   if(input$playerA=="")return()
-  print("transferfee in")
-  print(input$playerA)
+  #print("transferfee in")
+  #print(input$playerA)
    
   ## crash occurs here as BIRTHDATE not found and this is true in UpdatingSQL it is set to NULL
   ## not sure why it even there
@@ -28,7 +28,7 @@ observe({
     unique() %>% 
     mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
     rename(Fee=FEE,Team=TEAMNAME,Date=joined)
-  print(transfers)
+  #print(transfers)
   
   transfers <- cbind(transfers, id = seq_len(nrow(transfers)))
   
@@ -37,7 +37,7 @@ observe({
     row <- transfers[transfers$id == x$id,c("Date","Team","Cost")]
     paste0( names(row),": ",format(row), collapse = "<br />") 
   }
-  print("still OK")
+  #print("still OK")
   
   #write_csv(transfers,"problem.csv")
   

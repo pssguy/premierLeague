@@ -1,10 +1,10 @@
 playerSeqData <- reactive ({
-  print("psd reactive")
+  #print("psd reactive")
   
   if (is.null(input$playerA)) return()
   if (is.null(input$seqPlVenue)) return()
-  print("playerid")
-  print(input$playerA)
+  #print("playerid")
+  #print(input$playerA)
   
   if (input$seqPlVenue=="All") {
   appeared <- playerGame %>%
@@ -87,7 +87,7 @@ output$gameNoGoal <- renderPlot({
 
 output$gameGoal <- renderPlot({
   if (is.null(playerSeqData()$runApp)) return()
-  print("enter gameGoal")
+  #print("enter gameGoal")
   run <- playerSeqData()$runApp
   
   gameGoal <- run %>% 
@@ -116,9 +116,9 @@ output$gameNoGoalStarter <- renderPlot({
   if (is.null(playerSeqData()$runStarter)) return()
   
   run <- playerSeqData()$runStarter
-  print("print run ")
-  print(glimpse(run))
-  print("printed run ")
+  #print("#print run ")
+  #print(glimpse(run))
+  #print("#printed run ")
   
   gameGoal <- run %>% 
     filter(value==0) %>% 
@@ -172,8 +172,8 @@ output$gameGoalStarter <- renderPlot({
 
 observe({
   if (is.null(input$playerA)) return()
-  print ("enter gameGoalSeqStarter")
-  print(input$playerA)
+  #print ("enter gameGoalSeqStarter")
+  #print(input$playerA)
   starter <- playerGame %>%
     filter(PLAYERID==input$playerA&(START+subOn)>0) %>%  # 380 as sh
     arrange(gameDate) %>%
@@ -181,15 +181,15 @@ observe({
     mutate(starterOrder=row_number())
   
   
-  print(glimpse(starter))
-  print("starter")
+  #print(glimpse(starter))
+  #print("starter")
   
   starter$Scored <- "No"
   starter$Scored[starter$Gls>0] <- "Yes"
   
   runStarter <- subSeq(starter$Scored)
   
-  print(runStarter)
+  #print(runStarter)
   
   ## can take first,last or midpoint to have run not scoring/scoring
   
@@ -197,9 +197,9 @@ observe({
     left_join(starter,by=c("last"="starterOrder")) %>% 
     select(gameDate,slength,Scored) 
   
-  print("chart")
-  print(chart)
-  print("chart done")
+  #print("chart")
+  #print(chart)
+  #print("chart done")
   
   chart %>%     ggvis(~gameDate,~slength) %>% 
     layer_points(fill=~ Scored, size=2) %>% 
@@ -218,8 +218,8 @@ observe({
 observe({
   if (is.null(input$playerA)) return()
   #if (is.null(playerSeqData()$runStarter)) return()
-  print ("enter gameGoalSeqStarter")
-  print(input$playerA)
+  #print ("enter gameGoalSeqStarter")
+  #print(input$playerA)
   starter <- playerGame %>%
     filter(PLAYERID==input$playerA&START>0) %>%  # 380 as sh
     arrange(gameDate) %>%
@@ -227,15 +227,15 @@ observe({
     mutate(starterOrder=row_number())
   
   
-  print(glimpse(starter))
-  print("starter")
+  #print(glimpse(starter))
+  #print("starter")
   
   starter$Scored <- "No"
   starter$Scored[starter$Gls>0] <- "Yes"
   
   runStarter <- subSeq(starter$Scored)
   
-  print(runStarter)
+  #print(runStarter)
   
   ## can take first,last or midpoint to have run not scoring/scoring
   
@@ -243,9 +243,9 @@ chart <-  runStarter %>%
     left_join(starter,by=c("last"="starterOrder")) %>% 
     select(gameDate,slength,Scored) 
 
-print("chart")
-print(chart)
-print("chart done")
+#print("chart")
+#print(chart)
+#print("chart done")
     
 chart %>%     ggvis(~gameDate,~slength) %>% 
     layer_points(fill=~ Scored, size=2) %>% 
