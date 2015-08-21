@@ -30,13 +30,17 @@ shinyServer(function(input, output, session) {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs_goals") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
+      
+      # player ones
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID,  options=list(maxOptions=10000)))
     } else if (input$sbMenu=="pl_goals") {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID, options=list(maxOptions=10000))) # was selected=values$playerID, for all these
     } else if (input$sbMenu=="pl_glance") {
-      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
-    } else if (input$sbMenu=="pl_seqs_goals") {
+      #inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+      #inputPanel(selectizeInput("playerA", label=NULL, choices =playerChoice,selected=values$playerID, options=list(maxOptions=10000)))
+      inputPanel(selectInput("playerA", label=NULL, choices =playerChoice,selected=values$playerID))
+       } else if (input$sbMenu=="pl_seqs_goals") {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
     }else if (input$sbMenu=="pl_opponent") {
       inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
@@ -95,9 +99,15 @@ shinyServer(function(input, output, session) {
       } else {
         inputPanel(numericInput("gamesA","Games Played",min=1,max=38,step=1,value=currentRound))  
       }
+    } else if (input$sbMenu=="st_position") {
+               inputPanel(numericInput("positionA","League Position",min=1,max=22,step=1,value=1),
+                          numericInput("gamesB","Games Played",min=1,max=42,step=1,value=currentRound)
+                          )
     }
   })
-  
+      
+#       if (input$seasonA<"1995/96") {
+
   
   
   ## years available by team
@@ -585,6 +595,7 @@ shinyServer(function(input, output, session) {
   observeEvent(input$mostCards_rows_selected,{
     s = as.integer(input$mostCards_rows_selected)
     values$playerID <- teamData()$mostCards$PLAYERID[s]
+    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
   })
   
   observeEvent(input$teamYear_rows_selected,{

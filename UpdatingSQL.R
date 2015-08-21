@@ -199,6 +199,13 @@ playerGame <- tbl_df(dbGetQuery(conn, "SELECT  players.FIRSTNAME, players.LASTNA
                                 
 ))
 
+
+allPlayers <- tbl_df(dbGetQuery(conn, "SELECT  *
+                                FROM players"
+                                
+                                
+))
+
 ### confirms there are only 9 passed across instead of required 16 until sorted in access so that playerid is in upper
 # playerGameTest <- tbl_df(dbGetQuery(conn, "SELECT  players.FIRSTNAME, players.LASTNAME, players.BIRTHDATE,players.PLACE as city,players.COUNTRY,players.POSITION,     match.DATE,matchTeam.TEAMMATCHID,match.MATCHID,matchTeam.venue,teams.TEAMNAME,
 #                                 playerMatch.START, playerMatch.[OFF], playerMatch.subOn, playerMatch.GOALS,  playerClub.PLAYERID, playerClub.FEE,playerClub.PERMANENT, playerClub.LEFT,playerClub.JOINED,
@@ -1271,6 +1278,7 @@ tw <-
   playerGame %>% 
   group_by(PLAYERID,name) %>% 
   summarize(Assts=sum(Assists)) 
+  
 
 # previous data - may need to set date or from season maxround then gpo back one
 lw <- 
@@ -1422,6 +1430,7 @@ print("endGlobal")
 
 
 ## matbe create some basic files as rds
+saveRDS(allPlayers,"allPlayers.rds")
 saveRDS(playerGame,"playerGame.rds")
 saveRDS(summary,"summary.rds")
 saveRDS(standings,"standings.rds")

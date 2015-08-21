@@ -89,7 +89,7 @@ observe({
 output$careerYear <- DT::renderDataTable({
   careerData()$dfTeamYear  %>%  
     select(-MP) %>% 
-    DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+    DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
     })
 
 output$career <- DT::renderDataTable({
@@ -100,7 +100,12 @@ output$career <- DT::renderDataTable({
   }
  # df <- rbind(careerData()$dfTeam,careerData()$dfCareer)
   df  %>%  
-    DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+    DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE)) %>%  
+  formatStyle(
+      'Team',
+      target = 'row',
+      backgroundColor = styleEqual(c('Career'), c('lightgreen'))
+     )
 })
 
 # suggestion in github

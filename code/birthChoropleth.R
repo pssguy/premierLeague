@@ -16,7 +16,8 @@ output$teamLeaflet <- renderLeaflet({
   write_csv(temp,"tempProblem.csv")
   
   temp <-temp %>% 
-    left_join(pgMini)
+    left_join(pgMini) %>% 
+    filter(PLAYERID!="OWNGOAL")  
   
   write_csv(temp,"tempProblem2.csv") # no obv issue with Barnsley
   
@@ -40,7 +41,8 @@ output$teamLeaflet <- renderLeaflet({
   binpalEPL <-
     colorBin(c("#FFFF00","#FF8000","#FF0000"), temp$Apps,  pretty = TRUE)
   
-  temp %>%    leaflet() %>%
+  temp %>%   
+    leaflet() %>%
     addTiles() %>%
     setView(2,49,zoom=3) %>% 
     addCircleMarkers(

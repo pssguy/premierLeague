@@ -1,7 +1,7 @@
 output$st_round <- DT::renderDataTable({
 
-  year <- "2014/15"
-  games <- 38
+#   year <- "2014/15"
+#   games <- 38
   
   if(is.null(input$gamesA)) return()
   
@@ -12,7 +12,8 @@ output$st_round <- DT::renderDataTable({
     ungroup() %>% 
     arrange(Pos) %>% 
     select(-season) %>% 
-    DT::datatable(rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+    DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
+                  options= list(paging = FALSE, searching = FALSE,info=FALSE))
                                                   
 
 }
@@ -38,14 +39,24 @@ output$st_position <- DT::renderDataTable({
 #     pos <- 1 
 #   }
   
-  if(is.null(input$gamesA)) return()
-  filter(season==input$seasonA&tmYrGameOrder==input$gamesA) 
-  df <-  data.frame(standings %>%
-                      filter(tmYrGameOrder==input$gamesA&position==input$posA) %>%
-                      select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos))
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-                                 
-                                 order=list(c(0,'desc'))))
+  if(is.null(input$gamesB)) return()
+#   #filter(season==input$seasonA&tmYrGameOrder==input$gamesA) 
+#   df <-  data.frame(standings %>%
+#                       filter(tmYrGameOrder==input$gamesB&position==input$positionA) %>%
+#                       select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos))
+#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                  
+#                                  order=list(c(0,'desc'))))
+  standings %>% 
+    ungroup() %>% 
+    filter(tmYrGameOrder==input$gamesB&position==input$positionA) %>%
+    select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos) %>% 
+    arrange(desc(Season)) %>% 
+DT::datatable(class='compact stripe hover row-border',
+              rownames=FALSE,
+              options= list(searching = FALSE, info=FALSE))
+                               
+                               
   
 }
 )

@@ -104,7 +104,7 @@ output$mostCards <- DT::renderDataTable({
 # })
 
 output$seasonsBox <- renderInfoBox({
-  print("enterseasonsbox")
+  #print("enterseasonsbox")
   seasons <- as.character(teamData()$summary$years)
   infoBox(
     "Seasons",seasons, icon = icon("futbol-o"), #user-times
@@ -114,7 +114,7 @@ output$seasonsBox <- renderInfoBox({
 
 
 output$glanceTest <- renderText({
-  print(teamData()$summary$years)
+  #print(teamData()$summary$years)
   input$teamZ
 })
 
@@ -123,7 +123,7 @@ output$glanceTest <- renderText({
 #   
 # df <-  teamData()$test %>% 
 #     filter(season!="2015/16") 
-# print(glimpse(df))
+# #print(glimpse(df))
 # 
 # write_csv(df,"problem.csv")
 # 

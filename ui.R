@@ -47,7 +47,7 @@ dashboardPage(
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
         menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
-        menuSubItem("By Opposition",tabName = "pl_opponent", selected=TRUE)
+        menuSubItem("By Opposition",tabName = "pl_opponent")
       ),
       
       
@@ -124,8 +124,8 @@ dashboardPage(
                          status = "success",solidHeader = TRUE,title = "Latest App",
                          collapsible = T,collapsed =F,
                          helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
-                                  never played an EPL game again. Hover for Details"),
-                         selectInput("teamC", "Team",teamsChoice,selected="West Ham U" ),
+                                  never played an EPL game again. Click for Team. Hover for Details"),
+                         selectInput("teamC", label=NULL,teamsChoice,selected="West Ham U" , width=150),
                          ggvisOutput("ageRecord")
                      ),
               box(width=12,
@@ -155,25 +155,10 @@ fluidRow(
  tabBox(
    tabPanel("Squad Photo",htmlOutput("squadPhoto")),
  #tabPanel("Where in the World",plotOutput("birthChoropleth")),
- tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet"))
-#  tabPanel("Twitter",
-#           tags$body(includeScript("twitter.js"),
-#                     
-#                     uiOutput("teamTwitter")
-# #                     a("Fun", class="twitter-timeline",
-# #                       href="https://twitter.com/pssGuy/timelines/530058458880409600",
-# #                       "data-widget-id" = "530058992483958785",
-# #                       height="300",
-# #                       "data-chrome" ="nofooter transparent noheader")
-#                     
-#                     
-#                     )
-#                     
-#                    
-# )
+ tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")) # height='90%', width='90%' produces blank area
 ),
 box(title="EPL Finishing Positions",width=4,height=375,solidHeader = TRUE,status = 'success',
-#ggvisOutput("seasonsHist")
+
 plotOutput("seasonsHist")
 ),
 box(title="Top LineUp",width=2,solidHeader = TRUE,status = 'success',
@@ -451,19 +436,19 @@ tabItem(
           column(width = 3,
                  infoBoxOutput("teamsBox", width = 12)),
           
-          column(width = 3,
+          column(width = 3, offset =1,
                  infoBoxOutput("seasonsBoxPlayer", width = 12)),
           
-          column(width = 3,
+          column(width = 3, offset =1,
                  infoBoxOutput("appsBox", width = 12))
           
         ),
         fluidRow(
           column(width = 3,
                  infoBoxOutput("goalsBox", width = 12)),
-          column(width = 3,
+          column(width = 3,offset =1,
                  infoBoxOutput("assistsBox", width = 12)),
-          column(width = 3,
+          column(width = 3,offset =1,
                  infoBoxOutput("cardsBox", width = 12))
         ),
       fluidRow(
@@ -507,7 +492,7 @@ tabItem(
         "pl_goals",
         box(
           width = 12,title = "Goal Summary Table",solidHeader = TRUE,status = 'success',
-          collapsible = TRUE, collapsed = TRUE,
+          collapsible = TRUE, collapsed = FALSE,
           DT::dataTableOutput("goalSummary")
         ),
         fluidRow(column(width=6,
@@ -545,13 +530,22 @@ tabItem(
 column(width=3,plotOutput("gameGoalStarter")),
 column(width=3,plotOutput("gameNoGoalStarter"))
 ),
+# fluidRow(
+#   column(width=5,offset=1,plotOutput("gameGoalSeq")),
+#   column(width=6,offset=1,plotOutput("gameGoalSeqStarter"))
+#   
+# )
 fluidRow(
-  column(width=5,offset=1,plotOutput("gameGoalSeq")),
-  column(width=6,offset=1,plotOutput("gameGoalSeqStarter"))
+  box(width=6,
+      title = "Goal Sequences - All Games",solidHeader = TRUE,status = 'success',
+      collapsible = TRUE, collapsed = TRUE,
+      plotOutput("gameGoalSeq")),
+  box(width=6,
+      title = "Goal Sequences - As Starter",solidHeader = TRUE,status = 'success',
+      collapsible = TRUE, collapsed = TRUE,
+      plotOutput("gameGoalSeqStarter"))
   
 )
-
-                   
           ),
 
 tabItem(

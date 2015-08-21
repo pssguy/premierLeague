@@ -27,5 +27,9 @@ output$goalSummary <- DT::renderDataTable({
       rownames = FALSE,container = PL_format,options = list(
         paging = FALSE, searching = FALSE, ordering = FALSE,info = FALSE
       )
+    )  %>% formatStyle(
+      'Season',
+      target = 'row',
+      backgroundColor = styleEqual(c('Career'), c('lightgreen'))
     )
 })
