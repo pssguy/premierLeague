@@ -1,8 +1,8 @@
 
 
-dashboardPage(
+dashboardPage(title="BPL",
   skin = "yellow",
-  dashboardHeader(title = "Premier League"),
+  dashboardHeader(title = "Barclays Premier League", titleWidth = 300),
   
   dashboardSidebar(
     includeCSS("custom.css"),
@@ -37,7 +37,9 @@ dashboardPage(
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
         menuSubItem("By Round", tabName = "st_round"),
-        menuSubItem("By Position", tabName = "st_position")
+        menuSubItem("By Position", tabName = "st_position"),
+        menuSubItem("By Team", tabName = "st_team"),
+        menuSubItem("By Date", tabName = "st_date", selected=T)
       ),
       
       
@@ -191,7 +193,7 @@ fluidRow(
               
               fluidRow(
                 box(
-                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary (click on player and the Players tab for his info)",
+                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary ",
                   inputPanel(
                    
                     radioButtons(
@@ -394,6 +396,24 @@ tabItem(
           DT::dataTableOutput("st_position")
         )
       ),
+tabItem(
+  "st_team",
+  box(
+    width = 6,
+    title = "Standings By Team By Round",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("st_team")
+  )
+),
+tabItem(
+  "st_date",
+  box(
+    width = 4,
+    title = "Standings on chosen Date",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("st_dateNow")
+  )
+),
       
       
       
@@ -551,7 +571,7 @@ fluidRow(
 tabItem(
   "pl_opponent",   
   box(
-    width = 7,title = "Summary By Opponent",solidHeader = TRUE,status = 'success',
+    width = 7,title = "Summary By Opponent - click for Game Info",solidHeader = TRUE,status = 'success',
     collapsible = TRUE, collapsed = FALSE,
     DT::dataTableOutput("playerByOpponent")
      ),

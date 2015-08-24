@@ -1,4 +1,3 @@
-
 library(shiny)
 library(shinydashboard)
 library(httr)
@@ -51,11 +50,20 @@ teamCodes <- teamGames %>%
   unique()
 
 ## playerid name and lat/lon
+# pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
+#   select(PLAYERID,name,city,COUNTRY) %>% 
+#   unique() %>% 
+#   left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
+#   mutate(place=paste0(city," ",COUNTRY))
+
+
 pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
   select(PLAYERID,name,city,COUNTRY) %>% 
   unique() %>% 
+  
   left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
-  mutate(place=paste0(city," ",COUNTRY))
+  filter(PLAYERID!="OWNGOAL") %>% 
+  mutate(place=ifelse(is.na(city),COUNTRY,paste0(city," ",COUNTRY)))
 
     
 playerChoice <- pgMini$PLAYERID

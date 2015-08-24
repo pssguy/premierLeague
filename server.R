@@ -92,6 +92,7 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  ## may be able to simplify games inputs
   output$standings_ui <- renderUI({ 
     if (input$sbMenu=="st_round") {
       if (input$seasonA<"1995/96") {
@@ -103,9 +104,16 @@ shinyServer(function(input, output, session) {
                inputPanel(numericInput("positionA","League Position",min=1,max=22,step=1,value=1),
                           numericInput("gamesB","Games Played",min=1,max=42,step=1,value=currentRound)
                           )
+    } else if (input$sbMenu=="st_team") {
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
+                 numericInput("gamesC","Games Played",min=1,max=42,step=1,value=currentRound)
+      )
+    }  else if (input$sbMenu=="st_date") {
+      inputPanel(dateInput("dateA","Enter Date",value="2015-01-01", startview="year", min="1992-08-15", max=Sys.Date())
+      )
     }
   })
-      
+      #dateInput("date_1","Enter Date",value="2014-01-01", startview="year"),
 #       if (input$seasonA<"1995/96") {
 
   
@@ -598,22 +606,23 @@ shinyServer(function(input, output, session) {
     updateTabItems(session, inputId="sbMenu", selected="pl_glance")
   })
   
-  observeEvent(input$teamYear_rows_selected,{
-    s = as.integer(input$teamYear_rows_selected)
-    print("printing s")
-    
-tbl <-    data.frame(summary %>%
-                 filter(TEAMNAME==input$teamA&season==input$teamYears)) #%>%
-                 
-#                  mutate(pos=str_sub(POSITION,1,1),apps=St+On,Gls=StGls+subGls,Pens=startPens+subPens,Points=Gls+Assists,janAge=as.integer(str_sub(as.character(season),1,4)),byear=as.integer(str_sub(as.character(born),1,4)),age=janAge-byear) %>%
-#                  select(PLAYERID,Player=name,pos,Age=age,Apps=apps,St,On,Off,Bench,Mins=mins,Goals=Gls,Pens,Assists,Points,Y,R)) -> tbl
+  ## wan to re-address
+#   observeEvent(input$teamYear_rows_selected,{
+#     s = as.integer(input$teamYear_rows_selected)
+#     print("printing s")
 #     
-print(tbl$PLAYERID) # cazorla is 27t
-    print(s) # All Single default hit row 2 but s= 27(perhaps the sorting). However did give CAZORLS  which was what was after
-   print(tbl$PLAYERID[s])
-    values$playerID <- tbl$PLAYERID[s]
-    updateTabItems(session, inputId="sbMenu", selected="pl_glance")
-  })
+# tbl <-    data.frame(summary %>%
+#                  filter(TEAMNAME==input$teamA&season==input$teamYears)) #%>%
+#                  
+# #                  mutate(pos=str_sub(POSITION,1,1),apps=St+On,Gls=StGls+subGls,Pens=startPens+subPens,Points=Gls+Assists,janAge=as.integer(str_sub(as.character(season),1,4)),byear=as.integer(str_sub(as.character(born),1,4)),age=janAge-byear) %>%
+# #                  select(PLAYERID,Player=name,pos,Age=age,Apps=apps,St,On,Off,Bench,Mins=mins,Goals=Gls,Pens,Assists,Points,Y,R)) -> tbl
+# #     
+# print(tbl$PLAYERID) # cazorla is 27t
+#     print(s) # All Single default hit row 2 but s= 27(perhaps the sorting). However did give CAZORLS  which was what was after
+#    print(tbl$PLAYERID[s])
+#     values$playerID <- tbl$PLAYERID[s]
+#     updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+#   })
   
 }) # end
 

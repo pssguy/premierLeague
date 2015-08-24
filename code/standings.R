@@ -22,31 +22,10 @@ output$st_round <- DT::renderDataTable({
 
 output$st_position <- DT::renderDataTable({
   
-#   
-#   if (!is.null(input$season_4a)) {
-#     year <- input$season_4a
-#   } else {
-#     year <- "2014/15"
-#   }
-#   if (!is.null(input$games_4b)) {
-#     games <- input$games_4b
-#   } else {
-#     games <- currentRound 
-#   }
-#   if (!is.null(input$position_4a)) {
-#     pos <- input$position_4a
-#   } else {
-#     pos <- 1 
-#   }
+
   
   if(is.null(input$gamesB)) return()
-#   #filter(season==input$seasonA&tmYrGameOrder==input$gamesA) 
-#   df <-  data.frame(standings %>%
-#                       filter(tmYrGameOrder==input$gamesB&position==input$positionA) %>%
-#                       select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos))
-#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-#                                  
-#                                  order=list(c(0,'desc'))))
+
   standings %>% 
     ungroup() %>% 
     filter(tmYrGameOrder==input$gamesB&position==input$positionA) %>%
@@ -61,28 +40,38 @@ DT::datatable(class='compact stripe hover row-border',
 }
 )
 
-output$teamStanding <- DT::renderDataTable({
-  print(teamsChoice)
+output$st_team <- DT::renderDataTable({
+  if(is.null(input$gamesC)) return()
   
-  if (!is.null(input$games_4a)) {
-    games <- input$games_4a
-  } else {
-    games <- currentRound 
-  }
-  if (!is.null(input$team_4a)) {
-    theTeam <- input$team_4a
-  } else {
-    theTeam <- "Arsenal"
-  }
+#   if (!is.null(input$games_4a)) {
+#     games <- input$games_4a
+#   } else {
+#     games <- currentRound 
+#   }
+#   if (!is.null(input$team_4a)) {
+#     theTeam <- input$team_4a
+#   } else {
+#     theTeam <- "Arsenal"
+#   }
   
   
-  df <-  data.frame(standings %>%
-                      filter(tmYrGameOrder==games&team==theTeam) %>%
-                      select(Season=season,Pos=position,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos)) 
+#   df <-  data.frame(standings %>%
+#                       filter(tmYrGameOrder==games&team==theTeam) %>%
+#                       select(Season=season,Pos=position,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos)) 
+#   
+#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                  
+#                                  order=list(c(0,'desc'))))
   
-  DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-                                 
-                                 order=list(c(0,'desc'))))
+  
+  standings %>% 
+    ungroup() %>% 
+    filter(tmYrGameOrder==input$gamesC&team==input$teamA) %>%
+    select(Season=season,Pos=position,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos) %>% 
+    arrange(desc(Season)) %>% 
+    DT::datatable(class='compact stripe hover row-border',
+                  rownames=FALSE,
+                  options= list(searching = FALSE, info=FALSE))
                                  
 }
 )
@@ -115,36 +104,43 @@ output$currentForm <- DT::renderDataTable({
 })
 
 
-output$datetableNow <- DT::renderDataTable({
+#output$datetableNow <- DT::renderDataTable({
+  output$st_dateNow <- DT::renderDataTable({
   
-  
-  if (!is.null(input$date_1)) {
-    theDate <- input$date_1
-  } else {
-    theDate - Sys.Date()
-  }
+    if(is.null(input$dateA)) return()
+    
+#   if (!is.null(input$date_1)) {
+#     theDate <- input$date_1
+#   } else {
+#     theDate - Sys.Date()
+#   }
+    
+    theDate <- input$dateA
   
   if (month(theDate)<6) {
     yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
   }else {
     yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
   }
-  print(yr)
-  print(glimpse(standings))
+#   print(yr)
+#   print(glimpse(standings))
   table <-standings %>%
     filter(season==yr&gameDate<=theDate)  %>%  #478 loks good
     group_by(team) %>%
     transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-    mutate(GD=GF-GA) 
-  table <- unique(table)
-  
-  table <- data.frame(table)
-  table <-   table  %>% 
-    arrange(desc(Pts),desc(GD),desc(GF),team) %>%
-    mutate(position=row_number()) %>%
-    select(Pos=position,Team=team,Pl,Pts,GD)
-  DT::datatable(table,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-                                    order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
+    mutate(GD=GF-GA) %>% 
+    unique(.) %>% 
+    ungroup() %>% 
+
+
+    arrange(desc(Pts),desc(GD),desc(GF),team) 
+  print(table)
+  print(str(table))
+  table %>%
+   # mutate(position=row_number()) %>%
+    select(Team=team,Pl,GD,Pts) %>% 
+  DT::datatable(options= list(searching = FALSE, info=FALSE))
+                                    #order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
 }
 )
 

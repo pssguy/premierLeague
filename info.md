@@ -8,7 +8,8 @@ and rich experience
 
 ### Method
 
-Use tabs in sidebar to access tables and charts for teams/players etc
+Use tabs in sidebar to access tables and charts for teams/players etc.
+Rows in tables and points on charts can often be clicked for drilldown info
 
 
   ---
@@ -20,14 +21,18 @@ Use tabs in sidebar to access tables and charts for teams/players etc
  but more accurately reflects players creative contributions and is
  additionally available from the beginning of the EPL
  * Data is not updated in real-time but broadly works to a weekly timetable
-    Follow the [pssguy twitter account](https://twitter.com/pssGuy) for update
+ 
+    Follow the [pssguy twitter account](https://twitter.com/pssGuy) for updates
  
    ---
    
 ### Priorities
 
 Plans are listed in the [github issues](https://github.com/pssguy/premierLeague/issues)
-and suggestions are welcome 
+
+Feel free to recommend which should be priorities and add new suggestions
+
+NB The code on github is just backup and currently is not useable
 
    ---
    
