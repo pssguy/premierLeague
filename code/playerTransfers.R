@@ -6,7 +6,7 @@ observe({
   #print("checking not empty")
   #print(input$playerA)
   if(is.null(input$playerA)) return()
-  if(input$playerA=="")return()
+  #if(input$playerA=="")return()
   #print("transferfee in")
   #print(input$playerA)
    
@@ -21,14 +21,25 @@ observe({
 #     rename(Fee=FEE,Team=TEAMNAME,Date=joined)
 #   
   
+  ## need to cater for loans
+  
   transfers <-  playerGame %>% 
-    filter(PLAYERID==input$playerA&PERMANENT==1) %>% 
-    
-    select(name,joined,FEE,TEAMNAME) %>% 
+    filter(PLAYERID==input$playerA&PERMANENT==1) 
+  
+  print("nrow transfers")
+  print(nrow(transfers))
+  if (nrow(transfers)==0) {
+    write_csv(transfers,"loan.csv")
+    return(NULL) # this works but does not replace previous plot
+  }
+ transfers <-transfers %>% 
+   select(name,joined,FEE,TEAMNAME) %>% 
     unique() %>% 
     mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
     rename(Fee=FEE,Team=TEAMNAME,Date=joined)
   #print(transfers)
+ print("ok to here")
+ write_csv(transfers,"permanent.csv")
   
   transfers <- cbind(transfers, id = seq_len(nrow(transfers)))
   
@@ -56,4 +67,29 @@ observe({
     bind_shiny("playerTransfers")
   
  
+})
+
+output$playerTransfers_tau <- renderTaucharts({
+  
+  if(is.null(input$playerA)) return()
+  transfers <-  playerGame %>% 
+    filter(PLAYERID==input$playerA&PERMANENT==1) 
+  
+  print("nrow transfers")
+  print(nrow(transfers))
+  if (nrow(transfers)==0) {
+    write_csv(transfers,"loan.csv")
+    return(NULL) # this works but does not replace previous plot
+  }
+  transfers <-transfers %>% 
+    select(name,joined,FEE,TEAMNAME) %>% 
+    unique() %>% 
+    mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
+    rename(Fee=FEE,Team=TEAMNAME,Date=joined)
+  
+  tauchart(transfers) %>% tau_point("Date", "Cost",color="Team") %>% 
+    #tau_legend()  %>% 
+    tau_tooltip(c("Date","Team","Cost")) %>% 
+    tau_guide_x(tick_period='day', tick_format="year") %>% 
+    tau_guide_y(label ='Purchase Price (mill)')
 })

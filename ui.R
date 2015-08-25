@@ -440,7 +440,7 @@ tabItem(
             box(
               width = 12,title = "In Action",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-              htmlOutput("playerPic")
+              htmlOutput("playerPic", height=220)
             )
           ),
           column(
@@ -448,7 +448,7 @@ tabItem(
             box(
               width = 12,title = "Birth Place",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-              leafletOutput("playerBirthplace", height = 200)
+              leafletOutput("playerBirthplace", height = 220)
             )
           ),
           column(
@@ -456,7 +456,8 @@ tabItem(
             box(
               width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-             ggvisOutput("playerTransfers")
+             #ggvisOutput("playerTransfers")
+             tauchartsOutput("playerTransfers_tau", height="220px")
             )
           )
           
