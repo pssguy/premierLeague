@@ -14,12 +14,12 @@ getLineups = function(data,location,session) {
 output$lineup <- DT::renderDataTable({
   if (is.null(lineupValues$theGame))
     return()
- # print(lineupValues$theGame)
+ # #print(lineupValues$theGame)
   matchDate <-
     standings[standings$team == input$teamA &
                 standings$season == input$teamYears &
                 standings$tmYrGameOrder == lineupValues$theGame,]$gameDate
-  #print(matchDate)
+  ##print(matchDate)
   # lineupValues$theGame <- NULL this stops dtattable rendering not sure why but wnat to reset otherwise automatically calls up game of season even when new inputs
  df <-  playerGame %>%
     filter(TEAMNAME == input$teamA & gameDate == matchDate) %>%

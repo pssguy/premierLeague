@@ -39,7 +39,7 @@ dashboardPage(title="BPL",
         menuSubItem("By Round", tabName = "st_round"),
         menuSubItem("By Position", tabName = "st_position"),
         menuSubItem("By Team", tabName = "st_team"),
-        menuSubItem("By Date", tabName = "st_date", selected=T)
+        menuSubItem("By Date", tabName = "st_date")
       ),
       
       
@@ -409,9 +409,21 @@ tabItem(
   "st_date",
   box(
     width = 4,
-    title = "Standings on chosen Date",solidHeader = TRUE,status = 'success',
+    title = "Standings on Chosen Date",solidHeader = TRUE,status = 'success',
     collapsible = TRUE, collapsed = FALSE,
     DT::dataTableOutput("st_dateNow")
+  ),
+  box(
+    width = 4,
+    title = "Standings Rest of Season",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("st_dateLater")
+  ),
+  box(
+    width = 4,
+    title = "Standings Full Year",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    DT::dataTableOutput("st_dateSeason")
   )
 ),
       

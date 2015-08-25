@@ -33,17 +33,18 @@ shinyServer(function(input, output, session) {
       
       # player ones
     } else if (input$sbMenu=="pl_career") {
-      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID,  options=list(maxOptions=10000)))
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_goals") {
-      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice), selected=values$playerID, options=list(maxOptions=10000))) # was selected=values$playerID, for all these
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_glance") {
       #inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
       #inputPanel(selectizeInput("playerA", label=NULL, choices =playerChoice,selected=values$playerID, options=list(maxOptions=10000)))
-      inputPanel(selectInput("playerA", label=NULL, choices =playerChoice,selected=values$playerID))
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
        } else if (input$sbMenu=="pl_seqs_goals") {
-      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
-    }else if (input$sbMenu=="pl_opponent") {
-      inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+      #inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
+         inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
+         }else if (input$sbMenu=="pl_opponent") {
+           inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     }
     
   })

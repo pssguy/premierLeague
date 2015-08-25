@@ -68,6 +68,8 @@ output$gameNoGoal <- renderPlot({
     group_by(slength) %>% 
     tally()
   
+  if (nrow(gameGoal)==0) return()
+  
   if (tail(run,1)$value==0) {
     cond <- gameGoal$slength == tail(run,1)$slength
   } else {
@@ -94,12 +96,15 @@ output$gameGoal <- renderPlot({
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
+  if (nrow(gameGoal)==0) return()
   
   if (tail(run,1)$value==1) {
     cond <- gameGoal$slength == tail(run,1)$slength
   } else {
     cond <- FALSE
   }
+  
+
   
   ggplot(gameGoal, aes(x=slength,y=n)) +
     geom_bar(data=subset(gameGoal,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
@@ -124,6 +129,7 @@ output$gameNoGoalStarter <- renderPlot({
     filter(value==0) %>% 
     group_by(slength) %>% 
     tally()
+  if (nrow(gameGoal)==0) return()
   
   if (tail(run,1)$value==0) {
     cond <- gameGoal$slength == tail(run,1)$slength
@@ -151,6 +157,8 @@ output$gameGoalStarter <- renderPlot({
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
+  if (nrow(gameGoal)==0) return()
+  
   
   if (tail(run,1)$value==1) {
     cond <- gameGoal$slength == tail(run,1)$slength

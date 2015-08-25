@@ -4,7 +4,7 @@ output$teamLeaflet <- renderLeaflet({
   if(is.null(input$teamA)) return()
   print("enter team birthplaces")
   print(input$teamA)
-  temp <-  summary %>% 
+  theMap <-  summary %>% 
     ungroup() %>% 
     filter(TEAMNAME==input$teamA) %>% 
     mutate(Apps=St+On) %>% 
@@ -13,18 +13,18 @@ output$teamLeaflet <- renderLeaflet({
     summarize(Apps=sum(Apps)) %>% 
     ungroup()
   
-  write_csv(temp,"tempProblem.csv")
+  write_csv(theMap,"theMapProblem.csv")
   
-  temp <-temp %>% 
+  theMap <-theMap %>% 
     left_join(pgMini) %>% 
     filter(PLAYERID!="OWNGOAL")  
   
-  write_csv(temp,"tempProblem2.csv") # no obv issue with Barnsley
+  write_csv(theMap,"theMapProblem2.csv") # no obv issue with Barnsley
   
-  temp$lon <-  jitter(temp$lon, amount=0.5)
-  temp$lat <-  jitter(temp$lat, amount=0.5)
+  theMap$lon <-  jitter(theMap$lon, amount=0.5)
+  theMap$lat <-  jitter(theMap$lat, amount=0.5)
   
-  temp$popup <-
+  theMap$popup <-
     sprintf(
       "<table cellpadding='4' style='line-height:1'><tr>
       <th> %1$s  </th></tr>
@@ -32,19 +32,25 @@ output$teamLeaflet <- renderLeaflet({
       
       <tr align='center'><td>Apps: %3$s</td></tr>
         </table>",
-      temp$name,
-      temp$place,
-      temp$Apps
+      theMap$name,
+      theMap$place,
+      theMap$Apps
     )
   
-  write_csv(temp,"tempProblem3.csv")
+  write_csv(theMap,"theMapProblem3.csv")
   binpalEPL <-
-    colorBin(c("#FFFF00","#FF8000","#FF0000"), temp$Apps,  pretty = TRUE)
+    colorBin(c("#FFFF00","#FF8000","#FF0000"), theMap$Apps,  pretty = TRUE)
   
-  temp %>%   
+  print(theMap)
+  print(str(theMap))
+  print("drawing map")
+  
+  theMap <- data.frame(theMap) #makes no difference
+  
+  theMap %>%   
     leaflet() %>%
     addTiles() %>%
-    setView(2,49,zoom=3) %>% 
+   # setView(2,49,zoom=3) %>% 
     addCircleMarkers(
       radius = 3,fillOpacity = 0.5,popup =  ~ popup,color = ~ binpalEPL(Apps)
     )

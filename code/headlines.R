@@ -169,19 +169,28 @@ output$teamLeadersCurrent <- DT::renderDataTable({
   #currentTeams <- unique(maxDate$team)
   maxDate <- max(maxDate$gameDate) #"2015-08-10" looks good
   
+  print(maxDate)
+  
   # currentTeams <- df$TEAMNAME may want to use this in below if just 
   
   ty <- data.frame(playerGame %>%
                      filter(gameDate<=maxDate&season==currentYear) %>%
                      group_by(PLAYERID,name,TEAMNAME) %>%
                      summarise(goals=sum(Gls),assists=sum(Assists))) 
+  
+  print(glimpse(ty))
+  
   tyGoals <- ty %>%
     arrange(desc(goals)) %>%
     group_by(TEAMNAME) %>%
     slice(1) %>% 
     select(team=TEAMNAME,goals,name)
   
-  tyGoals[tyGoals$goals==0,]$name <- ""
+  print("good to here")
+  
+  #tyGoals[tyGoals$goals==0,]$name <- ""
+  
+  tyGoals$name <- ifelse(tyGoals$goals==0,"",tyGoals$name)
   
   tyAssists <- ty %>%
     arrange(desc(assists)) %>%
@@ -189,7 +198,9 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     slice(1) %>% 
     select(team=TEAMNAME,assists,name)
   
-  tyAssists[tyAssists$assists==0,]$name <- ""
+  #tyAssists[tyAssists$assists==0,]$name <- ""
+  tyGoals$name <- ifelse(tyAssists$assists==0,"",tyGoals$name)
+ 
   
   ## for cards
   ty <- playerGame %>%
@@ -206,7 +217,7 @@ output$teamLeadersCurrent <- DT::renderDataTable({
   
   ## cp had no card first day so next is not relevant - need to correct later
   
-  
+ 
   
   tyAll <- tyGoals %>% 
     inner_join(tyAssists,by=c("team"="team"))

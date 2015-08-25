@@ -18,12 +18,12 @@ lineupData <- eventReactive(input$teamA,{
   
 #  write_csv(test,"testproblem.csv") # alook 11 at this stage
   
- print(glimpse(test))
+ #print(glimpse(test))
   # count of lineups
   y <- sort(table(test$x))
   
   together <-y[[length(y)]]
-  print(together)
+  #print(together)
   # now extract names
   eleven <-names(y[length(y)])
   
@@ -34,7 +34,7 @@ lineupData <- eventReactive(input$teamA,{
   lineup <-gather(v)
   lineup$key <- NULL
   
-  print(glimpse(lineup))
+  #print(glimpse(lineup))
   
   colnames(lineup)[1] <- "PLAYERID"
   
@@ -49,12 +49,12 @@ lineupData <- eventReactive(input$teamA,{
   
   
   
-  print(glimpse(lineup))
-  print(str(lineup))
+  #print(glimpse(lineup))
+  #print(str(lineup))
   
   lineupText <- paste(lineup$name,collapse=", ")
-  print("lineup in data")
-  print(lineupText)
+  #print("lineup in data")
+  #print(lineupText)
   
   info=list(together=together,lineupText=lineupText)
   return(info)
@@ -66,15 +66,15 @@ output$lineupCount <- renderText({
 })
 
 output$lineupText <- renderText({
-  print("enter lineup")
-  print(lineupData()$lineupText)
-  print("just printed lineup in rendertext")
+  #print("enter lineup")
+  #print(lineupData()$lineupText)
+  #print("just #printed lineup in rendertext")
   lineupData()$lineupText
 })
 
 # output$lineup <- DT::renderDataTable({
 #  # if(is.null(lineupData())) return()
-#   print(str(lineupData()$lineup))
+#   #print(str(lineupData()$lineup))
 #   lineupData()$lineup %>% 
 #     DT::datatable()
 # #     DT::datatable(class='compact stripe hover row-border',options= list(

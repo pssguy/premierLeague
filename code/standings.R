@@ -104,26 +104,19 @@ output$currentForm <- DT::renderDataTable({
 })
 
 
-#output$datetableNow <- DT::renderDataTable({
+
   output$st_dateNow <- DT::renderDataTable({
   
     if(is.null(input$dateA)) return()
     
-#   if (!is.null(input$date_1)) {
-#     theDate <- input$date_1
-#   } else {
-#     theDate - Sys.Date()
-#   }
-    
-    theDate <- input$dateA
+  theDate <- input$dateA
   
   if (month(theDate)<6) {
     yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
   }else {
     yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
   }
-#   print(yr)
-#   print(glimpse(standings))
+
   table <-standings %>%
     filter(season==yr&gameDate<=theDate)  %>%  #478 loks good
     group_by(team) %>%
@@ -131,49 +124,98 @@ output$currentForm <- DT::renderDataTable({
     mutate(GD=GF-GA) %>% 
     unique(.) %>% 
     ungroup() %>% 
-
-
-    arrange(desc(Pts),desc(GD),desc(GF),team) 
-  print(table)
-  print(str(table))
-  table %>%
-   # mutate(position=row_number()) %>%
+    arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
     select(Team=team,Pl,GD,Pts) %>% 
   DT::datatable(options= list(searching = FALSE, info=FALSE))
-                                    #order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
+                                   
 }
 )
+  
+  
+  
+  output$st_dateLater <- DT::renderDataTable({
+    
+    if(is.null(input$dateA)) return()
+    
+    theDate <- input$dateA
+    
+    if (month(theDate)<6) {
+      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+    }else {
+      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+    }
+    
+    table <-standings %>%
+      filter(season==yr&gameDate>theDate)  %>%  #478 loks good
+      group_by(team) %>%
+      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+      mutate(GD=GF-GA) %>% 
+      unique(.) %>% 
+      ungroup() %>% 
+      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
+      select(Team=team,Pl,GD,Pts) %>% 
+      DT::datatable(options= list(searching = FALSE, info=FALSE))
+    
+  }
+  )
+  
+  
+  output$st_dateSeason <- DT::renderDataTable({
+    
+    if(is.null(input$dateA)) return()
+    
+    theDate <- input$dateA
+    
+    if (month(theDate)<6) {
+      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+    }else {
+      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+    }
+    
+    table <-standings %>%
+      filter(season==yr)  %>%  #478 loks good
+      group_by(team) %>%
+      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+      mutate(GD=GF-GA) %>% 
+      unique(.) %>% 
+      ungroup() %>% 
+      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
+      select(Team=team,Pl,GD,Pts) %>% 
+      DT::datatable(options= list(searching = FALSE, info=FALSE))
+    
+  }
+  )
 
-output$datetableRest <- DT::renderDataTable({
-  
-  
-  if (!is.null(input$date_1)) {
-    theDate <- input$date_1
-  } else {
-    theDate - Sys.Date()
-  }
-  
-  if (month(theDate)<6) {
-    yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
-  }else {
-    yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
-  }
-  table <-standings %>%
-    filter(season==yr&gameDate>theDate)  %>%  
-    group_by(team) %>%
-    transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-    mutate(GD=GF-GA) 
-  table <- unique(table)
-  
-  table <- data.frame(table)
-  table  %<>% 
-    arrange(desc(Pts),desc(GD),desc(GF),team) %>%
-    mutate(position=row_number()) %>%
-    select(Pos=position,Team=team,Pl,Pts,GD)
-  DT::datatable(table,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-                                    order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
-} 
-)
+# output$datetableRest <- DT::renderDataTable({
+#   
+#   
+#   if (!is.null(input$date_1)) {
+#     theDate <- input$date_1
+#   } else {
+#     theDate - Sys.Date()
+#   }
+#   
+#   if (month(theDate)<6) {
+#     yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+#   }else {
+#     yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+#   }
+#   table <-standings %>%
+#     filter(season==yr&gameDate>theDate)  %>%  
+#     group_by(team) %>%
+#     transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+#     mutate(GD=GF-GA) 
+#   table <- unique(table)
+#   
+#   table <- data.frame(table)
+#   table  %<>% 
+#     arrange(desc(Pts),desc(GD),desc(GF),team) %>%
+#     mutate(position=row_number()) %>%
+#     select(Pos=position,Team=team,Pl,Pts,GD)
+#   DT::datatable(table,options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                     order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
+# } 
+# )
 
 output$datetableYear <- DT::renderDataTable({
   
