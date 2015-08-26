@@ -57,7 +57,9 @@ dashboardPage(title="BPL",
       menuItem(
         "Specials", tabName = "specials",
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
-        menuSubItem("Youngest Players",tabName = "sp_youngest")
+        menuSubItem("Youngest Players",tabName = "sp_youngest"),
+        menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers", selected=T)
+        
       ),
       menuItem(
         "Other Dashboards",
@@ -598,6 +600,19 @@ tabItem(
   
 ),
       ## specials
+
+tabItem("sp_goalScorers", 
+        box(width=12,
+            status = "success",solidHeader = TRUE,title = "Leading Goalscorers. Amend minimum goals as required. Teams can be de(selected) via legend",
+            collapsible = T,collapsed =F,
+            helpText("Elite Goalscorers are always difficult to find which made home-grown Harry Kane's 21 league goals scored last year such a fairy tale
+                     "),
+            div(style = "display:inline-block",numericInput("goalA", label="Min Goals",value=20,min=1,max=40,width=80)),
+           # div(style = "display:inline-block",inputPanel(selectInput("teamE", label=NULL, teamsChoice))),
+           div(style = "display:inline-block",selectInput("teamE", label="Select Teams", c("All Teams",teamsChoice), selected=c("All Teams"), multiple = T, width=150)), 
+           tauchartsOutput("leadingGoalscorers_tau")
+            )),
+
 tabItem("sp_youngest", 
         box(width=12,
                            status = "success",solidHeader = TRUE,title = "Youngest Players",

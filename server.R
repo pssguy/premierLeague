@@ -579,6 +579,8 @@ shinyServer(function(input, output, session) {
   source("code/playerMilestones.R", local=TRUE)
   source("code/playerGoalDistribution.R", local=TRUE)
   source("code/playerByOpponent.R", local=TRUE)
+  source("code/sp_youngest.R", local=TRUE)
+  source("code/sp_leadingGoalscorers.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 
