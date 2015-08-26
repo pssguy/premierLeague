@@ -90,6 +90,6 @@ output$playerTransfers_tau <- renderTaucharts({
   tauchart(transfers) %>% tau_point("Date", "Cost",color="Team") %>% 
     #tau_legend()  %>% 
     tau_tooltip(c("Date","Team","Cost")) %>% 
-    tau_guide_x(tick_period='day', tick_format="year") %>% 
+    tau_guide_x(tick_period='day', tick_format="year", label="") %>% 
     tau_guide_y(label ='Purchase Price (mill)')
 })

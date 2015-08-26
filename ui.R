@@ -33,7 +33,15 @@ dashboardPage(title="BPL",
       ),
       
       
-      
+      menuItem(
+        "Players", tabName = "players",icon = icon("table"),
+        menuSubItem("At A Glance", tabName = "pl_glance"),
+        menuSubItem("Career Summary", tabName = "pl_career"),
+        menuSubItem("Goal Details", tabName = "pl_goals"),
+        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
+        menuSubItem("By Opposition",tabName = "pl_opponent")
+      ),
+        
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
         menuSubItem("By Round", tabName = "st_round"),
@@ -43,19 +51,13 @@ dashboardPage(title="BPL",
       ),
       
       
-      menuItem(
-        "Players", tabName = "players",icon = icon("table"),
-        menuSubItem("At A Glance", tabName = "pl_glance"),
-        menuSubItem("Career Summary", tabName = "pl_career"),
-        menuSubItem("Goal Details", tabName = "pl_goals"),
-        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
-        menuSubItem("By Opposition",tabName = "pl_opponent")
-      ),
+ 
       
       
       menuItem(
         "Specials", tabName = "specials",
-        menuSubItem("Scored On",tabName = "sp_scoredOn")
+        menuSubItem("Scored On",tabName = "sp_scoredOn"),
+        menuSubItem("Youngest Players",tabName = "sp_youngest")
       ),
       menuItem(
         "Other Dashboards",
@@ -123,7 +125,7 @@ dashboardPage(title="BPL",
               ),
               column(width=8,
                      box(width=12,
-                         status = "success",solidHeader = TRUE,title = "Latest App",
+                         status = "success",solidHeader = TRUE,title = "Highlighted App",
                          collapsible = T,collapsed =F,
                          helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
                                   never played an EPL game again. Click for Team. Hover for Details"),
@@ -440,7 +442,7 @@ tabItem(
             box(
               width = 12,title = "In Action",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-              htmlOutput("playerPic", height=220)
+              htmlOutput("playerPic", height=250)
             )
           ),
           column(
@@ -448,7 +450,7 @@ tabItem(
             box(
               width = 12,title = "Birth Place",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-              leafletOutput("playerBirthplace", height = 220)
+              leafletOutput("playerBirthplace", height = 250)
             )
           ),
           column(
@@ -457,7 +459,7 @@ tabItem(
               width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
              #ggvisOutput("playerTransfers")
-             tauchartsOutput("playerTransfers_tau", height="220px")
+             tauchartsOutput("playerTransfers_tau", height="250px")
             )
           )
           
@@ -596,6 +598,15 @@ tabItem(
   
 ),
       ## specials
+tabItem("sp_youngest", 
+        box(width=12,
+                           status = "success",solidHeader = TRUE,title = "Youngest Players",
+                           collapsible = T,collapsed =F,
+                           helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
+                                  never played an EPL game again. Click for Team. Hover for Details"),
+                           selectInput("teamD", label=NULL,teamsChoice,selected="West Ham U" , width=150),
+                           ggvisOutput("sp_ageRecord")
+)),
       tabItem("sp_scoredOn",
               fluidRow(
                 column(
