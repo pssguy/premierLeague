@@ -58,7 +58,7 @@ dashboardPage(title="BPL",
         "Specials", tabName = "specials",
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         menuSubItem("Youngest Players",tabName = "sp_youngest"),
-        menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers", selected=T)
+        menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers")
         
       ),
       menuItem(
@@ -161,7 +161,8 @@ fluidRow(
  tabBox(
    tabPanel("Squad Photo",htmlOutput("squadPhoto")),
  #tabPanel("Where in the World",plotOutput("birthChoropleth")),
- tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")) # height='90%', width='90%' produces blank area
+ tabPanel("Where in the World (click for details)",helpText("Available Soons")) 
+ #tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")) # height='90%', width='90%' produces blank area
 ),
 box(title="EPL Finishing Positions",width=4,height=375,solidHeader = TRUE,status = 'success',
 
@@ -277,19 +278,35 @@ fluidRow(
                   )
                 )
               )),
-      
-      tabItem(
-        "tm_seqs",
-        radioButtons(
-          "seqVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
-        ),
-fluidRow(column(width=2,plotOutput("tm_wins")),
-         column(width=2,plotOutput("tm_noWins")),
-         column(width=2,plotOutput("tm_draws")),
-         column(width=2,plotOutput("tm_noDraws")),
-         column(width=2,plotOutput("tm_losses")),
-         column(width=2,plotOutput("tm_noLosses"))
-),
+#       
+#       tabItem(
+#         "tm_seqs",
+#         radioButtons(
+#           "seqVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
+#         ),
+# fluidRow(column(width=2,plotOutput("tm_wins")),
+#          column(width=2,plotOutput("tm_noWins")),
+#          column(width=2,plotOutput("tm_draws")),
+#          column(width=2,plotOutput("tm_noDraws")),
+#          column(width=2,plotOutput("tm_losses")),
+#          column(width=2,plotOutput("tm_noLosses"))
+# ),
+
+tabItem(
+  "tm_seqs",
+  box(width=12, height= 350,title = "Result Sequences - Most Recent in Bold",
+      solidHeader = TRUE,status = 'success',
+      collapsible = TRUE, collapsed = FALSE,
+  radioButtons(
+    "seqVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
+  ),
+  fluidRow(column(width=2,plotOutput("tm_wins")),
+           column(width=2,plotOutput("tm_noWins")),
+           column(width=2,plotOutput("tm_draws")),
+           column(width=2,plotOutput("tm_noDraws")),
+           column(width=2,plotOutput("tm_losses")),
+           column(width=2,plotOutput("tm_noLosses"))
+  )),
 fluidRow(column(width=4,
          box(width=12,title = "Most Recent Record Run - Wins",
              solidHeader = TRUE,status = 'success',
@@ -558,6 +575,9 @@ tabItem(
         ),
         tabItem(
           "pl_seqs_goals",
+          box(width=12, height= 400,title = "Scoring Sequences - Most Recent in Bold",
+              solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = FALSE,
           radioButtons(
             "seqPlVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
           ),
@@ -566,7 +586,7 @@ tabItem(
           column(width=3,plotOutput("gameNoGoal")),
 column(width=3,plotOutput("gameGoalStarter")),
 column(width=3,plotOutput("gameNoGoalStarter"))
-),
+)),
 # fluidRow(
 #   column(width=5,offset=1,plotOutput("gameGoalSeq")),
 #   column(width=6,offset=1,plotOutput("gameGoalSeqStarter"))
@@ -603,7 +623,7 @@ tabItem(
 
 tabItem("sp_goalScorers", 
         box(width=12,
-            status = "success",solidHeader = TRUE,title = "Leading Goalscorers. Amend minimum goals as required. Teams can be de(selected) via legend",
+            status = "success",solidHeader = TRUE,title = "Leading Goalscorers. Amend minimum goals as required. Teams can be de(selected) via legend. Hover for details",
             collapsible = T,collapsed =F,
             helpText("Elite Goalscorers are always difficult to find which made home-grown Harry Kane's 21 league goals scored last year such a fairy tale
                      "),

@@ -87,7 +87,7 @@
 
 output$tm_wins <- renderPlot({
 
-  if(is.null(resData)) return()
+  if(is.null(resData)) return() # does initially give an error on page
   W <- resData()$W
   
   Win <- W %>% 
