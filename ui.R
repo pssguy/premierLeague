@@ -159,10 +159,11 @@ dashboardPage(title="BPL",
       tabItem("tm_glance",
 fluidRow(
  tabBox(
-   tabPanel("Squad Photo",htmlOutput("squadPhoto")),
+   tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")), # height='90%', width='90%' produces blank area
+   tabPanel("Squad Photo",htmlOutput("squadPhoto"))
  #tabPanel("Where in the World",plotOutput("birthChoropleth")),
- tabPanel("Where in the World (click for details)",helpText("Available Soons")) 
- #tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")) # height='90%', width='90%' produces blank area
+# tabPanel("Where in the World (click for details)",helpText("Available Soons")) 
+ #
 ),
 box(title="EPL Finishing Positions",width=4,height=375,solidHeader = TRUE,status = 'success',
 
@@ -415,6 +416,12 @@ tabItem(
           title = "Standings",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           DT::dataTableOutput("st_position")
+        ),
+        box(
+          width = 6,
+          title = "Standings",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          plotOutput("st_position_chart")
         )
       ),
 tabItem(
@@ -594,11 +601,11 @@ column(width=3,plotOutput("gameNoGoalStarter"))
 # )
 fluidRow(
   box(width=6,
-      title = "Goal Sequences - All Games",solidHeader = TRUE,status = 'success',
+      title = "Individual Goal Sequences By Date - All Games",solidHeader = TRUE,status = 'success',
       collapsible = TRUE, collapsed = TRUE,
       plotOutput("gameGoalSeq")),
   box(width=6,
-      title = "Goal Sequences - As Starter",solidHeader = TRUE,status = 'success',
+      title = "Individual Goal Sequences By Date - As Starter",solidHeader = TRUE,status = 'success',
       collapsible = TRUE, collapsed = TRUE,
       plotOutput("gameGoalSeqStarter"))
   

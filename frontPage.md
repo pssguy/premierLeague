@@ -8,10 +8,10 @@ Using the latest technology to bring you
   * Trivia Tweets
   
 Just select tabs to explore this
-Asite and connect to other dashboards from myTinyShinys 
+site and connect to other dashboards from myTinyShinys 
 
   
-   *Based on data  up to and including 10th Aug 2015*
+   *Based on data  up to and including 30th Aug 2015*
   
 
 

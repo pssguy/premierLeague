@@ -24,7 +24,7 @@ library(rgdal)
 library(choroplethr)
 library(choroplethrMaps)
 library(taucharts)
-#library(daff)
+library(daff)
 
 
 positions <- read_csv("positions.csv") ##

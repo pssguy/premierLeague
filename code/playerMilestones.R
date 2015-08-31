@@ -1,5 +1,5 @@
 ## reaching certain number of apps - goals,asssists
-## if a fixed table, then prob best in updatingSQL
+## if a fixed table, then prob best in updatingSQL yep thats where it is
 
 
 output$playerMilestones <- DT::renderDataTable({
