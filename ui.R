@@ -129,7 +129,7 @@ dashboardPage(title="BPL",
                      box(width=12,
                          status = "success",solidHeader = TRUE,title = "Highlighted App",
                          collapsible = T,collapsed =F,
-                         helpText("Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
+                         helpText("Reece Oxford made an impressive debut as West Ham's youngest ever Premier League Player but his predecessor
                                   never played an EPL game again. Click for Team. Hover for Details"),
                          selectInput("teamC", label=NULL,teamsChoice,selected="West Ham U" , width=150),
                          ggvisOutput("ageRecord")
@@ -529,12 +529,22 @@ tabItem(
       
       tabItem(
         "pl_career",
+        fluidRow(column(width=7,
         box(
           width = 12,title = "Game Summaries. Point size relates to Goals/Assists. Hover for details. Values of 99 indicate time of substitution unknown",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           ggvisOutput("careerChart")
+        )),
+        column(width=5,
+        box(
+          width = 12,title = "Points per 90 Minutes Hover for details",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+        #  ggvisOutput("pointsByYearChart")
+          tauchartsOutput("pointsByYearChart")
         )
-        ,
+        )
+        ),
+        
         box(
           width = 12,title = "By Club",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,

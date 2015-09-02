@@ -108,6 +108,52 @@ output$career <- DT::renderDataTable({
      )
 })
 
+
+output$pointsByYearChart <- renderTaucharts({
+  if (is.null(input$playerA)) return()
+  
+  df <-playerGame %>% 
+    filter(PLAYERID==input$playerA) %>% 
+    group_by(season,PLAYERID,name) %>% 
+    select(Gls,Assists,mins) %>% 
+    summarize(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
+    filter(Points!=0) %>% 
+    mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
+    ungroup() 
+  
+  df %>% 
+    tauchart() %>% 
+    tau_point("season","Ppm", size="2") %>% 
+    # tau_line("season","Ppm") %>% 
+    tau_tooltip(c("Goals","Assists")) %>% 
+    tau_guide_x(label="") %>% 
+    tau_guide_y(label ='Points per 90 mins')
+  
+})
+
+# observe({
+#   if (is.null(input$playerA)) return()
+#   
+#   playerGame %>% 
+#     filter(PLAYERID==input$playerA) %>% 
+#     group_by(season,PLAYERID,name) %>% 
+#     select(Gls,Assists,mins) %>% 
+#     summarize(G=sum(Gls),A=sum(Assists),P=G+A,M=sum(mins))%>% 
+#     filter(P!=0) %>% 
+#     mutate(Gpm=90*G/M,Apm=90*A/M,Ppm=90*P/M) %>% 
+#     ungroup() %>% 
+#     ggvis(~season,~Ppm) %>% 
+#     layer_lines() %>% 
+#     layer_points(size= ~P, fill:="red") %>% 
+#     hide_legend("size") %>% 
+#     add_axis("x", properties = axis_props(labels = list(
+#       angle = 45, align = "left", fontSize = 11
+#     )),title = "") %>% 
+#     add_axis("y", title="Points per 90 mins")  %>% 
+#     set_options(width=400, height=400) %>% 
+#     bind_shiny("pointsByYearChart")
+# })
+
 # suggestion in github
 ## this restricts to one row - can add 
 # callback="function(table) {
