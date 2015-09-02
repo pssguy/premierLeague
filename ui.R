@@ -159,7 +159,8 @@ dashboardPage(title="BPL",
       tabItem("tm_glance",
 fluidRow(
  tabBox(
-   tabPanel("Where in the World (click for details)",leafletOutput("teamLeaflet")), # height='90%', width='90%' produces blank area
+#    tabPanel("Where in the World (click for details)",
+#             leafletOutput("teamLeaflet")), # height='90%', width='90%' produces blank area also seemed to impact other tables on page!!!!!
    tabPanel("Squad Photo",htmlOutput("squadPhoto"))
  #tabPanel("Where in the World",plotOutput("birthChoropleth")),
 # tabPanel("Where in the World (click for details)",helpText("Available Soons")) 

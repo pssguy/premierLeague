@@ -8,7 +8,7 @@ output$st_round <- DT::renderDataTable({
   
   df <-  data.frame(standings %>%
                       filter(season==input$seasonA&tmYrGameOrder==input$gamesA) %>%
-                      select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos)) %>% 
+                      select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,GA=cumGA,Final=final_Pos)) %>% 
     ungroup() %>% 
     arrange(Pos) %>% 
     select(-season) %>% 

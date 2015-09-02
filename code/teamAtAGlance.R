@@ -69,10 +69,23 @@ output$mostGames <- DT::renderDataTable({
 
 output$mostGoals <- DT::renderDataTable({
   if(is.null(teamData())) return()
-  teamData()$mostGoals %>% 
+  
+#   print("mostGoals")
+#   print(teamData()$mostGoals)
+#   print("mostGoals")
+#   write_csv(teamData()$mostGoals,"mostGoals.csv")
+#   
+#   
+#   test <- read_csv("mostGoals.csv")
+  
+  teamData()$mostGoals   %>% 
     select(Player=name,Goals=sumGoals) %>% 
     DT::datatable(class='compact stripe hover row-border',options= list(
       pageLength = 5,lengthChange=FALSE,paging = TRUE, searching = FALSE, info=FALSE,sorting = FALSE))
+
+# test   %>% 
+#   select(Player=name,Goals=sumGoals) %>% 
+#   DT::datatable()
   
 })
 
