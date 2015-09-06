@@ -1,5 +1,4 @@
-
-
+## using pgMini means only those who have played
 output$playerBirthplace <- renderLeaflet({
   
   if(is.null(input$playerA)) return()

@@ -562,6 +562,7 @@ shinyServer(function(input, output, session) {
   #   source("code/playerWith.R", local=TRUE)
   # 
   source("code/specials/scoredOn.R", local=TRUE)
+  source("code/specials/resultsByGameSpan.R", local=TRUE)
   
   source("code/playerAtAGlance.R", local=TRUE)
   source("code/playerPix.R", local=TRUE)

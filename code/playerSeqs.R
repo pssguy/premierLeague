@@ -182,7 +182,7 @@ observe({
   print(input$playerA)
   
   if (is.null(input$playerA)) return()
-  if (input$playerA<"a") return()
+#  if (input$playerA<"a") return()
   #print ("enter gameGoalSeqStarter")
   #print(input$playerA)
   starter <- playerGame %>%
@@ -192,13 +192,17 @@ observe({
     mutate(starterOrder=row_number())
   
   
-  #print(glimpse(starter))
-  #print("starter")
+  print(glimpse(starter))
+  print("starteransub")
+  print(nrow(starter))
+  if (nrow(starter)==0) return()
   
   starter$Scored <- "No"
   starter$Scored[starter$Gls>0] <- "Yes"
   
   runStarter <- subSeq(starter$Scored)
+  
+  print(glimpse(runStarter))
   
   #print(runStarter)
   
@@ -233,7 +237,7 @@ observe({
   print(input$playerA)
   
   if (is.null(input$playerA)) return()
-  if (input$playerA<"a") return()
+ # if (input$playerA<"a") return()
   #if (is.null(playerSeqData()$runStarter)) return()
   #print ("enter gameGoalSeqStarter")
   #print(input$playerA)
@@ -243,16 +247,28 @@ observe({
     select(PLAYERID,Gls,plGameOrder,TEAMNAME,gameDate,Opponents) %>% 
     mutate(starterOrder=row_number())
   
-  
   #print(glimpse(starter))
-  #print("starter")
+  print("nrowstarter")
+  print(nrow(starter))
+ # if (nrow(starter)==0) return() ## but chart for previous player eg Bent remains
   
-  starter$Scored <- "No"
-  starter$Scored[starter$Gls>0] <- "Yes"
-  
+  if(nrow(starter>0)) {
+   starter$Scored <- "No"
+   starter$Scored[starter$Gls>0] <- "Yes"
+  }
+  print("OKA")
+  if (nrow(starter)==0) {
+    print("set up df")
+    runStarter <- data.frame(first=0,last=0,slength=0,midpoint=0,value="No")
+    runStarter$value <- as.character(runStarter$value)
+  } else {
   runStarter <- subSeq(starter$Scored)
-  
-  #print(runStarter)
+ 
+  }
+  print("OKB")
+  print("starter")
+  print("glimpse(runStarter)")
+  print(glimpse(runStarter))
   
   ## can take first,last or midpoint to have run not scoring/scoring
   

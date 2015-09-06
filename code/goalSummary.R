@@ -1,9 +1,13 @@
 output$goalSummary <- DT::renderDataTable({
+  
   df <-
     unique(allGoalsPlayer[allGoalsPlayer$PLAYERID == input$playerA,]) %>%
     ungroup() %>%
     select(-PLAYERID)
   
+#   #print("df length")
+#   #print(nrow(df))
+#   #print(glimpse(df)) #does have 1 obs all0 so should show up
   
   
   if (nrow(df) > 1) {

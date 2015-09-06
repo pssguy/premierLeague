@@ -58,7 +58,8 @@ dashboardPage(title="BPL",
         "Specials", tabName = "specials",
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         menuSubItem("Youngest Players",tabName = "sp_youngest"),
-        menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers")
+        menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
+        menuSubItem("Results By Game Span",tabName = "sp_resSpan", selected=T)
         
       ),
       menuItem(
@@ -67,8 +68,8 @@ dashboardPage(title="BPL",
         menuSubItem("Cricket",href = "https://mytinyshinys.shinyapps.io/cricket"),
         menuSubItem("MainlyMaps",href = "https://mytinyshinys.shinyapps.io/mainlyMaps"),
         menuSubItem("MLB",href = "https://mytinyshinys.shinyapps.io/mlbCharts"),
-        
-        menuSubItem("WikiGuardian",href = "https://mytinyshinys.shinyapps.io/wikiGuardian")
+        menuSubItem("WikiGuardian",href = "https://mytinyshinys.shinyapps.io/wikiGuardian"),
+        menuSubItem("World Soccer",href = "https://mytinyshinys.shinyapps.io/worldSoccer")
       ),
       
       
@@ -605,11 +606,7 @@ tabItem(
 column(width=3,plotOutput("gameGoalStarter")),
 column(width=3,plotOutput("gameNoGoalStarter"))
 )),
-# fluidRow(
-#   column(width=5,offset=1,plotOutput("gameGoalSeq")),
-#   column(width=6,offset=1,plotOutput("gameGoalSeqStarter"))
-#   
-# )
+
 fluidRow(
   box(width=6,
       title = "Individual Goal Sequences By Date - All Games",solidHeader = TRUE,status = 'success',
@@ -650,6 +647,21 @@ tabItem("sp_goalScorers",
            div(style = "display:inline-block",selectInput("teamE", label="Select Teams", c("All Teams",teamsChoice), selected=c("All Teams"), multiple = T, width=150)), 
            tauchartsOutput("leadingGoalscorers_tau")
             )),
+
+
+tabItem("sp_resSpan", 
+        box(width=12,
+            status = "success",solidHeader = TRUE,title = "Results By Game Span (takes a few seconds)",
+            collapsible = T,collapsed =F,
+            sliderInput("spanA", label="Game Span",value=10,min=2,max=20),
+            radioButtons("spanVenue", label=NULL, choices=c("All","Home","Away"),inline =T),
+            radioButtons("result", label=NULL, choices=c("Win","Loss","Draw","No Win","No Loss","No Draw"),inline=T),
+            
+           # div(style = "display:inline-block",sliderInput("spanA", label="Game Span",value=10,min=2,max=20),selectInput("spanVenue", label="NULL", choices=c("All","Home","Away"))),
+           #  div(style = "display:inline-block",selectInput("spanVenue", label="NULL", choices=c("All","Home","Away"))),
+           # div(style = "display:inline-block",selectInput("teamE", label="Select Teams", c("All Teams",teamsChoice), selected=c("All Teams"), multiple = T, width=150)), 
+            DT::dataTableOutput("resByGameSpan")
+        )),
 
 tabItem("sp_youngest", 
         box(width=12,
