@@ -4,6 +4,12 @@
 
 output$resByGameSpan <- DT::renderDataTable({
   
+  print(input$spanVenue)
+  print(input$spanA)
+  print(input$result)
+  
+  x <- integer()
+  
   if(input$spanVenue=="Away") {
   allteams <- standings %>% 
     ungroup() %>% 
@@ -150,7 +156,7 @@ output$resByGameSpan <- DT::renderDataTable({
    
    
    
-   
+   print(input$result)
    
    
   df %>% 

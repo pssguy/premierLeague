@@ -68,7 +68,10 @@ output$gameNoGoal <- renderPlot({
     group_by(slength) %>% 
     tally()
   
-  if (nrow(gameGoal)==0) return()
+  #if (nrow(gameGoal)==0) return()
+  if (nrow(gameGoal)==0){
+    gameGoal <- data.frame(slength=0,n=0)
+  } 
   
   if (tail(run,1)$value==0) {
     cond <- gameGoal$slength == tail(run,1)$slength
@@ -96,7 +99,10 @@ output$gameGoal <- renderPlot({
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
-  if (nrow(gameGoal)==0) return()
+ # if (nrow(gameGoal)==0) return()
+  if (nrow(gameGoal)==0){
+    gameGoal <- data.frame(slength=0,n=0)
+  } 
   
   if (tail(run,1)$value==1) {
     cond <- gameGoal$slength == tail(run,1)$slength
@@ -129,7 +135,10 @@ output$gameNoGoalStarter <- renderPlot({
     filter(value==0) %>% 
     group_by(slength) %>% 
     tally()
-  if (nrow(gameGoal)==0) return()
+ # if (nrow(gameGoal)==0) return()
+  if (nrow(gameGoal)==0){
+    gameGoal <- data.frame(slength=0,n=0)
+  } 
   
   if (tail(run,1)$value==0) {
     cond <- gameGoal$slength == tail(run,1)$slength
@@ -149,6 +158,8 @@ output$gameNoGoalStarter <- renderPlot({
 }, height=250)
 
 output$gameGoalStarter <- renderPlot({
+  print("test as starter")
+  print(playerSeqData()$runStarter)
   if (is.null(playerSeqData()$runStarter)) return()
   
   run <- playerSeqData()$runStarter
@@ -157,8 +168,10 @@ output$gameGoalStarter <- renderPlot({
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
-  if (nrow(gameGoal)==0) return()
-  
+  #if (nrow(gameGoal)==0) return() # this works but means no graph is shown
+  if (nrow(gameGoal)==0){
+    gameGoal <- data.frame(slength=0,n=0)
+  }  
   
   if (tail(run,1)$value==1) {
     cond <- gameGoal$slength == tail(run,1)$slength

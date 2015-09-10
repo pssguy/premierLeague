@@ -1,5 +1,3 @@
-
-
 dashboardPage(title="BPL",
   skin = "yellow",
   dashboardHeader(title = "Barclays Premier League", titleWidth = 300),
@@ -59,7 +57,7 @@ dashboardPage(title="BPL",
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         menuSubItem("Youngest Players",tabName = "sp_youngest"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("Results By Game Span",tabName = "sp_resSpan", selected=T)
+        menuSubItem("Results By Game Span",tabName = "sp_resSpan")
         
       ),
       menuItem(
@@ -568,7 +566,7 @@ tabItem(
           collapsible = TRUE, collapsed = FALSE,
           DT::dataTableOutput("goalSummary")
         ),
-        fluidRow(column(width=6,
+        fluidRow(column(width=7,
         box(
           width = 12,title = "Goals By Year",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = TRUE,
@@ -580,7 +578,7 @@ tabItem(
           ggvisOutput("playerGoals")
         )
         ),
-        column(width=6,
+        column(width=5,
                box(
                  width = 12,title = "Goals Distribution (Points are jittered)",solidHeader = TRUE,status = 'success',
                  collapsible = TRUE, collapsed = TRUE,
