@@ -705,8 +705,20 @@ tabItem("sp_youngest",
       
       
 tabItem("sp_birthplace", 
-        
+        box(
+          title = "", solidHeader = TRUE,status = 'success',
+          width = 7,
+          div(style = "display:inline-block; padding-right: 40px;",selectInput("bp_Teams",NULL,teamsChoice_2, width='150px')),
+              div(style = "display:inline-block; padding-right: 40px;",selectInput("bp_Country",NULL,countryChoice, width='150px', selected="England")),
+          div(style = "display:inline-block",radioButtons("bp_fullScale","Full Scale", c("No","Yes"), inline=T)),
         ggvisOutput("sp_birthplaceChart")
+        ),
+        box(
+          title = "", solidHeader = TRUE,status = 'success',
+          width = 3,offset=1,
+          DT::dataTableOutput("sp_bpTeamsbyYear")
+        )
+        
         ),   
       
       
