@@ -5,8 +5,11 @@ careerData <- reactive({
   
    if (is.null(input$playerA)) return()
 #   #print(values$playerId)
-#   #print(input$playerA)
+   print(input$playerA)
+   print("careerData")
   thePlayer <- input$playerA
+  
+ # thePlayer <- values$playerId
   
  # updateSelectizeInput(session, "playerA", choices = playerChoice, selected = input$playerA)
   

@@ -54,10 +54,13 @@ dashboardPage(title="BPL",
       
       menuItem(
         "Specials", tabName = "specials",
-        menuSubItem("Scored On",tabName = "sp_scoredOn"),
-        menuSubItem("Youngest Players",tabName = "sp_youngest"),
+        
+        menuSubItem("Birthplace",tabName = "sp_birthplace", selected=T),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("Results By Game Span",tabName = "sp_resSpan")
+        menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
+        menuSubItem("Scored On",tabName = "sp_scoredOn"),
+        menuSubItem("Youngest Players",tabName = "sp_youngest")
+        
         
       ),
       menuItem(
@@ -484,7 +487,6 @@ tabItem(
             box(
               width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-             #ggvisOutput("playerTransfers")
              tauchartsOutput("playerTransfers_tau", height="250px")
             )
           )
@@ -609,11 +611,13 @@ fluidRow(
   box(width=6,
       title = "Individual Goal Sequences By Date - All Games",solidHeader = TRUE,status = 'success',
       collapsible = TRUE, collapsed = TRUE,
-      plotOutput("gameGoalSeq")),
+      plotOutput("gameGoalSeq")
+      ),
   box(width=6,
       title = "Individual Goal Sequences By Date - As Starter",solidHeader = TRUE,status = 'success',
       collapsible = TRUE, collapsed = TRUE,
-      plotOutput("gameGoalSeqStarter"))
+      plotOutput("gameGoalSeqStarter")
+     )
   
 )
           ),
@@ -700,7 +704,10 @@ tabItem("sp_youngest",
               ))),
       
       
-      
+tabItem("sp_birthplace", 
+        
+        ggvisOutput("sp_birthplaceChart")
+        ),   
       
       
       

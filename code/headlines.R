@@ -188,6 +188,7 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     arrange(desc(goals)) %>%
     group_by(TEAMNAME) %>%
     slice(1) %>% 
+    ungroup() %>%
     select(team=TEAMNAME,goals,name)
   
   print("good to here")
@@ -200,6 +201,7 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     arrange(desc(assists)) %>%
     group_by(TEAMNAME) %>%
     slice(1) %>% 
+    ungroup() %>%
     select(team=TEAMNAME,assists,name)
   
   #tyAssists[tyAssists$assists==0,]$name <- ""
@@ -217,6 +219,7 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     arrange(desc(n)) %>%
     group_by(TEAMNAME) %>%
     slice(1) %>% 
+    ungroup() %>%
     select(team=TEAMNAME,cards=n,name)
   
   ## cp had no card first day so next is not relevant - need to correct later

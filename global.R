@@ -180,6 +180,11 @@ trueGames <- playerGame %>%
   group_by(PLAYERID) %>% 
   mutate(trueGameOrder=row_number())
 
+# used in sp_birthplace
+allPlayers <- playerGame %>% 
+  select(name,PLAYERID,COUNTRY) %>% 
+  unique()
+
 
 # standard map data for world
 mapData <- readOGR(dsn=".",
