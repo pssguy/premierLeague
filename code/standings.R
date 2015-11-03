@@ -39,38 +39,23 @@ DT::datatable(class='compact stripe hover row-border',
 )
 
 
-output$st_position_chart <- renderPlot({
+observe({
   
   if(is.null(input$gamesB)) return()
   
-#   standings %>% 
-#     ungroup() %>% 
-#     filter(tmYrGameOrder==input$gamesB&position==input$positionA) %>%
-#     select(Season=season,Team=team,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos) %>% 
-#     arrange(desc(Season)) %>% 
-#     DT::datatable(class='compact stripe hover row-border',
-#                   rownames=FALSE,
-#                   options= list(searching = FALSE, info=FALSE))
-#   
-#   
-#   theMin <- min(standings$final_Pos)
-#   theMax <- max(standings$final_Pos)
+
 df <-  standings %>% 
     ungroup() %>% 
     filter(tmYrGameOrder==input$gamesB&position==input$positionA)
   
-  
-  theMin <- min(df$final_Pos)
-theMax <- max(df$final_Pos)
-    df %>% 
-    ggplot(aes(final_Pos)) +
-    geom_histogram(fill="blue",binwidth = 0.5, alpha=0.5) +
-    # scale_x_continuous(breaks=df$final_Pos+0.2, labels=df$final_Pos)
-    # scale_x_continuous(breaks=standings$final_Pos+0.2, labels=standings$final_Pos)
-    scale_x_discrete(breaks=c(theMin:theMax)) +
-    theme_bw() +
-    xlab("Final Position") +
-    ylab("Seasons")
+df %>% 
+  ggvis(~final_Pos) %>% 
+  layer_histograms(fill:="lightblue") %>% 
+  add_axis("x", title="Final League Position", format='d') %>% 
+  add_axis("y", title="Seasons", format='d') %>% 
+  bind_shiny("st_position_chart")
+
+
   
 }
 )

@@ -40,6 +40,7 @@ Play <- readRDS("Play.rds")
 Place <- readRDS("Place.rds")
 Method<- readRDS("Method.rds")
 teamGames <- readRDS("teamGames.rds")
+managers <- readRDS("managers.rds")
 milestones<- read_csv("milestones.csv")
 playerGeos <- read_csv("playerGeos.csv")
 
@@ -74,6 +75,10 @@ teamsChoice_2 <- c("All Teams",teamsChoice)
 
 seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
 seasonChoice_2 <- c("All Seasons",seasonChoice)
+
+
+countryChoice <- sort(unique(playerGame$COUNTRY))
+countryChoice_2 <- c("All Countries",countryChoice)
 
 currentYear <-max(standings$season)
 currentRound <-max(standings[standings$season==currentYear,]$tmYrGameOrder)
