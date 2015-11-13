@@ -45,7 +45,11 @@ shinyServer(function(input, output, session) {
          inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
          }else if (input$sbMenu=="pl_opponent") {
            inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
-    }
+         } else if (input$sbMenu=="sp_comparisons") {
+           inputPanel(selectInput("playerComps", label="Type Names and Select", choices =playerChoice,selected=c("BECKHAD","SCHOLEP","GIGGSR"), multiple= TRUE),
+                      radioButtons("compCategory", label="Category", choices=c("Goals","Assists","Points"),selected="Points",inline=TRUE),
+           actionButton(inputId="compBtn",label="Compare Players"))
+         }
     
   })
   
@@ -583,6 +587,7 @@ shinyServer(function(input, output, session) {
   source("code/sp_youngest.R", local=TRUE)
   source("code/sp_leadingGoalscorers.R", local=TRUE)
   source("code/sp_birthplace.R", local=TRUE)
+  source("code/playercomparisons.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

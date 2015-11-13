@@ -1,4 +1,4 @@
-dashboardPage(
+  dashboardPage(
   title = "BPL",
   skin = "yellow",
   dashboardHeader(title = "Barclays Premier League", titleWidth = 300),
@@ -58,6 +58,7 @@ dashboardPage(
         
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
+        menuSubItem("Player Comparisons",tabName = "sp_comparisons", selected=T),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
@@ -98,9 +99,9 @@ dashboardPage(
               fluidRow(
                 column(
                   width = 4,
-                  box(
+                  box(class = "information",
                     width = 12,
-                    status = "warning",solidHeader = TRUE,title = "Not Just Another EPL site ",
+                    status = "warning",solidHeader = TRUE,title = "Not Just Another Soccer site ",
                     collapsible = T,collapsed = F,
                     includeMarkdown("frontPage.md")
                   ),
@@ -136,7 +137,7 @@ dashboardPage(
                     
                   ),
                   box(
-                    width = 12,
+                    width = 12, class = "information",
                     status = "success",solidHeader = TRUE,title = "What's New",
                     collapsible = T,collapsed = T,
                     includeMarkdown("whatsNew.md")
@@ -769,6 +770,16 @@ dashboardPage(
             ggvisOutput("sp_ageRecord")
             )
       ),
+tabItem(
+  "sp_comparisons",
+  box(
+    width = 12,
+    status = "success",solidHeader = TRUE,title = "Offensive Output Comparisons",
+    collapsible = T,collapsed = F,
+    
+    ggvisOutput("sp_comparisons")
+    )
+    ),
       tabItem("sp_scoredOn",
               fluidRow(
                 column(
