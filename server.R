@@ -54,8 +54,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  ## try observe for players - seems to work in terms of calling correct data but does not update
-  ## the actual. possibly use a values?
+ 
   
   observeEvent(input$playerA,{
     
