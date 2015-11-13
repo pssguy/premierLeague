@@ -1,59 +1,132 @@
 
 
 ## latest App - subsequently switched to specials?? - decid on how names go
+## ermmber it needs different input names cf those in specials
 
- observe({
-  if (is.null(input$teamC)) return()
-   
-   ## easiest to put here
-   apps <- summary %>% 
-     #filter((St+On)>0) %>% 
-     group_by(PLAYERID) %>% 
-     summarize(Apps=(sum(St)+sum(On)))
-  
-  df <-  playerGame %>% 
-    filter((START+subOn)>0&TEAMNAME==input$teamC) %>% 
-    group_by(gameDate) %>% 
-    mutate(youngest=min(age)) %>% 
-    filter(age==youngest) %>% 
-    ungroup() %>% 
-    arrange(gameDate) %>% 
-    select(name,age,gameDate,PLAYERID) %>% 
-    inner_join(apps)
-  
-  df$age <- as.numeric(df$age)
-  
-  df$id <- 1:nrow(df)
-  
-df <-  df %>% 
-    mutate(youngest=cummin(age)) %>% 
-    filter(age==youngest) %>% 
-    mutate(year=as.integer(str_sub(age,1,2))) %>% 
-    mutate(days=floor(365.25*(age-year))) %>% 
-    mutate(showAge=paste0(year," yrs ",days," days")) %>% 
-    mutate(showApps=paste0(Apps," career Apps"))
-
-#print(glimpse(df))
-  
-  all_values <- function(x) {
-    if(is.null(x)) return(NULL)
-    row <- df[x$id == df$id,c("name","showAge","gameDate","showApps") ]
-    paste0(format(row), collapse = "<br />")
-  }
-  
-df   %>% 
-    ggvis(~gameDate,~youngest, key:= ~id) %>% 
-    layer_points(fill =~name) %>% 
-    add_legend("fill", title="") %>% 
-    add_axis("x", title="") %>% 
-    add_axis("y", title="Age",title_offset=50) %>% 
-    add_tooltip(all_values,"hover") %>% 
-  set_options(height = 300) %>% 
-    bind_shiny("ageRecord")
-  
-})
+## youngest player - previous option
+#  observe({
+#   if (is.null(input$teamC)) return()
+#    
+#    ## easiest to put here
+#    apps <- summary %>% 
+#      #filter((St+On)>0) %>% 
+#      group_by(PLAYERID) %>% 
+#      summarize(Apps=(sum(St)+sum(On)))
+#   
+#   df <-  playerGame %>% 
+#     filter((START+subOn)>0&TEAMNAME==input$teamC) %>% 
+#     group_by(gameDate) %>% 
+#     mutate(youngest=min(age)) %>% 
+#     filter(age==youngest) %>% 
+#     ungroup() %>% 
+#     arrange(gameDate) %>% 
+#     select(name,age,gameDate,PLAYERID) %>% 
+#     inner_join(apps)
+#   
+#   df$age <- as.numeric(df$age)
+#   
+#   df$id <- 1:nrow(df)
+#   
+# df <-  df %>% 
+#     mutate(youngest=cummin(age)) %>% 
+#     filter(age==youngest) %>% 
+#     mutate(year=as.integer(str_sub(age,1,2))) %>% 
+#     mutate(days=floor(365.25*(age-year))) %>% 
+#     mutate(showAge=paste0(year," yrs ",days," days")) %>% 
+#     mutate(showApps=paste0(Apps," career Apps"))
+# 
+# #print(glimpse(df))
+#   
+#   all_values <- function(x) {
+#     if(is.null(x)) return(NULL)
+#     row <- df[x$id == df$id,c("name","showAge","gameDate","showApps") ]
+#     paste0(format(row), collapse = "<br />")
+#   }
+#   
+# df   %>% 
+#     ggvis(~gameDate,~youngest, key:= ~id) %>% 
+#     layer_points(fill =~name) %>% 
+#     add_legend("fill", title="") %>% 
+#     add_axis("x", title="") %>% 
+#     add_axis("y", title="Age",title_offset=50) %>% 
+#     add_tooltip(all_values,"hover") %>% 
+#   set_options(height = 300) %>% 
+#     bind_shiny("ageRecord")
+#   
+# })
 
  
+ observeEvent(input$hl_compBtn,{
+   
+   # base data.frame
+   df <-playerGame %>% 
+     filter((START+subOn>0)&PLAYERID %in% input$hl_playerComps) %>% 
+     select(name,PLAYERID,Gls,Assists,age,gameDate) %>% 
+     arrange(gameDate) %>% 
+     group_by(name,PLAYERID) %>% 
+     mutate(gameOrder=row_number(),points=Assists+Gls,
+            cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points)) 
+   
+   # set up plot from radio button choices
+   
+   if (input$hl_compCategory=="Points") {
+     yTitle <-"Cumulative Goals+ Assists (inc. secondary)"
+     if (input$hl_compTime=="Apps") {
+       xTitle <-"PL Apps"
+       plot <- df %>% 
+         ggvis(~gameOrder,~cumPoints) 
+     } else if (input$hl_compTime=="Age") {
+       xTitle <-"Age"
+       plot <- df %>% 
+         ggvis(~age,~cumPoints) 
+     } else if (input$hl_compTime=="Date") {
+       xTitle <-""
+       plot <- df %>% 
+         ggvis(~gameDate,~cumPoints) 
+     }
+     
+   } else if  (input$hl_compCategory=="Goals") {   
+     yTitle <-"Cumulative Goals"
+     if (input$hl_compTime=="Apps") {
+       xTitle <-"PL Apps"
+       plot <- df %>% 
+         ggvis(~gameOrder,~cumGoals) 
+     } else if (input$hl_compTime=="Age") {
+       xTitle <-"Age"
+       plot <- df %>% 
+         ggvis(~age,~cumGoals) 
+     } else if (input$hl_compTime=="Date") {
+       xTitle <-""
+       plot <- df %>% 
+         ggvis(~gameDate,~cumGoals) 
+     } 
+   } else if  (input$hl_compCategory=="Assists") {   
+     yTitle <-"Cumulative Assists (inc. secondary)"
+     if (input$hl_compTime=="Apps") {
+       xTitle <-"PL Apps"
+       plot <- df %>% 
+         ggvis(~gameOrder,~cumAssists) 
+     } else if (input$hl_compTime=="Age") {
+       xTitle <-"Age"
+       plot <- df %>% 
+         ggvis(~age,~cumAssists) 
+     } else if (input$hl_compTime=="Date") {
+       xTitle <-""
+       plot <- df %>% 
+         ggvis(~gameDate,~cumAssists) 
+     }
+   }
+   
+   # create plot
+   plot %>% 
+     layer_lines(stroke= ~name) %>% 
+     add_axis("x", title=xTitle) %>% 
+     add_axis("y", title=yTitle) %>% 
+     add_legend("stroke", title="") %>% 
+     bind_shiny("hl_comparisons")
+   
+   
+ })
  
  
 

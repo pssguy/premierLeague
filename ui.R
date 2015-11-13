@@ -58,7 +58,7 @@
         
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("Player Comparisons",tabName = "sp_comparisons", selected=T),
+        menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
@@ -145,19 +145,32 @@
                 ),
                 column(
                   width = 8,
-                  box(
-                    width = 12,
-                    status = "success",solidHeader = TRUE,title = "Highlighted App",
-                    collapsible = T,collapsed = F,
-                    helpText(
-                      "Reece Oxford made an impressive debut as West Ham's youngest ever Premier League Player but his predecessor
-                      never played an EPL game again. Click for Team. Hover for Details"
-                    ),
-                    selectInput(
-                      "teamC", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
-                    ),
-                    ggvisOutput("ageRecord")
-                    ),
+#                   box(
+#                     width = 12,
+#                     status = "success",solidHeader = TRUE,title = "Highlighted App",
+#                     collapsible = T,collapsed = F,
+#                     helpText(
+#                       "Reece Oxford made an impressive debut as West Ham's youngest ever Premier League Player but his predecessor
+#                       never played an EPL game again. Click for Team. Hover for Details"
+#                     ),
+#                     selectInput(
+#                       "teamC", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
+#                     ),
+#                     ggvisOutput("ageRecord")
+#                     ),
+box(
+  width = 12,
+  status = "success",solidHeader = TRUE,title = "Highlighted App",
+  collapsible = T,collapsed = F,
+  helpText(
+    "Compare Players offensive stats over time"
+  ),
+  inputPanel(selectInput("hl_playerComps", label="Type Names and Select", choices =playerChoice,selected=c("BECKHAD","SCHOLEP","GIGGSR"), multiple= TRUE),
+             radioButtons("hl_compCategory", label="Category", choices=c("Goals","Assists","Points"),selected="Points",inline=TRUE),
+             radioButtons("hl_compTime", label="X Scale", choices=c("Apps","Age","Date"),inline=TRUE),
+             actionButton(inputId="hl_compBtn",label="Compare Players")),
+  ggvisOutput("hl_comparisons")
+),
                   box(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Team Leaders (Ties not shown)",
