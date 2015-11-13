@@ -48,6 +48,7 @@ shinyServer(function(input, output, session) {
          } else if (input$sbMenu=="sp_comparisons") {
            inputPanel(selectInput("playerComps", label="Type Names and Select", choices =playerChoice,selected=c("BECKHAD","SCHOLEP","GIGGSR"), multiple= TRUE),
                       radioButtons("compCategory", label="Category", choices=c("Goals","Assists","Points"),selected="Points",inline=TRUE),
+                      radioButtons("compTime", label=NULL, choices=c("Apps","Age","Date"),inline=TRUE),
            actionButton(inputId="compBtn",label="Compare Players"))
          }
     

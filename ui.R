@@ -775,6 +775,7 @@ tabItem(
   box(
     width = 12,
     status = "success",solidHeader = TRUE,title = "Offensive Output Comparisons",
+    footer = "Unlike official Statistics, up to two assists are allowed per goal",
     collapsible = T,collapsed = F,
     
     ggvisOutput("sp_comparisons")
