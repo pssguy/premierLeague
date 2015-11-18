@@ -55,7 +55,7 @@
       
       menuItem(
         "Specials", tabName = "specials",
-        
+        menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs", selected=T),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
@@ -824,6 +824,16 @@ tabItem(
               ))),
       
       
+
+tabItem(
+  "sp_plGoalSeqs",
+  box(
+    title = "Best Goal Scoring Sequence (click for player)", solidHeader = TRUE,status = 'success',
+    width = 6,
+    ggvisOutput("allPlayerGoalSeqs")
+    
+  )),
+
       tabItem(
         "sp_birthplace",
         box(
