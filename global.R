@@ -44,6 +44,7 @@ managers <- readRDS("managers.rds")
 milestones<- read_csv("milestones.csv")
 playerGeos <- read_csv("playerGeos.csv")
 goalSeqs <- readRDS("goalSeqs.rds")
+goalSeqsClub <- readRDS("goalSeqsClub.rds")
 
 
 teamCodes <- teamGames %>% 

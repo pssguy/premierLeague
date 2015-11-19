@@ -15,7 +15,9 @@ shinyServer(function(input, output, session) {
     #     } else 
     if (input$sbMenu=="tm_playerSummary") { # has to be at menuSubItem if it exists
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
-      
+    } else if (input$sbMenu=="sp_plGoalSeqs") {
+      inputPanel(selectInput("teamC", label=NULL, teamsChoice_2))
+    
     } else if (input$sbMenu=="tm_leaguePosition") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     }  else if (input$sbMenu=="tm_goals") {
