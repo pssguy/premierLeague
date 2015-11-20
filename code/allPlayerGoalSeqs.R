@@ -44,10 +44,15 @@ observe({
 
 
   
-  
+  # need id for tooltip
   topScorers  <- cbind(topScorers, id = seq_len(nrow(topScorers)))  
   
+  # need jitter to identify individuals
+  topScorers$jitGoals <- jitter(topScorers$totGoals)
+  topScorers$jitslength <- jitter(topScorers$slength)
  
+  
+
   
   all_values <- function(x) {
     if(is.null(x)) return(NULL)
@@ -56,18 +61,20 @@ observe({
     paste0( format(row), collapse = "<br />")
   }
   
-  ## slightly different axes dependent on whether team ort not
+  ## slightly different axes dependent on whether team or not
   
   if (theTeam=="All Teams") {
   topScorers %>% 
-    ggvis(~totGoals,~slength,key := ~id) %>% 
+    ggvis(~jitGoals,~jitslength,key := ~id) %>% 
+      layer_points(size=2) %>% 
     add_axis("y",title="Best Consecutive Scoring Run in PL games", format='d') %>% 
     add_axis("x", title="Career Premier League goals") %>% 
     add_tooltip(all_values,"click") %>% 
     bind_shiny("allPlayerGoalSeqs")
   } else {
     topScorers %>% 
-      ggvis(~totGoals,~slength,key := ~id) %>% 
+      ggvis(~jitGoals,~jitslength,key := ~id) %>% 
+      layer_points(size=2) %>% 
       add_axis("y",title="Best Consecutive Scoring Run in PL games for Club", format='d') %>% 
       add_axis("x", title="Career Premier League goals for Club") %>% 
       add_tooltip(all_values,"click") %>% 

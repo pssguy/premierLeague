@@ -829,6 +829,7 @@ tabItem(
   "sp_plGoalSeqs",
   box(
     title = "Best Goal Scoring Sequence (click for player)", solidHeader = TRUE,status = 'success',
+    footer ="Data is jittered to make players more easily identifiable",
     width = 6,
     ggvisOutput("allPlayerGoalSeqs")
     
