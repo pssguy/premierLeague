@@ -81,3 +81,35 @@ observe({
       bind_shiny("allPlayerGoalSeqs")
   }
 })
+
+
+## plotly version - initially all data
+
+output$allPlayerGoalSeqs_plotly <- renderPlotly({
+bestRun <- goalSeqs %>% 
+  
+  select(PLAYERID,slength) %>% 
+  arrange(PLAYERID,desc(slength)) %>% 
+  group_by(PLAYERID) %>% 
+  slice(1)
+
+topScorers <- playerGame %>% 
+  filter(PLAYERID %in% bestRun$PLAYERID) %>% 
+  group_by(name,PLAYERID) %>% 
+  
+  summarize(totGoals=sum(Gls)) %>% 
+  inner_join(bestRun)
+
+# need jitter to identify individuals
+topScorers$jitGoals <- jitter(topScorers$totGoals)
+topScorers$jitslength <- jitter(topScorers$slength)
+
+plot_ly(topScorers, x = jitGoals, y = jitslength, mode = "markers", hoverinfo = "text",
+        text = paste("Name:",name,"<br> Goals:",totGoals,"<br> Sequence:",slength)) %>%
+  layout(hovermode = "closest",
+         xaxis=list(title="Career Goals"),
+         yaxis=list(title="Best Scoring Sequence - jittered to show all Players"
+                   )
+  )
+
+})

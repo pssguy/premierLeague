@@ -55,7 +55,7 @@
       
       menuItem(
         "Specials", tabName = "specials",
-        menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs", selected=T),
+        menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs", selected= T),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
@@ -109,13 +109,13 @@
                   box(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Current Team Sequences",
-                    collapsible = T,collapsed = T,
+                    collapsible = T,collapsed = F,
                     DT::dataTableOutput("teamSeqCurrent")
                   ),
                   box(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Player Milestones",
-                    collapsible = T,collapsed = T,
+                    collapsible = T,collapsed = F,
                     DT::dataTableOutput("playerMilestones")
                   ),
                   box(
@@ -174,7 +174,7 @@ box(
                   box(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Team Leaders (Ties not shown)",
-                    collapsible = T,collapsed = T,
+                    collapsible = T,collapsed = F,
                     DT::dataTableOutput("teamLeadersCurrent")
                   )
               )
@@ -832,6 +832,13 @@ tabItem(
     footer ="Data is jittered to make players more easily identifiable",
     width = 6,
     ggvisOutput("allPlayerGoalSeqs")
+    
+  ),
+  box(
+    title = "Best Goal Scoring Sequence (hover for player)", solidHeader = TRUE,status = 'success',
+    footer ="Data is jittered to make players more easily identifiable",
+    width = 6,
+    plotlyOutput("allPlayerGoalSeqs_plotly")
     
   )),
 
