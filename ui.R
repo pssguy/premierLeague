@@ -55,9 +55,10 @@
       
       menuItem(
         "Specials", tabName = "specials",
-        menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs", selected= T),
+        menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
+        menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs", selected= T),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
@@ -766,6 +767,19 @@ box(
             DT::dataTableOutput("resByGameSpan")
           )
         ),
+tabItem(
+  "sp_twoClubs",
+  box(
+    width = 4,
+    status = "success",solidHeader = TRUE,title = "Played for Two Clubs",footer="On Squad appeances include those as non-playing sub",
+    collapsible = T,collapsed = F,
+    selectInput("twoTeams","Select two teams",choices=teamsChoice, selected=c("Chelsea","Tottenham H"), multiple=T),
+    radioButtons("twoTeamsApp","",c("Appeared","On Squad"), inline=T),
+    
+
+    DT::dataTableOutput("twoClubs")
+  )
+),
         
         tabItem(
           "sp_youngest",
