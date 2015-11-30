@@ -58,10 +58,11 @@
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs", selected= T),
+        menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
+        menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear", selected= T),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
         
         
@@ -889,7 +890,16 @@ tabItem(
         
       ),
       
-      
+tabItem(
+  "sp_yearOnYear",
+  selectInput("yronyrTeam","Select teams",choices=teamsChoice,selected=c("Arsenal","Chelsea","Man. Utd.","Liverpool"), multiple=T),
+  numericInput("yronyrRound","Games played",value=currentValue,min=1,max=42),
+  box(
+    title = "Year on Year Changes - Hover points for Details - Click on Legend to Remove/Show Team", solidHeader = TRUE,status = 'success',
+    width = 6,
+    plotlyOutput("sp_yearOnYear")
+  )
+),
       
       
       

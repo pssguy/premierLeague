@@ -25,6 +25,7 @@ library(choroplethr)
 library(choroplethrMaps)
 library(taucharts)
 library(daff)
+library(plotly)
 
 
 positions <- read_csv("positions.csv") ##
@@ -93,11 +94,12 @@ lastYear <- yrs[2]
 currentRound <-max(standings[standings$season==currentYear,]$tmYrGameOrder)
 ## take account of few games
 if (currentRound<6) {
-  currentValue <- currentRound
-} else {
   currentValue <- 6
+} else {
+  currentValue <- currentRound
 }
-
+print("currentValue")
+print(currentValue)
 
 tmYrs <-standings %>%
   select(season,team) %>%
