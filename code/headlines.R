@@ -286,9 +286,11 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     ungroup() %>% 
     filter(gameDate<=maxDate&season==currentYear&CARD>1) %>%
     group_by(PLAYERID,name,TEAMNAME) %>%
-    tally() 
+    tally() %>% 
+    ungroup()
   
   tyCards <- ty %>%
+   
     arrange(desc(n)) %>%
     group_by(TEAMNAME) %>%
     slice(1) %>% 
