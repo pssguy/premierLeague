@@ -905,8 +905,7 @@ tabItem(
 
 tabItem(
   "sp_tmGoalsSince",
-#   selectInput("yronyrTeam","Select teams",choices=teamsChoice,selected=c("Arsenal","Chelsea","Man. Utd.","Liverpool"), multiple=T),
-#   numericInput("yronyrRound","Games",value=currentValue,min=1,max=42, width=80),
+
   
   box(
     title = "Game Sequences", solidHeader = TRUE,status = 'success',

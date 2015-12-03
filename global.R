@@ -200,4 +200,10 @@ mapData <- readOGR(dsn=".",
                    layer = "ne_50m_admin_0_countries", 
                    encoding = "UTF-8",verbose=FALSE)
 
+
+## used in year on year change
+yrs <- unique(standings$season)
+teams <- unique(standings$team)
+allSeasonTeams <- data.frame(season=rep(yrs, length(teams)),team=rep(teams, length(yrs)))
+
 print("end global")

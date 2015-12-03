@@ -1,12 +1,7 @@
 
 
 output$sp_yearOnYear <- renderPlotly({
-# teams <- c("Arsenal","Chelsea")
-# rounds <- 12
-# 
-# 
-# teams <- c("Arsenal","Chelsea")
-# rounds <- 12
+
 
 test <-standings %>% 
   ungroup() %>% 
@@ -14,7 +9,7 @@ test <-standings %>%
   select(team,season,cumPts) %>% 
   right_join(allSeasonTeams) %>% 
   arrange(season) %>% 
-  # filter(team=="Chelsea") %>% 
+  
   group_by(team) %>% 
   mutate(prev=lag(cumPts),diff=cumPts-prev) %>% 
   filter(season>"1992/93"&team %in% input$yronyrTeam&!is.na(diff)) %>% 
