@@ -57,12 +57,13 @@
         "Specials", tabName = "specials",
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
+        menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince", selected=T),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
-        menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear", selected= T),
+        menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
         
         
@@ -893,11 +894,32 @@ tabItem(
 tabItem(
   "sp_yearOnYear",
   selectInput("yronyrTeam","Select teams",choices=teamsChoice,selected=c("Arsenal","Chelsea","Man. Utd.","Liverpool"), multiple=T),
-  numericInput("yronyrRound","Games played",value=currentValue,min=1,max=42),
+  numericInput("yronyrRound","Games",value=currentValue,min=1,max=42, width=80),
+  radioButtons("yronyrCat","Category",c("Points","Position","GF","GA","GD"), inline=T),
   box(
     title = "Year on Year Changes - Hover points for Details - Click on Legend to Remove/Show Team", solidHeader = TRUE,status = 'success',
     width = 6,
     plotlyOutput("sp_yearOnYear")
+  )
+),
+
+tabItem(
+  "sp_tmGoalsSince",
+#   selectInput("yronyrTeam","Select teams",choices=teamsChoice,selected=c("Arsenal","Chelsea","Man. Utd.","Liverpool"), multiple=T),
+#   numericInput("yronyrRound","Games",value=currentValue,min=1,max=42, width=80),
+  
+  box(
+    title = "Game Sequences", solidHeader = TRUE,status = 'success',
+    width = 6,
+    
+    div(
+      style = "display:inline-block; padding-right: 20px;",radioButtons("goalsSinceCat","Minimum Goals",c("Goals For","Goals Ag","Goals in Game"), inline=T)
+    ),
+    div(
+      style = "display:inline-block", numericInput("goalsSinceCount","Goals",value=5,min=1,max=15, width=80)
+    ),
+
+    DT::dataTableOutput("tmGoalsSince")
   )
 ),
       

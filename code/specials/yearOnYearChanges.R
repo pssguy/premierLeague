@@ -17,7 +17,7 @@ test <-standings %>%
   # filter(team=="Chelsea") %>% 
   group_by(team) %>% 
   mutate(prev=lag(cumPts),diff=cumPts-prev) %>% 
-  filter(season>"1992/93"&team %in% input$yronyrTeam) %>% 
+  filter(season>"1992/93"&team %in% input$yronyrTeam&!is.na(diff)) %>% 
   ungroup() %>% 
   arrange(team)
 
