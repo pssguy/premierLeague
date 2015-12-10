@@ -594,6 +594,7 @@ shinyServer(function(input, output, session) {
   source("code/specials/twoClubs.R", local=TRUE)
   source("code/specials/yearOnYearChanges.R", local=TRUE)
   source("code/specials/tmGoalsSince.R", local=TRUE)
+  source("code/teamHeatMap.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

@@ -27,6 +27,7 @@
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
+        menuSubItem("Result Heatmap",tabName = "tm_heat", selected=T),
         menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
         #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
@@ -57,13 +58,13 @@
         "Specials", tabName = "specials",
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
-        menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince", selected=T),
+        menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
-        menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
+       # menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
         
         
@@ -324,6 +325,18 @@ box(
                     )
                   )
                 )),
+
+
+tabItem("tm_heat",
+        
+            
+            box(
+              title = "Heatmap", solidHeader = TRUE,status = 'success',
+              width = 6,
+              
+              plotlyOutput("heatResults")
+            )
+),
         #
         #       tabItem(
         #         "tm_seqs",
@@ -908,7 +921,7 @@ tabItem(
 
   
   box(
-    title = "Game Sequences", solidHeader = TRUE,status = 'success',
+    title = "Goals per Game", solidHeader = TRUE,status = 'success',
     width = 6,
     
     div(
