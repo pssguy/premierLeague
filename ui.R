@@ -333,9 +333,18 @@ tabItem("tm_heat",
             box(
               title = "Heatmap", solidHeader = TRUE,status = 'success',
               width = 6,
-              
-              plotlyOutput("heatResults")
-            )
+              selectInput("heatTeam","Choose team",teamsChoice_2, selected="Liverpool"),
+              plotlyOutput("heatResults"),
+              h4("Click on a cell in the heatmap to display table of results")
+              #verbatimTextOutput("selection")
+            ),
+        box(
+          title = "Results by Scoreline", solidHeader = TRUE,status = 'success',
+          width = 6,
+          uiOutput("heatHeader"),
+          DT::dataTableOutput("heatTable")
+          
+        )
 ),
         #
         #       tabItem(
