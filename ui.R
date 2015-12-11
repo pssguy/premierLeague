@@ -27,7 +27,7 @@
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Result Heatmap",tabName = "tm_heat", selected=T),
+        menuSubItem("Scoreline Heatmap",tabName = "tm_heat", selected=T),
         menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
         #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),

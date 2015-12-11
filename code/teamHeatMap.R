@@ -35,7 +35,7 @@ output$heatResults <- renderPlotly({
                                   unique(test$GA))))
   
   
-  plot_ly(x = unique(test$GF), y = unique(test$GF), z = Games, key = mdat, hoverinfo="z",
+  plot_ly(x = unique(test$GF), y = unique(test$GF), z = Games, key = Games, hoverinfo="z",
           colorscale='YIOrRd', reversescale=T,
           type = "heatmap") %>%
     layout(xaxis = list(title = "Goals Against"), 
@@ -47,26 +47,26 @@ cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
 
 #  cv <- ClientValue$new("plotly_click", group = "A") #object 'ClientValue' not found
 
-output$selection <- renderPrint({
-  s <- cv$get()
-  print(s)
-  if (length(s) == 0) {
-    "Click on a cell in the heatmap to display a scatterplot"
-  } else {
-    cat("You selected: \n\n")
-    as.list(s)
-  }
-})
+# output$selection <- renderPrint({
+#   s <- cv$get()
+#   print(s)
+#   if (length(s) == 0) {
+#     "Click on a cell in the heatmap to display a scatterplot"
+#   } else {
+#     cat("You selected: \n\n")
+#     as.list(s)
+#   }
+# })
 
 output$heatHeader <- renderUI({
   s <- cv$get()
   if (length(s)==0) return()
-   print(s[["y"]])
-   print(s[["x"]])
+#    print(s[["y"]])
+#    print(s[["x"]])
   gFor=s[["y"]]
   gAg =s[["x"]]
-  print(gFor)
-  print(gAg)
+#   print(gFor)
+#   print(gAg)
   
  
   
