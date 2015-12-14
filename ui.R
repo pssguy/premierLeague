@@ -950,7 +950,7 @@ tabItem(
   
   
   box(
-    title = "Percent Full Games", solidHeader = TRUE,status = 'success',
+    title = "Percent Full Games - zoom and hover for details, Click for Game Details Chart", solidHeader = TRUE,status = 'success',
     width = 6,
 #     div(
 #       style = "display:inline-block; padding-right: 20px;",
@@ -959,11 +959,18 @@ tabItem(
 #       style = "display:inline-block",  sliderInput("sp_pcFullGames","Appearances",min=1,max=500,value=50)
 #     ),
 selectInput("sp_pcFullGamsTeams","Choose",teamsChoice_2,width=150),
-sliderInput("sp_pcFullGames","Appearances",min=1,max=500,value=50),
+sliderInput("sp_pcFullGames","Minimum Appearances",min=1,max=500,value=50),
 
     
     plotlyOutput("pcFullGames")
-  )
+  ),
+box(
+  title = "Player Appearances - Hover point for Details", solidHeader = TRUE,status = 'success',
+  width = 6,
+ 
+  plotlyOutput("pcFullGamesDets")
+)
+
 ),
       
       
