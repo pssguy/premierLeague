@@ -60,6 +60,7 @@
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
+        menuSubItem("Percent Full Games",tabName = "sp_pcFullGames", selected=T),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
@@ -941,6 +942,27 @@ tabItem(
     ),
 
     DT::dataTableOutput("tmGoalsSince")
+  )
+),
+
+tabItem(
+  "sp_pcFullGames",
+  
+  
+  box(
+    title = "Percent Full Games", solidHeader = TRUE,status = 'success',
+    width = 6,
+#     div(
+#       style = "display:inline-block; padding-right: 20px;",
+#     selectInput("sp_pcFullGamsTeams","Choose",teamsChoice_2),width=120),
+#     div(
+#       style = "display:inline-block",  sliderInput("sp_pcFullGames","Appearances",min=1,max=500,value=50)
+#     ),
+selectInput("sp_pcFullGamsTeams","Choose",teamsChoice_2,width=150),
+sliderInput("sp_pcFullGames","Appearances",min=1,max=500,value=50),
+
+    
+    plotlyOutput("pcFullGames")
   )
 ),
       

@@ -26,6 +26,7 @@ library(choroplethrMaps)
 library(taucharts)
 library(daff)
 library(plotly)
+library(crosstalk)
 
 
 positions <- read_csv("positions.csv") ##
