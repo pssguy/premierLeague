@@ -27,7 +27,7 @@
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Scoreline Heatmap",tabName = "tm_heat", selected=T),
+        menuSubItem("Scoreline Heatmap",tabName = "tm_heat"),
         menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
         #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
@@ -47,7 +47,8 @@
         menuSubItem("By Round", tabName = "st_round"),
         menuSubItem("By Position", tabName = "st_position"),
         menuSubItem("By Team", tabName = "st_team"),
-        menuSubItem("By Date", tabName = "st_date")
+        menuSubItem("By Date", tabName = "st_date"),
+        menuSubItem("Leaders by Season", tabName = "st_leaders",selected=T)
       ),
       
       
@@ -60,7 +61,7 @@
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("Percent Full Games",tabName = "sp_pcFullGames", selected=T),
+        menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
@@ -526,6 +527,23 @@ tabItem("tm_heat",
               DT::dataTableOutput("st_team")
             )
           ),
+
+tabItem(
+  "st_leaders",
+  box(
+    width = 6,
+    title = "Number of leadership changes by Year",solidHeader = FALSE,
+    collapsible = FALSE, collapsed = FALSE,
+   plotlyOutput("st_topChanges")
+  ),
+  box(
+    width = 6,
+    title = "Progress of teams that topped League - hover chart for results",solidHeader = FALSE,
+    collapsible = FALSE, collapsed = FALSE,
+    plotlyOutput("st_topChangesWeekly")
+  )
+),
+
           tabItem(
             "st_date",
             box(
