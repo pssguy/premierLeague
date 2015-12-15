@@ -202,24 +202,45 @@ box(
       tabItem(
         "tm_glance",
         fluidRow(
-          tabBox(#    tabPanel("Where in the World (click for details)",
-            #             leafletOutput("teamLeaflet")), # height='90%', width='90%' produces blank area also seemed to impact other tables on page!!!!!
-            tabPanel("Squad Photo",htmlOutput("squadPhoto"),
-            #tabPanel("Where in the World",plotOutput("birthChoropleth")),
-            # tabPanel("Where in the World (click for details)",helpText("Available Soons"))
-            #),
-            box(
-              title = "EPL Finishing Positions",width = 4,height = 375,solidHeader = TRUE,status = 'success',
-              
-              plotOutput("seasonsHist")
-            ),
-            box(
-              title = "Top LineUp",width = 2,solidHeader = TRUE,status = 'success',
-              h5(textOutput("lineupCount")),
-              hr(),
-              textOutput("lineupText")
-            )
-            
+#           tabBox(#    tabPanel("Where in the World (click for details)",
+#             #             leafletOutput("teamLeaflet")), # height='90%', width='90%' produces blank area also seemed to impact other tables on page!!!!!
+#             tabPanel("Squad Photo",htmlOutput("squadPhoto"),
+#             #tabPanel("Where in the World",plotOutput("birthChoropleth")),
+#             # tabPanel("Where in the World (click for details)",helpText("Available Soons"))
+#             #),
+#             box(
+#               title = "EPL Finishing Positions",width = 4,height = 375,solidHeader = TRUE,status = 'success',
+#               
+#               plotOutput("seasonsHist")
+#             ),
+#             box(
+#               title = "Top LineUp",width = 2,solidHeader = TRUE,status = 'success',
+#               h5(textOutput("lineupCount")),
+#               hr(),
+#               textOutput("lineupText")
+#             )
+#             
+#             
+#           ))
+          
+          
+          
+         
+            box("Squad Photo",htmlOutput("squadPhoto")),
+                     
+                     box(
+                       title = "EPL Finishing Positions",width = 4,height = 375,solidHeader = TRUE,status = 'success',
+                       
+                       plotOutput("seasonsHist")
+                     ),
+                     box(
+                       title = "Top LineUp",width = 2,solidHeader = TRUE,status = 'success',
+                       h5(textOutput("lineupCount")),
+                       hr(),
+                       textOutput("lineupText")
+                     )
+                     
+                     
             
           ),
           
@@ -241,7 +262,7 @@ box(
               DT::dataTableOutput("mostCards")
             )
           )
-        ))),
+        ),
         
         
         tabItem("tm_playerSummary",
@@ -538,7 +559,8 @@ tabItem(
   ),
   box(
     width = 6,
-    title = "Progress of teams that topped League - hover chart for results",solidHeader = FALSE,
+    title = "Progress of teams that topped League - hover chart for results
+",solidHeader = FALSE,
     collapsible = FALSE, collapsed = FALSE,
     plotlyOutput("st_topChangesWeekly")
   )
