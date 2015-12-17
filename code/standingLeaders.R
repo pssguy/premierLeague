@@ -63,7 +63,8 @@ output$st_topChanges <- renderPlotly({
       glimpse(df)
       
       
-      theTitle<-paste0(yr, " (click Team-name in legend to show/no show)")
+      theTitle<-paste0(yr, " (click Team-name
+ in legend to show/no show)")
       
       plot_ly(df,x=tmYrGameOrder, y=position, mode="markers+lines", color=team,
               hoverinfo = "text",

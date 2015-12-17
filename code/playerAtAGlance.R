@@ -1,8 +1,9 @@
 ## summary stats/photo/birtplace maybe add transfers in?
+#print("playerpataglance") when addressing problem - does not show anyways
 
-
-data <- reactive({
+glanceData <- reactive({
   
+  print("enter ata aglance reactive") # this is not even being called?
   if(is.null(input$playerA)) return()
   
 
@@ -38,47 +39,55 @@ career <- cbind(max,tot)  %>%
 
 
 
-
-
+print("career")
+print(career)
 info=list(teams=teams,seasons=seasons,career=career)
 return(info)
 
 })
 
 output$appsBox <- renderInfoBox({
+#   if (is.null(input$playerA)) return()
+#   if (input$playerA=="") return()
+#   print(input$playerA)
+#   print("data()$career$showApps")
+#   print(glanceData()$career$showApps) #NULL
+#   print("that was data()$career$showApps")
+  
     infoBox(
-    "Appearances",data()$career$showApps, icon = icon("futbol-o"), #user-times
+    "Appearances",glanceData()$career$showApps, icon = icon("futbol-o"), #user-times
     color = "light-blue", subtitle = " Tot - Max(Year)"
   )
 })
 output$teamsBox <- renderInfoBox({
+  print("enterteamsbox")
   infoBox(
-    "Teams",data()$teams, icon = icon("home"),
+    "Teams",glanceData()$teams, icon = icon("home"),
     color = "light-blue"
   )
 })
 output$goalsBox <- renderInfoBox({
   infoBox(
-    "Goals",data()$career$showGoals, icon = icon("bullseye"),
+    "Goals",glanceData()$career$showGoals, icon = icon("bullseye"),
     color = "green", subtitle = " Tot - Max(Year)"
   )
 })
 output$assistsBox <- renderInfoBox({
   infoBox(
-    "Assists",data()$career$showAssists, icon = icon("heart"),
+    "Assists",glanceData()$career$showAssists, icon = icon("heart"),
     color = "green", subtitle = " Tot - Max(Year)"
   )
 })
 output$cardsBox <- renderInfoBox({
   infoBox(
-    "Cards",data()$career$showCards, icon = icon("book"),
+    "Cards",glanceData()$career$showCards, icon = icon("book"),
     color = "orange", subtitle = " Tot - Max(Year)"
   )
 })
 output$seasonsBoxPlayer <- renderInfoBox({
  
   infoBox(
-    "Seasons",data()$seasons, icon = icon("calendar"),
+    "Seasons",glanceData()$seasons, icon = icon("calendar"),
     color = "light-blue"
   )
 })

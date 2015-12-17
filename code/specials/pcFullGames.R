@@ -1,5 +1,5 @@
 
-data <- reactive({
+fullGamesdata <- reactive({
   
   if (input$sp_pcFullGamsTeams=="All Teams") {
     df <-playerGame %>% 
@@ -26,7 +26,7 @@ data <- reactive({
 
 output$pcFullGames <- renderPlotly({
  
-  df <- data()$df
+  df <- fullGamesdata()$df
  
   
   plot_ly(df, x = count, y = fullPC, mode = "markers", hoverinfo = "text",color=POSITION,key=PLAYERID,
@@ -61,7 +61,7 @@ output$pcFullGames <- renderPlotly({
     s <- cv$get()
     if (length(s)==0) return()
     
-    df <- data()$df
+    df <- fullGamesdata()$df
 
     
   dets <- playerGame %>% 

@@ -79,22 +79,26 @@ output$heatHeader <- renderUI({
   }
 })
 output$heatTable <- DT::renderDataTable({
- 
-  s <- cv$get() 
+  s <- cv$get()
   
-  if (length(s)==0) {
+  if (length(s) == 0) {
     return()
   } else {
-
-    gFor=s[["y"]]
-    gAg =s[["x"]]
-    standings %>% 
-      ungroup() %>% 
-      filter(team==input$heatTeam&GF==gFor&GA==gAg) %>% 
-      arrange(desc(gameDate)) %>% 
-      select(Opponents=OppTeam,Venue=venue,
-             Season=season,Date=gameDate) %>% 
-      DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = FALSE,info=FALSE))
+    gFor = s[["y"]]
+    gAg = s[["x"]]
+    standings %>%
+      ungroup() %>%
+      filter(team == input$heatTeam & GF == gFor & GA == gAg) %>%
+      arrange(desc(gameDate)) %>%
+      select(
+        Opponents = OppTeam,Venue = venue,
+        Season = season,Date = gameDate
+      ) %>%
+      DT::datatable(
+        class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(
+          paging = TRUE, searching = FALSE,info = FALSE
+        )
+      )
   }
   
 })

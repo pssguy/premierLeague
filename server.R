@@ -39,6 +39,7 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="pl_goals") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_glance") {
+      print("pl_glance")
       #inputPanel(selectizeInput("playerA", label=NULL, c(Choose='',playerChoice),selected=values$playerID, options=list(maxOptions=10000)))
       #inputPanel(selectizeInput("playerA", label=NULL, choices =playerChoice,selected=values$playerID, options=list(maxOptions=10000)))
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
