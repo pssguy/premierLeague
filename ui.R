@@ -519,14 +519,15 @@ tabItem("tm_heat",
 tabItem(
   "st_boxplot",
   box(
-    width = 6, height=500,
-    title = "Standings",solidHeader = TRUE,status = 'success',
-   
+    width = 6, height=600,
+    collapsed=F,collapsible=T,
+    title = "Points Range by Games played - Click plot for Season standings",solidHeader = TRUE,status = 'success',
+    sliderInput("st_boxGames","Games Played", min=1,max=42, value=currentRound),
     plotlyOutput("st_BoxAll")
   ),
   box(
-    width = 6,
-    title = "Standings",solidHeader = TRUE,status = 'success',
+    width = 6,height=600,
+    collapsed=F,collapsible=T,
     
     plotlyOutput("st_BoxSeason")
   )
