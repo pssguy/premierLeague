@@ -44,11 +44,12 @@
       
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
+        menuSubItem("All Seasons", tabName = "st_boxplot",selected=T),
         menuSubItem("By Round", tabName = "st_round"),
         menuSubItem("By Position", tabName = "st_position"),
         menuSubItem("By Team", tabName = "st_team"),
         menuSubItem("By Date", tabName = "st_date"),
-        menuSubItem("Leaders by Season", tabName = "st_leaders",selected=T)
+        menuSubItem("Leaders by Season", tabName = "st_leaders")
       ),
       
       
@@ -515,6 +516,21 @@ tabItem("tm_heat",
 #                    
 #           ),
           ## Standings section
+tabItem(
+  "st_boxplot",
+  box(
+    width = 6, height=500,
+    title = "Standings",solidHeader = TRUE,status = 'success',
+   
+    plotlyOutput("st_BoxAll")
+  ),
+  box(
+    width = 6,
+    title = "Standings",solidHeader = TRUE,status = 'success',
+    
+    plotlyOutput("st_BoxSeason")
+  )
+),
           tabItem(
             "st_round",
             box(
