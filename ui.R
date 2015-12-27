@@ -1038,7 +1038,8 @@ tabItem(
   box(
   
     sliderInput("pcPlGoals","Minimum Goals",min=1,max=250,value=50),
-    
+    radioButtons("pcPlGoalsCat","Choose category",c("Long Range","Pen Area","6yd Box",
+                                                    "Open Play","Corner","Throw In","Indirect FK","Direct FK","Penalty","Right Foot","Left Foot","Header"), inline=T ),
     plotlyOutput("pcPlayerGoals")
   )
 ),
