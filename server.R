@@ -599,6 +599,7 @@ shinyServer(function(input, output, session) {
   source("code/specials/pcFullGames.R", local=TRUE)
   source("code/standingLeaders.R", local=TRUE)
   source("code/standingsBoxplot.R", local=TRUE)
+  source("code/specials/pcPlayerGoals.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

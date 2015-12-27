@@ -44,7 +44,7 @@
       
       menuItem(
         "Standings", tabName = "standings",icon = icon("table"),
-        menuSubItem("All Seasons", tabName = "st_boxplot",selected=T),
+        menuSubItem("All Seasons", tabName = "st_boxplot"),
         menuSubItem("By Round", tabName = "st_round"),
         menuSubItem("By Position", tabName = "st_position"),
         menuSubItem("By Team", tabName = "st_team"),
@@ -63,6 +63,7 @@
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
+        menuSubItem("Player % Goals by Category",tabName = "sp_pcPlayerGoals", selected=T),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
@@ -1028,6 +1029,18 @@ box(
   plotlyOutput("pcFullGamesDets")
 )
 
+),
+
+tabItem(
+  "sp_pcPlayerGoals",
+  
+  
+  box(
+  
+    sliderInput("pcPlGoals","Minimum Goals",min=1,max=250,value=50),
+    
+    plotlyOutput("pcPlayerGoals")
+  )
 ),
       
       
