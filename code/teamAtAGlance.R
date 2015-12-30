@@ -131,31 +131,13 @@ output$glanceTest <- renderText({
   input$teamZ
 })
 
-## look at ggplot alternative
-# observeEvent(teamData(),{
-#   
-# df <-  teamData()$test %>% 
-#     filter(season!="2015/16") 
-# #print(glimpse(df))
-# 
-# write_csv(df,"problem.csv")
-# 
-# df  %>% 
-#     
-#     ggvis(~final_Pos) %>% 
-#     set_options(width=220,height=220) %>% 
-#     add_axis("y", title="Seasons", format='d') %>% 
-#     add_axis("x", title="Position", format='d') %>% 
-#     bind_shiny('seasonsHist')
-#   
-# })
 
 
 output$seasonsHist <- renderPlot({
   if(is.null(teamData())) return
   
 df <-  teamData()$test 
-#write_csv(df,"problem.csv")
+
 # condition for showing bolder color ie current season
 cond <- df$season =="2015/16"
 #set pretty scales - function does not work

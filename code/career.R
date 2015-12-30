@@ -112,7 +112,7 @@ output$career <- DT::renderDataTable({
 })
 
 
-output$pointsByYearChart <- renderTaucharts({
+output$pointsByYearChart <- renderPlotly({
   if (is.null(input$playerA)) return()
   
   df <-playerGame %>% 
@@ -124,13 +124,30 @@ output$pointsByYearChart <- renderTaucharts({
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup() 
   
-  df %>% 
-    tauchart() %>% 
-    tau_point("season","Ppm", size="2") %>% 
-    # tau_line("season","Ppm") %>% 
-    tau_tooltip(c("Goals","Assists")) %>% 
-    tau_guide_x(label="") %>% 
-    tau_guide_y(label ='Points per 90 mins')
+#   write_csv(df,"tauproblem.csv")
+#   
+#   df %>% 
+#     tauchart() %>% 
+#     tau_point("season","Ppm", size="2") %>% 
+#     # tau_line("season","Ppm") %>% 
+#     tau_tooltip(c("Goals","Assists")) %>% 
+#     tau_guide_x(label="") %>% 
+#     tau_guide_y(label ='Points per 90 mins')
+  
+  plot_ly(df, x = season, y = Ppm, mode = "markers", hoverinfo = "text",
+          marker=list(size=Mins/10, sizemode="area"),
+          text = paste(
+            "<br>Goals: ",Goals,
+            "<br>Assists: ",Assists,
+            "<br>Points: ",Points,
+            "<br>Minutes: ",Mins
+          )) %>%
+    layout(hovermode = "closest",
+           title="Points per 90 mins by Season",
+           xaxis=list(title=""),
+           yaxis=list(title="Points per 90 mins",rangemode="tozero"
+           )
+    )
   
 })
 

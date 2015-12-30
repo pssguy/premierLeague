@@ -107,6 +107,9 @@ pcPlayerGoalsData <- reactive({
       ungroup() %>% 
       arrange(desc(pc))
   }
+  # jitter so points are distinguishable
+  df$jitpc <- jitter(df$pc, amount=0.2)
+  df$jittot <- jitter(df$tot, amount=0.2)
   
   info=list(df=df,category=input$pcPlGoalsCat)
   return(info)
@@ -118,10 +121,10 @@ output$pcPlayerGoals <- renderPlotly({
   
   df <- pcPlayerGoalsData()$df
 
-plot_ly(df, x = tot, y = pc, mode = "markers", hoverinfo = "text",
+plot_ly(df, x = jittot, y = jitpc, mode = "markers", hoverinfo = "text",
         text = paste(name,
                      "<br>Category: ",lr,
-                     "<br>Toatal: ",tot,
+                     "<br>Total: ",tot,
                      "<br>PerCent: ",pc,"%")) %>%
   layout(hovermode = "closest",
          title=paste0(pcPlayerGoalsData()$category," as % of Premier League Goals"),

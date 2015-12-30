@@ -7,7 +7,7 @@ output$playerMilestones <- DT::renderDataTable({
   print(glimpse(milestones))
 milestones %>% 
   DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
-                colnames=c('','Category','Games'),
+                colnames=c('','Category','Count'),
                 options= list(paging = FALSE, searching = FALSE,info=FALSE))
   
 }) 

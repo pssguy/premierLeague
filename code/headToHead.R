@@ -91,7 +91,7 @@ output$hthTable <- DT::renderDataTable({
   
   print(glimpse(info()$tbl))
   
-# write_csv(info()$tbl,"problem.csv")
+
  print(str(info()$tbl))
   info()$tbl %>% 
     select(-Pts) %>% 
