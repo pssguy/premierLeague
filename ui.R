@@ -27,7 +27,8 @@ dashboardPage(
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Scoreline Heatmap",tabName = "tm_heat"),
+        menuSubItem("Scoreline Heatmap",tabName = "tm_heat", selected =
+                      T),
         menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
         #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
@@ -60,8 +61,7 @@ dashboardPage(
         "Specials", tabName = "specials",
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
         menuSubItem("Birthplace",tabName = "sp_birthplace"),
-        menuSubItem("Deficits Overcome",tabName = "sp_deficits", selected =
-                      T),
+        menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
@@ -373,10 +373,22 @@ dashboardPage(
           #verbatimTextOutput("selection")
         ),
         box(
-          title = "Results by Scoreline", solidHeader = TRUE,status = 'success',
+          title = "Results by Scoreline",
+          footer="Click row for Goalscorer timeline",
+          solidHeader = TRUE,status = 'success',
           width = 6,
           uiOutput("heatHeader"),
           DT::dataTableOutput("heatTable")
+          
+        ),
+        box(
+          solidHeader = TRUE,status = 'success',
+          title="Goal Timeline",
+          collapsible = T,collapsed = F,
+          height=200,
+          
+          
+          d3kit_timelineOutput("matchScorers")
           
         )
       ),

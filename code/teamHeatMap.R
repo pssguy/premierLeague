@@ -58,47 +58,166 @@ cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
 #   }
 # })
 
-output$heatHeader <- renderUI({
+
+## look to put into reactive so that can use to produce goal scoring table
+
+heatData <- reactive({
+  
+  if(is.null(cv$get())) return
+  
   s <- cv$get()
   if (length(s)==0) return()
-#    print(s[["y"]])
-#    print(s[["x"]])
+  
   gFor=s[["y"]]
   gAg =s[["x"]]
-#   print(gFor)
-#   print(gAg)
-  
  
   
+  
+  
   if (gFor>gAg) {
-  h4(paste0(gFor,"-",gAg, " victories"))
+ header<-  h4(paste0(gFor,"-",gAg, " victories"))
   } else if (gAg>gFor) {
-    h4(paste0(gFor,"-",gAg, " losses")) 
+    header<-    h4(paste0(gFor,"-",gAg, " losses")) 
   } else {
-  h4(paste0(gFor,"-",gAg, " draws"))
+    header<-   h4(paste0(gFor,"-",gAg, " draws"))
   }
+  
+ df <- standings %>%
+    ungroup() %>%
+    filter(team == input$heatTeam & GF == gFor & GA == gAg) %>%
+    arrange(desc(gameDate)) %>%
+    select(
+      Opponents = OppTeam,Venue = venue,
+      Season = season,Date = gameDate,MATCHID
+    ) 
+ 
+ info=list(df=df,header=header)
+ return(info)
+  
+  
 })
+
+
+output$heatHeader <- renderUI({
+
+  if (is.null(heatData())) return()
+  heatData()$header
+  
+})
+
+
 output$heatTable <- DT::renderDataTable({
-  s <- cv$get()
-  
-  if (length(s) == 0) {
-    return()
-  } else {
-    gFor = s[["y"]]
-    gAg = s[["x"]]
-    standings %>%
-      ungroup() %>%
-      filter(team == input$heatTeam & GF == gFor & GA == gAg) %>%
-      arrange(desc(gameDate)) %>%
-      select(
-        Opponents = OppTeam,Venue = venue,
-        Season = season,Date = gameDate
-      ) %>%
-      DT::datatable(
-        class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(
-          paging = TRUE, searching = FALSE,info = FALSE
-        )
+  if (is.null(heatData())) return()
+  heatData()$df %>%
+      DT::datatable(selection='single',
+                    class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(
+                      paging = TRUE, searching = FALSE,info = FALSE
+                    )
       )
-  }
+  })
+  
+
+output$matchScorers <- renderd3kit_timeline({
+  
+  if(is.null(values$MATCHID)) return()
+  
+  allTeams <- teamGames %>% 
+    filter(MATCHID == values$MATCHID)
+  
+  teamMatch <- allTeams$TEAMMATCHID
+  
+  twGoals <- goals %>% 
+    filter(TEAMMATCHID %in% teamMatch)
+  
+  a <- twGoals %>% 
+    left_join(playerGame) %>% 
+    select(player=LASTNAME,time=TIME,team=TEAMNAME,venue,MATCHID) %>% 
+    mutate(color=ifelse(venue=="H","#0000ff","#458B00")) %>%
+    arrange(time)
+  
+  df <- a %>% 
+    filter(MATCHID==values$MATCHID)
+  
+  print("glimpsedf")
+  print(glimpse(df))
+  
+  write_csv(df,"problem.csv")
+  
+  colorJS <- htmlwidgets::JS("function(d){return d.color;}")
+  
+  d3kit_timeline(
+    df,
+    direction = "down",
+    ## having team there takes up too much space was return d.player + ' - ' + d.team;
+    textFn = htmlwidgets::JS(
+      "
+    function(d){
+    return d.player;
+    }
+    "
+    ),
+    # color probably needs to be treated like the *Fn arguments
+    #  for ultimate flexibility
+    dotColor = colorJS,
+    linkColor = colorJS,
+    labelTextColor = "#FFF",
+    labelBgColor = colorJS,
+    dotRadius = 3,
+    labella = list(maxPos = 600),
+    layerGap = 10, # distance to axis
+    margin = list(left = 20, right = 100, top = 20, bottom = 40),
+    scale = htmlwidgets::JS("d3.scale.linear()"),
+    domain = c(0,90),
+    width = 500,
+    height = 150
+  )
   
 })
+
+
+# output$heatHeader <- renderUI({
+#   s <- cv$get()
+#   if (length(s)==0) return()
+# #    print(s[["y"]])
+# #    print(s[["x"]])
+#   gFor=s[["y"]]
+#   gAg =s[["x"]]
+# #   print(gFor)
+# #   print(gAg)
+#   
+#  
+#   
+#   if (gFor>gAg) {
+#   h4(paste0(gFor,"-",gAg, " victories"))
+#   } else if (gAg>gFor) {
+#     h4(paste0(gFor,"-",gAg, " losses")) 
+#   } else {
+#   h4(paste0(gFor,"-",gAg, " draws"))
+#   }
+# })
+# 
+# 
+# output$heatTable <- DT::renderDataTable({
+#   s <- cv$get()
+#   
+#   if (length(s) == 0) {
+#     return()
+#   } else {
+#     gFor = s[["y"]]
+#     gAg = s[["x"]]
+#     standings %>%
+#       ungroup() %>%
+#       filter(team == input$heatTeam & GF == gFor & GA == gAg) %>%
+#       arrange(desc(gameDate)) %>%
+#       select(
+#         Opponents = OppTeam,Venue = venue,
+#         Season = season,Date = gameDate
+#       ) %>%
+#       DT::datatable(selection='single',
+#         class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(
+#           paging = TRUE, searching = FALSE,info = FALSE
+#         )
+#       )
+#   }
+#   
+# })

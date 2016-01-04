@@ -5,6 +5,7 @@ values <- reactiveValues()
  #values$TEAMNAME <- "Arsenal" 
  values$TEAMNAME <- NULL
  values$Opponents <- NULL
+ values$MATCHID <- NULL
 
 shinyServer(function(input, output, session) {
   
@@ -627,6 +628,17 @@ shinyServer(function(input, output, session) {
     s = as.integer(input$mostCards_rows_selected)
     values$playerID <- teamData()$mostCards$PLAYERID[s]
     updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  })
+  
+  ## looking to go from heatmap table to showing scorers - may be better elsewhere
+  
+  observeEvent(input$heatTable_rows_selected,{
+    s = as.integer(input$heatTable_rows_selected)
+    print(s)
+    print(glimpse(heatData()$df))
+    values$MATCHID <- heatData()$df$MATCHID[s]
+    print(values$MATCHID)
+    #updateTabItems(session, inputId="sbMenu", selected="pl_glance")
   })
   
   ## wan to re-address
