@@ -111,7 +111,8 @@ output$heatTable <- DT::renderDataTable({
   heatData()$df %>%
       DT::datatable(selection='single',
                     class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(
-                      paging = TRUE, searching = FALSE,info = FALSE
+                      paging = TRUE, searching = FALSE,info = FALSE,
+                      columnDefs= list(list(visible=FALSE,targets=list(4)))
                     )
       )
   })

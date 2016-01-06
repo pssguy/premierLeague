@@ -50,6 +50,10 @@ observe({
   
   df$id <- 1:nrow(df)
   
+  print("save prob")
+  write_csv(df,"problem.csv")
+  print("prob saved")
+  
   all_values <- function(x) {
     if(is.null(x)) return(NULL)
     row <- df[x$id == df$id,c("season","pc")]
@@ -101,7 +105,7 @@ df %>%
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
       set_options(width=500) %>% 
-  add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+ # add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
   add_axis("x", properties = axis_props(labels = list(
     angle = 45, align = "left", fontSize = 10
   )),title = "") %>% 
@@ -117,7 +121,7 @@ df %>%
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
        scale_numeric("y",domain=c(0,100)) %>% 
-      add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+  #    add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
       add_axis("x", properties = axis_props(labels = list(
         angle = 45, align = "left", fontSize = 10
       )),title = "") %>% 

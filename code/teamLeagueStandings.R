@@ -9,9 +9,9 @@ observe({
   
   theTeam <- input$teamA
   theSeason <- input$teamYears
-  print("team and season")
-  print(theTeam)
-  print(theSeason)
+#   print("team and season")
+#   print(theTeam) # theTeam <-  "Arsenal"
+#   print(theSeason)
   graph <- standings %>%
     filter(team==theTeam&season==theSeason)
   
@@ -30,7 +30,8 @@ observe({
     select(season,leader=team,tmYrGameOrder,lpos=position,lpoints=cumPts)
   
   
-  
+  print("theseason")
+  print(theSeason)
   pos4 <- standings %>%
     filter(position==4&season==theSeason) %>%
     select(season,euro=team,tmYrGameOrder,epos=position,epoints=cumPts)
@@ -38,15 +39,15 @@ observe({
   ## need to vary in shiny
   if (theSeason >"1994/95") {
     pos18 <- standings %>%
-      filter(position==18&season==theSeason) %>%
+      filter(position==17&season==theSeason) %>%
       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
   } else if (theSeason=="1994/95") {
     pos18 <- standings %>%
-      filter(position==19&season==theSeason) %>%
+      filter(position==18&season==theSeason) %>%
       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
   } else {
     pos18 <- standings %>%
-      filter(position==20&season==theSeason) %>%
+      filter(position==19&season==theSeason) %>%
       select(season,rel=team,tmYrGameOrder,rpos=position,rpoints=cumPts)
   }
   #str(pos1)
@@ -68,7 +69,7 @@ observe({
     layer_lines(~tmYrGameOrder,~rpoints,stroke := "red") %>%
     add_tooltip(all_values, "hover") %>%
     handle_click(getLineups) %>% 
-    add_axis("y",title="Points",format='d') %>%
+    add_axis("y",title="Points") %>%
     add_axis("x",title="Games Played. Lines also shown for 1st,4th and final Relegation Position",format='d') %>%
     add_legend("fill",title="") %>%
     set_options(width = "auto", height = 400, resizable=FALSE) %>%
