@@ -1,11 +1,13 @@
 ## probbaly need to have set of selectors a la PFA
-## also may want to go to reactive
+## isssue with error
 
 #resData <- eventReactive(input$teamA,{ this works until another reactive is added eg input$seqVenue
+## errro gets shown momentarily if this is first category in teams gone to - bit unlikely
   resData <- reactive({
-  print("enter teamWins")
-  print(input$seqVenue)
-  if(is.null(input$teamA)) return()
+  
+  if (is.null(input$teamA)) return()
+ 
+  if (length(input$teamA)<1) return()
   if (input$seqVenue=="All") {
   W <-standings %>% 
     ungroup() %>% 
@@ -85,152 +87,259 @@
   
 })
 
-output$tm_wins <- renderPlot({
+  
+output$tm_wins <- renderPlotly({
 
-  if(is.null(resData)) return() # does initially give an error on page
+ 
+  if(is.null(resData)) return()
   W <- resData()$W
+  
+ 
   
   Win <- W %>% 
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
+  
+ 
+
+  
   if (tail(W,1)$value==1) {
-    cond <- Win$slength == tail(W,1)$slength
+    curr <- tail(W,1)$slength 
+    Win <-  Win %>% 
+      mutate(opacity=ifelse(slength==curr,1,0.3))
   } else {
-    cond <- FALSE
+    Win$opacity <- 0.3
   }
-  ggplot(Win, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Win,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Win,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("Wins")
+
+
+  plot_ly(Win,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, # could equally be slength
+          hoverinfo="text",
+           text=paste("Run:",slength,"<br> Count:",n)) %>% 
+                layout(hovermode = "closest", title= "Wins",
+                       xaxis=list(title="Run"),
+                       yaxis=list(title="Count"
+                       ))
+ 
+
+})
+
+
+
+output$tm_noWins <- renderPlotly({
   
-}, height=200)
-
-
-output$tm_noWins <- renderPlot({
   if(is.null(resData)) return()
   W <- resData()$W
+  
+  print(tail(W,1))
   
   Win <- W %>% 
     filter(value==0) %>% 
     group_by(slength) %>% 
     tally()
+  
+  
   if (tail(W,1)$value==0) {
-    cond <- Win$slength == tail(W,1)$slength
+    curr <- tail(W,1)$slength 
+  Win <-  Win %>% 
+    mutate(opacity=ifelse(slength==curr,1,0.3))
   } else {
-    cond <- FALSE
+    Win$opacity <- 0.3
   }
-  ggplot(Win, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Win,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Win,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("Winless")
   
-}, height=200)
+  
+  plot_ly(Win,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, 
+          hoverinfo="text",
+          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "No Wins",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           ))
+  
+})
 
-output$tm_draws <- renderPlot({
+output$tm_draws <- renderPlotly({
   
   if(is.null(resData)) return()
   D <- resData()$D
   
-  Draw <- D %>% 
+  
+  
+ Draw <- D %>% 
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
+  
+  
+  
+  
   if (tail(D,1)$value==1) {
-    cond <- Draw$slength == tail(D,1)$slength
+    curr <- tail(D,1)$slength 
+    Draw <-  Draw %>% 
+      mutate(opacity=ifelse(slength==curr,1,0.3))
   } else {
-    cond <- FALSE
+    Draw$opacity <- 0.3
   }
-  ggplot(Draw, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Draw,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Draw,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("Draws")
   
-}, height=200)
+  
+  plot_ly(Draw,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, 
+          hoverinfo="text",
+          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "Draws",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           ))
+  
+  
+})
 
+### native plotly
 
-output$tm_noDraws <- renderPlot({
-  if(is.null(resData)) return()
+output$tm_noDraws <- renderPlotly({
   if(is.null(resData)) return()
   D <- resData()$D
+  
+  
   
   Draw <- D %>% 
     filter(value==0) %>% 
     group_by(slength) %>% 
     tally()
-  if (tail(D,1)$value==0) {
-    cond <- Draw$slength == tail(D,1)$slength
-  } else {
-    cond <- FALSE
-  }
-  ggplot(Draw, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Draw,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Draw,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("No Draws")
   
-}, height=200)
+  
+  
+  
+  if (tail(D,1)$value==0) {
+    curr <- tail(D,1)$slength 
+    Draw <-  Draw %>% 
+      mutate(opacity=ifelse(slength==curr,1,0.3))
+  } else {
+    Draw$opacity <- 0.3
+  }
+  
+  
+  plot_ly(Draw,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, 
+          hoverinfo="text",
+          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "No Draws",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           ))
+  
+})
 
 
-output$tm_losses <- renderPlot({
+output$tm_losses <- renderPlotly({
   
   if(is.null(resData)) return()
   L <- resData()$L
+  
+  
   
   Loss <- L %>% 
     filter(value==1) %>% 
     group_by(slength) %>% 
     tally()
-  if (tail(L,1)$value==1) {
-    cond <- Loss$slength == tail(L,1)$slength
-  } else {
-    cond <- FALSE
-  }
-  ggplot(Loss, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Loss,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Loss,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("Defeats")
   
-}, height=200)
+  
+  
+  
+  if (tail(L,1)$value==1) {
+    curr <- tail(L,1)$slength 
+    Loss <-  Loss %>% 
+      mutate(opacity=ifelse(slength==curr,1,0.3))
+  } else {
+    Loss$opacity <- 0.3
+  }
+  
+  
+  plot_ly(Loss,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, 
+          hoverinfo="text",
+          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "Losses",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           ))
+  
+  
+})
 
+### native plotly
 
-output$tm_noLosses <- renderPlot({
+output$tm_noLosses <- renderPlotly({
   
   if(is.null(resData)) return()
   L <- resData()$L
+  
+  
   
   Loss <- L %>% 
     filter(value==0) %>% 
     group_by(slength) %>% 
     tally()
-  if (tail(L,1)$value==0) {
-    cond <- Loss$slength == tail(L,1)$slength
-  } else {
-    cond <- FALSE
-  }
-  ggplot(Loss, aes(x=slength,y=n)) +
-    geom_bar(data=subset(Loss,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
-    geom_bar(data=subset(Loss,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    theme_bw() +
-    xlab("Sequence") +
-    ylab("Count") +
-    ggtitle("Undefeated")
   
-}, height=200)
+  
+  
+  
+  if (tail(L,1)$value==0) {
+    curr <- tail(L,1)$slength 
+    Loss <-  Loss %>% 
+      mutate(opacity=ifelse(slength==curr,1,0.3))
+  } else {
+    Loss$opacity <- 0.3
+  }
+  
+  
+  plot_ly(Loss,x=slength,
+          y=n,
+          type="bar",
+          marker=list(color='blue'),
+          opacity=opacity,
+          showlegend=F,
+          group= slength, 
+          hoverinfo="text",
+          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "No Losses",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           ))
+  
+  
+  
+  
+})
+
+
 
 output$tmWinSeq <- DT::renderDataTable({
   if(is.null(resData())) return()

@@ -17,7 +17,7 @@ dashboardPage(
     sidebarMenu(
       id = "sbMenu",
       
-      menuItem("Front Page",tabName = "frontPage"),
+      menuItem("Front Page",tabName = "frontPage", selected =T),
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
@@ -27,8 +27,7 @@ dashboardPage(
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
-        menuSubItem("Scoreline Heatmap",tabName = "tm_heat", selected =
-                      T),
+        menuSubItem("Scoreline Heatmap",tabName = "tm_heat"),
         menuSubItem("Sequences-Results",tabName = "tm_seqs")#,
         #menuSubItem("Sequences-Goals",tabName = "tm_seqs_goals")
       ),
@@ -60,7 +59,7 @@ dashboardPage(
       menuItem(
         "Specials", tabName = "specials",
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
-        menuSubItem("Birthplace",tabName = "sp_birthplace"),
+      #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
@@ -384,7 +383,7 @@ dashboardPage(
         box(
           solidHeader = TRUE,status = 'success',
           title="Goal Timeline",
-          collapsible = T,collapsed = F,
+         # collapsible = T,collapsed = F,
           height=200,
           
           
@@ -721,7 +720,7 @@ dashboardPage(
           width = 5,
           box(
             width = 12,title = "Points per 90 Minutes Hover for details",solidHeader = TRUE,status = 'success',
-            footer = "Hover for details. Point size reflects minutes played",
+            footer = "Hover for details. Circle size reflects minutes played",
             collapsible = TRUE, collapsed = FALSE,
             #  ggvisOutput("pointsByYearChart")
             plotlyOutput("pointsByYearChart")

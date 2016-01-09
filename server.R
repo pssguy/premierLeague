@@ -31,6 +31,8 @@ shinyServer(function(input, output, session) {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
+    } else if (input$sbMenu=="tm_heat") {
+      inputPanel(selectInput("heatTeam", label=NULL,selected=values$TEAMNAME, teamsChoice))
     } else if (input$sbMenu=="tm_seqs_goals") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
       
@@ -590,7 +592,7 @@ shinyServer(function(input, output, session) {
   source("code/playerByOpponent.R", local=TRUE)
   source("code/sp_youngest.R", local=TRUE)
   source("code/sp_leadingGoalscorers.R", local=TRUE)
-  source("code/sp_birthplace.R", local=TRUE)
+ # source("code/sp_birthplace.R", local=TRUE)
   source("code/playerComparisons.R", local=TRUE)
   source("code/allPlayerGoalSeqs.R", local=TRUE)
   source("code/specials/twoClubs.R", local=TRUE)

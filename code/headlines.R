@@ -248,12 +248,13 @@ output$teamLeadersCurrent <- DT::renderDataTable({
   
   print(maxDate)
   
-  # currentTeams <- df$TEAMNAME may want to use this in below if just 
+
   
   ty <- data.frame(playerGame %>%
                      filter(gameDate<=maxDate&season==currentYear) %>%
                      group_by(PLAYERID,name,TEAMNAME) %>%
-                     summarise(goals=sum(Gls),assists=sum(Assists))) 
+                     summarise(goals=sum(Gls),assists=sum(Assists))) %>% 
+                     mutate(points=goals+assists)
   
   print(glimpse(ty))
   
@@ -264,11 +265,11 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     ungroup() %>%
     select(team=TEAMNAME,goals,name)
   
-  print("good to here")
   
-  #tyGoals[tyGoals$goals==0,]$name <- ""
   
-  tyGoals$name <- ifelse(tyGoals$goals==0,"",tyGoals$name)
+  
+  
+  tyGoals$gname <- ifelse(tyGoals$goals==0,"",tyGoals$name)
   
   tyAssists <- ty %>%
     arrange(desc(assists)) %>%
@@ -277,9 +278,18 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     ungroup() %>%
     select(team=TEAMNAME,assists,name)
   
-  #tyAssists[tyAssists$assists==0,]$name <- ""
-  tyGoals$name <- ifelse(tyAssists$assists==0,"",tyGoals$name)
  
+  tyAssists$aname <- ifelse(tyAssists$assists==0,"",tyAssists$name)
+ 
+  tyPoints <- ty %>%
+    arrange(desc(points)) %>%
+    group_by(TEAMNAME) %>%
+    slice(1) %>% 
+    ungroup() %>%
+    select(team=TEAMNAME,points,name)
+  
+  
+  tyPoints$pname <- ifelse(tyPoints$points==0,"",tyPoints$name)
   
   ## for cards
   ty <- playerGame %>%
@@ -295,28 +305,33 @@ output$teamLeadersCurrent <- DT::renderDataTable({
     group_by(TEAMNAME) %>%
     slice(1) %>% 
     ungroup() %>%
-    select(team=TEAMNAME,cards=n,name)
+    select(team=TEAMNAME,cards=n,cname=name)
   
   ## cp had no card first day so next is not relevant - need to correct later
   
  
   
-  tyAll <- tyGoals %>% 
-    inner_join(tyAssists,by=c("team"="team"))
+
   
-  
+  ## does this cater for where player has assist but no goal??
   tyAll <- tyGoals %>% 
     inner_join(tyAssists,by="team") %>% 
+    inner_join(tyPoints,by="team") %>% 
     left_join(tyCards,by="team")
   
   ## need to correct for teams that have no cards
-#  tyAll[is.na(tyAll$cards)]$name <- ""
+
   tyAll$cards <-ifelse(is.na(tyAll$cards),0,tyAll$cards)
-  tyAll$name <-ifelse(is.na(tyAll$name),"",tyAll$name)
+#  tyAll$name <-ifelse(is.na(tyAll$name),"",tyAll$name) ??
+  
+ 
   
   tyAll %>% 
-    DT::datatable(class='compact stripe hover row-border',colnames = c('Team', '', 'Goals', 'Assists', '', 'Cards', ''),rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
-  #DT::datatable(class='compact stripe hover row-border',colnames = c('Player', 'Start', 'On', 'Off', 'Goals', 'Assists', 'Card'),
+    select(-name) %>% 
+    select(Team=team,goals,Goals=name.x,assists,Assists=name.y,points,Points=pname,cards,Cards=cname) %>% 
+    DT::datatable(class='compact stripe hover row-border',colnames = c('Team', '', 'Goals','', 'Assists','','Points', '', 'Cards'),rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+  
+
   
   
 })
