@@ -28,6 +28,8 @@ library(taucharts)
 library(daff)
 library(plotly)
 library(crosstalk)
+library(explodingboxplotR)
+library(beeswarm) # just for test
 
 
 

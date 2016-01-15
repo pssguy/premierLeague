@@ -50,14 +50,14 @@ output$scoredOn <- DT::renderDataTable({
 
 scoredOnDetsData <- reactive({
   
-  print("enter scoredOnDetsData")
+ # print("enter scoredOnDetsData")
   if(is.null(input$scoredOn_rows_selected)) return()
   
   s = as.integer(input$scoredOn_rows_selected)
   
-  print(s)
+ # print(s)
   player <- scoredOnData()$df[s,]$PLAYERID
-  print(player)
+# print(player)
   
  df <- playerGame %>% 
     filter(PLAYERID==player&(START+subOn)>0) %>% 

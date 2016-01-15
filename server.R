@@ -36,6 +36,12 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="tm_seqs_goals") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
       
+      
+      # manager ones
+    } else if (input$sbMenu=="managers") {
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
+    
+      
       # player ones
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
@@ -604,6 +610,7 @@ shinyServer(function(input, output, session) {
   source("code/standingsBoxplot.R", local=TRUE)
   source("code/specials/pcPlayerGoals.R", local=TRUE)
   source("code/specials/deficitsOvercome.R", local=TRUE)
+  source("code/managerPPG.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

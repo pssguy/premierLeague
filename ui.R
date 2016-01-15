@@ -17,7 +17,8 @@ dashboardPage(
     sidebarMenu(
       id = "sbMenu",
       
-      menuItem("Front Page",tabName = "frontPage", selected =T),
+      menuItem("Front Page",tabName = "frontPage"),
+      menuItem("Managers",tabName = "managers", selected = T),
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
@@ -194,6 +195,14 @@ dashboardPage(
                 )
               )),
       
+      #managers
+      tabItem("managers",
+              box(title="Manger's Average points per game",
+                  status = "success",
+              ggvisOutput("managerPPGbyTeam")
+              )
+      ),
+              
       
       ## Player Section
       tabItem(
@@ -365,8 +374,8 @@ dashboardPage(
         box(
           title = "Heatmap", solidHeader = TRUE,status = 'success',
           width = 6,
-          selectInput("heatTeam","Choose team",teamsChoice_2, selected =
-                        "Liverpool"),
+#           selectInput("heatTeam","Choose team",teamsChoice_2, selected =
+#                         "Liverpool"),
           plotlyOutput("heatResults"),
           h4("Click on a cell in the heatmap to display table of results")
           #verbatimTextOutput("selection")
@@ -408,19 +417,19 @@ dashboardPage(
       tabItem(
         "tm_seqs",
         box(
-          width = 12, height = 350,title = "Result Sequences - Most Recent in Bold",
+          width = 12, height = 550,title = "Result Sequences - Most Recent in bold - Hover bar for details",
           solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           radioButtons(
             "seqVenue","Venue",choices = c("All","Home","Away"),inline = TRUE
           ),
           fluidRow(
-            column(width = 2,plotOutput("tm_wins")),
-            column(width = 2,plotOutput("tm_noWins")),
-            column(width = 2,plotOutput("tm_draws")),
-            column(width = 2,plotOutput("tm_noDraws")),
-            column(width = 2,plotOutput("tm_losses")),
-            column(width = 2,plotOutput("tm_noLosses"))
+            column(width = 2,plotlyOutput("tm_wins")),
+            column(width = 2,plotlyOutput("tm_noWins")),
+            column(width = 2,plotlyOutput("tm_draws")),
+            column(width = 2,plotlyOutput("tm_noDraws")),
+            column(width = 2,plotlyOutput("tm_losses")),
+            column(width = 2,plotlyOutput("tm_noLosses"))
           )
         ),
         fluidRow(
@@ -553,7 +562,13 @@ dashboardPage(
           collapsed = F,collapsible = T,
           
           plotlyOutput("st_BoxSeason")
-        )
+        )#,
+#         box(
+#          # width = 6,height = 600,
+#           #collapsed = F,collapsible = T,
+#           #exploding_boxplotOutput("test", width = "100%", height = "400px"),
+#           exploding_boxplotOutput("st_explodingBoxAll")
+#         )
       ),
       tabItem(
         "st_round",

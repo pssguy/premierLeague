@@ -51,3 +51,48 @@ output$st_BoxSeason <- renderPlotly({
     )
   
 })
+
+
+### alternative exploding boxplot
+
+output$st_explodingBoxAll <- renderExploding_boxplot({
+  
+  print("enter exploding")
+  
+  
+  df <- standings %>% 
+    ungroup() %>% 
+    filter(tmYrGameOrder==input$st_boxGames) %>% 
+    select(team,season,cumPts,tmYrGameOrder)  %>% 
+    mutate(year=str_sub(season,1,4)) %>% 
+    rename(points=cumPts)
+  
+  print("expl ")
+  print(glimpse(df))
+  
+  exploding_boxplot(
+    df,
+    y = "points",
+    group = "year",
+    width= 600,
+    label = "team", 
+    iqr = 2,
+    margin = list(bottom = 30, left = 50, top = 20, right = 20)
+    
+  )
+})
+
+output$test <-  renderExploding_boxplot({
+  exploding_boxplot(
+    data.frame(
+      rowname = rownames(InsectSprays),
+      InsectSprays,
+      stringsAsFactors = FALSE
+    ),
+    y = "count",
+    group = "spray",
+    color = "spray",
+    label = "rowname"
+  )
+  
+})
