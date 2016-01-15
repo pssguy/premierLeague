@@ -35,13 +35,14 @@ allManagerStints[allManagerStints$Joined<="1992-08-15","Joined"] <- "1992-08-15"
 observe({
   
   if(is.null(input$teamA)) return()
+  if(is.null(input$managerGames)) return()
   print(input$teamA)
   
 teamRecord <- ppgManagerTeamStint  %>% 
   
   select(TEAMNAME,name,ManagerTeam,games,ppg) %>% 
   inner_join(allManagerStints) %>% 
-  filter(TEAMNAME==input$teamA&games>5) 
+  filter(TEAMNAME==input$teamA&games>=input$managerGames) 
 
 
 
