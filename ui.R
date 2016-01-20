@@ -40,7 +40,7 @@ dashboardPage(
         menuSubItem("By Opposition",tabName = "pl_opponent"),
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
-        menuSubItem("Points per Game", tabName = "pl_ppg", selected = T),
+        menuSubItem("Points per Game", tabName = "pl_ppg"),
         menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
        
       ),
@@ -182,10 +182,11 @@ dashboardPage(
                   #              actionButton(inputId="hl_compBtn",label="Compare Players")),
                   #   ggvisOutput("hl_comparisons")
                   # ),
-                  box(
-                    solidHeader = FALSE,status = 'success',
-                    footer = "Hover points for detail",
-                    plotlyOutput("hl_relegationOvercome")
+                  box(width=12,
+                    solidHeader = TRUE,status = 'warning',title="Latest App - Goals and Assists by Game",
+                    inputPanel(selectInput("playerppg", label="Type Name and Select", choices =playerChoice,selected="VARDYJ")),
+                   # footer = "Hover points for detail",
+                    plotlyOutput("player_ppg_hl")
                   ),
                   
                   box(
