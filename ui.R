@@ -18,7 +18,7 @@ dashboardPage(
       id = "sbMenu",
       
       menuItem("Front Page",tabName = "frontPage"),
-      menuItem("Managers",tabName = "managers", selected = T),
+      menuItem("Managers",tabName = "managers"),
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
@@ -37,10 +37,12 @@ dashboardPage(
       menuItem(
         "Players", tabName = "players",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "pl_glance"),
+        menuSubItem("By Opposition",tabName = "pl_opponent"),
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
-        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals"),
-        menuSubItem("By Opposition",tabName = "pl_opponent")
+        menuSubItem("Points per Game", tabName = "pl_ppg", selected = T),
+        menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
+       
       ),
       
       menuItem(
@@ -197,14 +199,16 @@ dashboardPage(
       
       #managers
       tabItem("managers",
-              box(title="Manger's Average points per game",
+              box(title="Manager's Average points per game - Hover bar for more information",
                   status = "success",
-              ggvisOutput("managerPPGbyTeam")
+              ggvisOutput("managerPPGbyTeam"),
+              textOutput("liverpool")
               )
       ),
               
       
       ## Player Section
+      
       tabItem(
         "players",
         box(
@@ -788,6 +792,17 @@ dashboardPage(
           
         ))
       ),
+
+tabItem(
+  "pl_ppg",
+  box(
+    width = 12,title = "Goals and Assists by Game - Hover for details",solidHeader = TRUE,status = 'success',
+    collapsible = TRUE, collapsed = FALSE,
+    plotlyOutput("player_ppg")
+  )
+  ),
+
+
       tabItem(
         "pl_seqs_goals",
         box(

@@ -137,7 +137,7 @@ output$tm_noWins <- renderPlotly({
   if(is.null(resData)) return()
   W <- resData()$W
   
-  print(tail(W,1))
+
   
   Win <- W %>% 
     filter(value==0) %>% 

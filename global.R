@@ -35,6 +35,7 @@ library(beeswarm) # just for test
 
 positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds")
+playerClub <- readRDS("playerClub.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")
 standings <- readRDS("standings.rds")

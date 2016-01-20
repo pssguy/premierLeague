@@ -39,13 +39,16 @@ shinyServer(function(input, output, session) {
       
       # manager ones
     } else if (input$sbMenu=="managers") {
-      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice))
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
+                 sliderInput("managerGames", label="Min games in Stint", min=1,max=100,value=5))
     
       
       # player ones
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
-    } else if (input$sbMenu=="pl_goals") {
+    } else if (input$sbMenu=="pl_career") {
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
+    } else if (input$sbMenu=="pl_ppg") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_glance") {
       print("pl_glance")
@@ -611,6 +614,7 @@ shinyServer(function(input, output, session) {
   source("code/specials/pcPlayerGoals.R", local=TRUE)
   source("code/specials/deficitsOvercome.R", local=TRUE)
   source("code/managerPPG.R", local=TRUE)
+  source("code/player_ppg.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

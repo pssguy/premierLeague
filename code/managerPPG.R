@@ -44,6 +44,14 @@ teamRecord <- ppgManagerTeamStint  %>%
   inner_join(allManagerStints) %>% 
   filter(TEAMNAME==input$teamA&games>=input$managerGames) 
 
+teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
+  all_values <- function(x) {
+    if(is.null(x)) return(NULL)
+    row <- teamRecord[teamRecord$id == x$id,c("games","ppg")]
+    #paste0(names(row),": ", format(row), collapse = "<br />")
+    paste0( names(row),": ",format(row), collapse = "<br />") 
+  }
+
 
 
 minY <- min(teamRecord$ppg)-0.1
@@ -51,11 +59,27 @@ maxY <- max(teamRecord$ppg)+0.1
 
 #library(ggrepel) # unsuccesful attempt
 teamRecord %>% 
-  ggvis(x =~ Joined,y=~ppg+0.01,fill = "687a97") %>% 
+  ggvis(x =~ Joined,y=~ppg+0.01,fill = "687a97",key := ~id) %>% 
   layer_rects(x2=~Left,y2=~ppg-0.01) %>% 
   layer_text(text:=~name, stroke:="red") %>% 
   scale_numeric("y",domain=c(minY,maxY)) %>% 
-  add_axis("x", title="") %>% 
+  add_axis("x", title=" ") %>% 
   add_axis("y", title="Av Points per Game") %>% 
+  add_tooltip(all_values,"hover") %>% 
+  hide_legend("fill") %>% 
   bind_shiny("managerPPGbyTeam")
+})
+
+
+output$liverpool <- renderText({
+  
+  if(is.null(input$teamA)) return()
+  
+  if (input$teamA!="Liverpool") {
+    
+  } else {
+    "Houllier was initially a joint manager with Evans and was temporarily
+    replaced by Thompson when ill"
+  }
+  
 })
