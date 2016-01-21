@@ -34,13 +34,14 @@ output$st_topChanges <- renderPlotly({
     )
 })
   ## crosstalk to get to table of those results
-  cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
+#  cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
   
   
   
   output$st_topChangesWeekly <- renderPlotly({
     
-    s <- cv$get() 
+   # s <- cv$get() 
+    s <- event_data("plotly_click")
     
     if (length(s)==0) {
       return()

@@ -43,29 +43,21 @@ output$heatResults <- renderPlotly({
 })
 
 ## crosstalk to get to table of those results
-cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
+#cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
 
-#  cv <- ClientValue$new("plotly_click", group = "A") #object 'ClientValue' not found
 
-# output$selection <- renderPrint({
-#   s <- cv$get()
-#   print(s)
-#   if (length(s) == 0) {
-#     "Click on a cell in the heatmap to display a scatterplot"
-#   } else {
-#     cat("You selected: \n\n")
-#     as.list(s)
-#   }
-# })
 
 
 ## look to put into reactive so that can use to produce goal scoring table
 
 heatData <- reactive({
   
-  if(is.null(cv$get())) return
+  # if(is.null(cv$get())) return
+  # 
+  # s <- cv$get()
   
-  s <- cv$get()
+  if(is.null(event_data("plotly_selected"))) return
+  s <- event_data("plotly_click")
   if (length(s)==0) return()
   
   gFor=s[["y"]]

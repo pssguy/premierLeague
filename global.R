@@ -27,7 +27,7 @@ library(choroplethrMaps)
 library(taucharts)
 library(daff)
 library(plotly)
-library(crosstalk)
+#library(crosstalk) no longer needed as can now use event_data() in plotly
 library(explodingboxplotR)
 library(beeswarm) # just for test
 

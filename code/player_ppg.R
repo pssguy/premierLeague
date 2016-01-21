@@ -49,7 +49,7 @@ output$player_ppg_hl <- renderPlotly({
   plot_ly(ppgPlayer , x=plGameOrder, y=Gls, name="Goals", type="bar",
           hoverinfo="text",
           text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
-    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)")  %>%
+    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)", type="bar")  %>%
     layout(hovermode = "closest", barmode="stack",
            
            xaxis=list(title=xTitle),

@@ -53,7 +53,7 @@ plot_ly(df, x = season, y = deficit, mode = "markers", hoverinfo = "text",color=
 
 })
 
-## when used as headline
+## when used as headline ( so need to incorporate as a special??)
 
 output$hl_relegationOvercome <- renderPlotly({
   

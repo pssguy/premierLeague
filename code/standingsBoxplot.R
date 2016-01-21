@@ -17,10 +17,11 @@ output$st_BoxAll <- renderPlotly({
 })
 
 ## crosstalk to get to table of those results
-cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
+#cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
 
 output$st_BoxSeason <- renderPlotly({
-  s <- cv$get()
+  #s <- cv$get()
+  s <- event_data("plotly_click")
   
   if (length(s) == 0) {
     return()

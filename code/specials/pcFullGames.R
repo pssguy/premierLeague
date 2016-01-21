@@ -42,12 +42,13 @@ output$pcFullGames <- renderPlotly({
 
 
   
-  ## crosstalk to get to individual chart
-  cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
+  # ## crosstalk to get to individual chart
+  # cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
   
   
   output$selection <- renderPrint({
-    s <- cv$get()
+   # s <- cv$get()
+    s <- event_data("plotly_click")
     print(s)
     if (length(s) == 0) {
       "Click on a cell in the heatmap to display a scatterplot"
@@ -58,7 +59,8 @@ output$pcFullGames <- renderPlotly({
   })
   
   output$pcFullGamesDets <- renderPlotly({
-    s <- cv$get()
+   # s <- cv$get()
+    s <- event_data("plotly_click")
     if (length(s)==0) return()
     
     df <- fullGamesdata()$df

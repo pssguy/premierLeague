@@ -379,11 +379,15 @@ dashboardPage(
         box(
           title = "Heatmap", solidHeader = TRUE,status = 'success',
           width = 6,
-#           selectInput("heatTeam","Choose team",teamsChoice_2, selected =
-#                         "Liverpool"),
+          
+          # # revamped version of plotly - but seems to work ok without any change?
+          # plotlyOutput("x", width = 400, height = 250, inline = T),
+          # htmltools::div(style = "display:inline-block", plotlyOutput("x", width = 400, height = 250)),
+
+
           plotlyOutput("heatResults"),
           h4("Click on a cell in the heatmap to display table of results")
-          #verbatimTextOutput("selection")
+          
         ),
         box(
           title = "Results by Scoreline",
