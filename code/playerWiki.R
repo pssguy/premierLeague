@@ -1,11 +1,11 @@
 
 output$playerWiki <- renderUI({
   
-
-  if (is.null(input$playerA)) return()
-  print("enter wiki")
-  print(input$playerA)
-    
+  req(input$playerA)
+  # if (is.null(input$playerA)) return()
+  # print("enter wiki")
+  # print(input$playerA)
+  #   
  theName <- playerGame[playerGame$PLAYERID==input$playerA,]$name[1]
     theName <- str_replace_all(theName," ","_")
     

@@ -3,7 +3,8 @@
 
 output$player_ppg <- renderPlotly({
   
-  if(is.null(input$playerA)) return()
+  #if(is.null(input$playerA)) return()
+  req(input$playerA)
   
  
   
@@ -19,10 +20,12 @@ output$player_ppg <- renderPlotly({
   plot_ly(ppgPlayer , x=plGameOrder, y=Gls, name="Goals", type="bar",
           hoverinfo="text",
           text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
-    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)")  %>%
+    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)", type="bar",
+              hoverinfo="text",
+              text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder))  %>%
     layout(hovermode = "closest", barmode="stack",
-         
-          xaxis=list(title=xTitle),
+           
+           xaxis=list(title=xTitle),
            yaxis=list(title="Points"),
            title=" Hover bar for details", titlefont=list(size=16)
     )
@@ -33,8 +36,8 @@ output$player_ppg <- renderPlotly({
 ## headline version which defaults to vardy
 output$player_ppg_hl <- renderPlotly({
   
-  if(is.null(input$playerppg)) return()
-  
+ # if(is.null(input$playerppg)) return()
+  req(input$playerppg)
   
   
   ppgPlayer <- playerGame %>%
@@ -49,7 +52,9 @@ output$player_ppg_hl <- renderPlotly({
   plot_ly(ppgPlayer , x=plGameOrder, y=Gls, name="Goals", type="bar",
           hoverinfo="text",
           text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
-    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)", type="bar")  %>%
+    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)", type="bar",
+              hoverinfo="text",
+              text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder))  %>%
     layout(hovermode = "closest", barmode="stack",
            
            xaxis=list(title=xTitle),

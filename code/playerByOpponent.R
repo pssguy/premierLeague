@@ -4,7 +4,8 @@ pboData <- reactive({
   
   print("enter reactive")
   
-  if(is.null(input$playerA)) return()
+  #if(is.null(input$playerA)) return()
+  req(input$playerA)
   
   player <- playerGame %>% 
     filter(PLAYERID==input$playerA)
@@ -118,8 +119,8 @@ pboData <- reactive({
   
     
     output$playerByOpponent <- DT::renderDataTable({
-      print("enter pbo")
-      if(is.null(pboData())) return()
+      # print("enter pbo")
+      # if(is.null(pboData())) return()
       print("entered pbo")
       pboData()$byOpponent %>% 
             DT::datatable(selection='single',class='compact stripe hover row-border',

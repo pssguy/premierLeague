@@ -39,9 +39,10 @@
 # need to split into reactive as tabe is needed for selection (should change based on row clicked on really)
 info <- reactive({
   print("enter htoh reactive")
-  if (is.null(input$teamA)) return()
-  print("inputteamA")
-  print(input$teamA)
+  #if (is.null(input$teamA)) return()
+  req(input$teamA)
+  # print("inputteamA")
+  # print(input$teamA)
   
   # calc wins ? could put in global
   W <- hth %>%
@@ -86,8 +87,8 @@ info <- reactive({
 
 
 output$hthTable <- DT::renderDataTable({
-  if(is.null(info()$tbl)) return()
-  print("enter hthTable")
+ # if(is.null(info()$tbl)) return()
+ # print("enter hthTable")
   
   print(glimpse(info()$tbl))
   

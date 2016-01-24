@@ -9,7 +9,8 @@ allCats <- data.frame(category=cats)
 
 output$goalFirsts <- DT::renderDataTable({
   
-  if(is.null(input$playerA)) return()
+  #if(is.null(input$playerA)) return()
+  req(input$playerA)
   
   print("enter goalFirsts")
   a <- goals %>%

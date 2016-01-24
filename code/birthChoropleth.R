@@ -1,7 +1,8 @@
 ## for now just do point locations
 
 output$teamLeaflet <- renderLeaflet({
-  if(is.null(input$teamA)) return()
+  #if(is.null(input$teamA)) return()
+  req(input$teamA)
   print("enter team birthplaces")
   print(input$teamA)
   theMap <-  summary %>% 

@@ -1,4 +1,8 @@
-# updates SQL and creates rds tables that can go directly to global
+#updates SQL and creates rds tables that can go directly to global
+
+#NB change milestone date each week and should be first date of round as we are using it for less than
+milestoneDate <- "2016-01-16"
+
 library(RODBC)
 library(dplyr)
 library(stringr)
@@ -8,83 +12,87 @@ library(ggplot2)
 library(shiny)
 library(RSQLite)
 library(RSQLite.extfuns)
+library(readr)
+library(daff)
 
-setwd("C:/Users/pssguy/Documents/R/premierLeague")
+#setwd("C:/Users/pssguy/Documents/R/premierLeague")
 
 channel <- odbcConnect("eplR")
 
 managers <- sqlQuery(channel,paste(
-  "   SELECT        soccer.tblManagerBasic.Lastname, soccer.tblManagerBasic.FirstName, soccer.tblManagers.ManagerID, soccer.tblManagers.TeamID, soccer.tblManagers.Joined, soccer.tblManagers.[Left], 
-                         soccer.tblTeam_Names.TEAMNAME,soccer.tblManagers.Caretaker
-FROM            soccer.tblTeam_Names INNER JOIN
-                         soccer.tblManagers ON soccer.tblTeam_Names.TEAMID = soccer.tblManagers.TeamID INNER JOIN
-                         soccer.tblManagerBasic ON soccer.tblManagers.ManagerID = soccer.tblManagerBasic.ManagerID"
+  "   SELECT        dbo.tblManagerBasic.Lastname, dbo.tblManagerBasic.FirstName, dbo.tblManagers.ManagerID, dbo.tblManagers.TeamID, dbo.tblManagers.Joined, dbo.tblManagers.[Left], 
+                         dbo.tblTeam_Names.TEAMNAME,dbo.tblManagers.Caretaker,dbo.tblManagers.ManagerTeam
+FROM            dbo.tblTeam_Names INNER JOIN
+                         dbo.tblManagers ON dbo.tblTeam_Names.TEAMID = dbo.tblManagers.TeamID INNER JOIN
+                         dbo.tblManagerBasic ON dbo.tblManagers.ManagerID = dbo.tblManagerBasic.ManagerID"
 
 ),stringsAsFactors=F)
 
 
 match <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblMatch.DATE,soccer.tblMatch.CROWD,soccer.tblMatch.REFEREE,soccer.tblMatch.MATCHID
-FROM soccer.tblMatch
+  "  SELECT dbo.tblMatch.DATE,dbo.tblMatch.CROWD,dbo.tblMatch.REFEREE,dbo.tblMatch.MATCHID
+FROM dbo.tblMatch
 
    "
 ),stringsAsFactors=F)
 
+
+## looks like dbo. is not necessary though does not cause errors
 matchTeam <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblMatchTeam.TEAMMATCHID,soccer.tblMatchTeam.MATCHID,soccer.tblMatchTeam.TEAMID,soccer.tblMatchTeam.[HOME/AWAY] as venue,
-     soccer.tblMatchTeam.GOALS
-FROM  soccer.tblMatchTeam
+  "  SELECT tblMatchTeam.TEAMMATCHID,tblMatchTeam.MATCHID,tblMatchTeam.TEAMID,tblMatchTeam.[HOME/AWAY] as venue,
+     tblMatchTeam.GOALS
+FROM  tblMatchTeam
 
    "
 ),stringsAsFactors=F)
 
 teams <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblTeam_Names.TEAMID,soccer.tblTeam_Names.TEAMNAME
-FROM soccer.tblTeam_Names
+  "  SELECT tblTeam_Names.TEAMID,tblTeam_Names.TEAMNAME
+FROM tblTeam_Names
 
    "
 ),stringsAsFactors=F)
 
 # need to write lat lon to table - may be overwriting prob
 players <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblPlayers.PLAYERID,soccer.tblPlayers.FIRSTNAME,soccer.tblPlayers.LASTNAME,soccer.tblPlayers.BIRTHDATE,soccer.tblPlayers.PLACE,
-soccer.tblPlayers.COUNTRY,soccer.tblPlayers.POSITION,soccer.tblPlayers.lat,soccer.tblPlayers.lon
-FROM soccer.tblPlayers
+  "  SELECT tblPlayers.PLAYERID,tblPlayers.FIRSTNAME,tblPlayers.LASTNAME,tblPlayers.BIRTHDATE,tblPlayers.PLACE,
+tblPlayers.COUNTRY,tblPlayers.POSITION,tblPlayers.lat,tblPlayers.lon
+FROM tblPlayers
 
    "
 ),stringsAsFactors=F)
 
 
 playerClub <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblPlayerClub.PLAYERID,soccer.tblPlayerClub.TEAMID,soccer.tblPlayerClub.JOINED,soccer.tblPlayerClub.[LEFT],
-soccer.tblPlayerClub.PERMANENT,soccer.tblPlayerClub.FEE,soccer.tblPlayerClub.FEEOUT,soccer.tblPlayerClub.PLAYER_TEAM
-FROM soccer.tblPlayerClub
+  "  SELECT tblPlayerClub.PLAYERID,tblPlayerClub.TEAMID,tblPlayerClub.JOINED,tblPlayerClub.[LEFT],
+tblPlayerClub.PERMANENT,tblPlayerClub.FEE,tblPlayerClub.FEEOUT,tblPlayerClub.PLAYER_TEAM
+FROM tblPlayerClub
 
    "
 ),stringsAsFactors=F)
 
 
 playerMatch <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblPlayer_Match.PLAYER_MATCH,soccer.tblPlayer_Match.TEAMMATCHID,soccer.tblPlayer_Match.PLAYER_TEAM,soccer.tblPlayer_Match.START,
-soccer.tblPlayer_Match.[OFF],soccer.tblPlayer_Match.[ON] as subOn,soccer.tblPlayer_Match.GOALS,soccer.tblPlayer_Match.PENS,
-soccer.tblPlayer_Match.CARD,soccer.tblPlayer_Match.OwnGoal,soccer.tblPlayer_Match.MissedPenalty
-FROM soccer.tblPlayer_Match
+  "  SELECT tblPlayer_Match.PLAYER_MATCH,tblPlayer_Match.TEAMMATCHID,tblPlayer_Match.PLAYER_TEAM,tblPlayer_Match.START,
+tblPlayer_Match.[OFF],tblPlayer_Match.[ON] as subOn,tblPlayer_Match.GOALS,tblPlayer_Match.PENS,
+tblPlayer_Match.CARD,tblPlayer_Match.OwnGoal,tblPlayer_Match.MissedPenalty
+FROM tblPlayer_Match
 
    "
 ),stringsAsFactors=F)
 #str(playerMatch)
 
 goals <- sqlQuery(channel,paste(
-  "  SELECT soccer.tblGoals.PLAYER_MATCH,soccer.tblGoals.TIME,soccer.tblGoals.METHOD,soccer.tblGoals.PLACE,
-soccer.tblGoals.PLAY,soccer.tblGoals.PLAYER_MATCH_GOAL
-FROM soccer.tblGoals
+  "  SELECT tblGoals.PLAYER_MATCH,tblGoals.TIME,tblGoals.METHOD,tblGoals.PLACE,
+tblGoals.PLAY,tblGoals.PLAYER_MATCH_GOAL
+FROM tblGoals
 
    "
 ),stringsAsFactors=F)
 
 assists<- sqlQuery(channel,paste(
-  "  SELECT soccer.tblAssists.PLAYER_MATCH,soccer.tblAssists.PLAYER_MATCH_GOAL
-FROM soccer.tblAssists
+  "  SELECT tblAssists.PLAYER_MATCH,tblAssists.PLAYER_MATCH_GOAL
+FROM tblAssists
 
    "
 ),stringsAsFactors=F)
@@ -234,12 +242,15 @@ allPlayers <- tbl_df(dbGetQuery(conn, "SELECT  *
 # ))
 
 managers <- tbl_df(dbGetQuery(conn, "SELECT managers.Lastname, managers.FirstName, managers.ManagerID, managers.TeamID, managers.Joined, managers.[Left], 
-                              managers.TEAMNAME,managers.Caretaker
+                              managers.TEAMNAME,managers.Caretaker,managers.ManagerTeam
                               
                               FROM managers "
                               
                               
 ))
+
+managers$Left <- as.Date(managers$Left/(60*60*24), origin= '1970-01-01')
+managers$Joined <- as.Date(managers$Joined/(60*60*24), origin= '1970-01-01')
 
 
 assistsPlayerGame <- tbl_df(dbGetQuery(conn, "SELECT        playerMatch.TEAMMATCHID, playerClub.PLAYERID, COUNT(assists.PLAYER_MATCH_GOAL) AS Assists
@@ -300,6 +311,12 @@ goals[goals$PLAY=="T",]$PLAY <- "Throw"
 goals[goals$PLACE=="G",]$PLACE <- "6_Yd_Box"
 goals[goals$PLACE=="P",]$PLACE <- "Pen_Area"
 goals[goals$PLACE=="O",]$PLACE <- "Long_Range"
+
+playerGame$POSITION[which(playerGame$POSITION=="G")] <- "Goalkeeper"
+playerGame$POSITION[which(playerGame$POSITION=="D")] <- "Defender"
+playerGame$POSITION[which(playerGame$POSITION=="M")] <- "Midfielder"
+playerGame$POSITION[which(playerGame$POSITION=="F")] <- "Forward"
+
 
 
 match$gameDate <- as.Date(match$DATE/(60*60*24), origin= '1970-01-01')
@@ -545,94 +562,186 @@ summary[is.na(summary$OG),]$OG <- 0
 summary[is.na(summary$MP),]$MP <- 0# calculate max games in current season - still need to sort
 thisYearGames <- 7 #NB
 
-## lader by club calc
+## leader by club calc
+# goals
+
 temp <-summary %>%
+  ungroup() %>% 
   filter(PLAYERID!="OWNGOAL") %>%
   mutate(goals=StGls+subGls) %>%
-  select(StGls,subGls,goals)
-temp <- data.frame(temp) # has all attribyres in
+    select(PLAYERID,name,StGls,subGls,goals,TEAMNAME,season)
 
-## prob goals not best name as it is what 
-glsTeamSeason <-temp %>%
+glsTeamSeason <-temp %>% # cannot call goals already df which need to use later
   arrange(desc(goals)) %>%
-  group_by(TEAMNAME,season) %>%
-  
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=goals) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=goals) %>%
   mutate(goals=paste(n1,v1)) %>%
   select(TEAMNAME,season,goals)
 
+# temp <-summary %>%
+#   ungroup() %>% 
+#   filter(PLAYERID!="OWNGOAL") %>%
+#   mutate(goals=StGls+subGls) %>%
+#   select(StGls,subGls,goals)
+# #temp <- data.frame(temp) # has all attribyres in
+# 
+# ## prob goals not best name as it is what 
+# glsTeamSeason <-temp %>%
+#   arrange(desc(goals)) %>%
+#   group_by(TEAMNAME,season) %>%
+#   
+#   slice(1) %>%
+#   select(n1=name,v1=goals) %>%
+#   mutate(goals=paste(n1,v1)) %>%
+#   select(TEAMNAME,season,goals)
+
 #asssists
+# temp <-summary %>%
+#   select(Assists) 
+# temp <- data.frame(temp)
+# assists <-  temp  %>% 
+#   arrange(desc(Assists)) %>%
+#   group_by(TEAMNAME,season) %>%
+#   
+#   slice(1) %>%
+#   select(n1=name,v1=Assists) %>%
+#   mutate(assists=paste(n1,v1)) %>%
+#   select(TEAMNAME,season,assists)
+
 temp <-summary %>%
-  select(Assists) 
-temp <- data.frame(temp)
-assists <-  temp  %>% 
+  ungroup() %>% 
+    select(PLAYERID,name,Assists,TEAMNAME,season)
+#temp <- data.frame(temp) # has all attribyres in
+
+assists <-temp %>%
   arrange(desc(Assists)) %>%
-  group_by(TEAMNAME,season) %>%
-  
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=Assists) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=Assists) %>%
   mutate(assists=paste(n1,v1)) %>%
   select(TEAMNAME,season,assists)
 
-glimpse(summary)
+
+#glimpse(summary)
 
 #points
 temp <-summary %>%
+  ungroup() %>% 
   filter(PLAYERID!="OWNGOAL") %>%
   mutate(points=Assists+StGls+subGls) %>%
-  select(points)
-temp <- data.frame(temp) # has all attribyres in
+  select(PLAYERID,name,points,TEAMNAME,season)
+#temp <- data.frame(temp) # has all attribyres in
 points <-temp %>%
   arrange(desc(points)) %>%
-  group_by(TEAMNAME,season) %>%
-  
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=points) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=points) %>%
   mutate(points=paste(n1,v1)) %>%
   select(TEAMNAME,season,points)
 
 
 #sub
+# temp <-summary %>%
+#   select(On) 
+# temp <- data.frame(temp)
+# sub <-  temp  %>% 
+#   arrange(desc(On)) %>%
+#   group_by(TEAMNAME,season) %>%
+#   
+#   slice(1) %>%
+#   select(n1=name,v1=On) %>%
+#   mutate(sub=paste(n1,v1)) %>%
+#   select(TEAMNAME,season,sub)
+
+
 temp <-summary %>%
-  select(On) 
-temp <- data.frame(temp)
-sub <-  temp  %>% 
-  arrange(desc(On)) %>%
-  group_by(TEAMNAME,season) %>%
+  ungroup() %>% 
   
+  select(PLAYERID,name,On,TEAMNAME,season)
+
+sub <-temp %>%
+  arrange(desc(On)) %>%
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=On) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=On) %>%
   mutate(sub=paste(n1,v1)) %>%
   select(TEAMNAME,season,sub)
 
 #starts
+# temp <-summary %>%
+#   select(St) 
+# temp <- data.frame(temp)
+# starts <-  temp  %>% 
+#   arrange(desc(St)) %>%
+#   group_by(TEAMNAME,season) %>%
+#   
+#   slice(1) %>%
+#   select(n1=name,v1=St) %>%
+#   mutate(starts=paste(n1,v1)) %>%
+#   select(TEAMNAME,season,starts)
+
 temp <-summary %>%
-  select(St) 
-temp <- data.frame(temp)
-starts <-  temp  %>% 
-  arrange(desc(St)) %>%
-  group_by(TEAMNAME,season) %>%
+  ungroup() %>% 
   
+  select(PLAYERID,name,St,TEAMNAME,season)
+
+starts <-temp %>%
+  arrange(desc(St)) %>%
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=St) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=St) %>%
   mutate(starts=paste(n1,v1)) %>%
   select(TEAMNAME,season,starts)
 
+
 #cards
+
+
 temp <-summary %>%
-  
+  ungroup() %>% 
   mutate(cards=Y+R) %>%
-  select(cards)
-temp <- data.frame(temp) # has all attribyres in
+  select(PLAYERID,name,cards,TEAMNAME,season)
+# temp <-summary %>%
+#   
+#   mutate(cards=Y+R) %>%
+#   select(cards)
+# temp <- data.frame(temp) # has all attribyres in
+# cards <-temp %>%
+#   arrange(desc(cards)) %>%
+#   group_by(TEAMNAME,season) %>%
+#   
+#   slice(1) %>%
+#   select(n1=name,v1=cards) %>%
+#   mutate(cards=paste(n1,v1)) %>%
+#   select(TEAMNAME,season,cards)
+
 cards <-temp %>%
   arrange(desc(cards)) %>%
-  group_by(TEAMNAME,season) %>%
-  
+  group_by(TEAMNAME,season,name,PLAYERID) %>%
+  ungroup() %>% 
+  group_by(season,TEAMNAME) %>% 
   slice(1) %>%
-  select(n1=name,v1=cards) %>%
+  ungroup() %>% 
+  rename(n1=name,v1=cards) %>%
   mutate(cards=paste(n1,v1)) %>%
   select(TEAMNAME,season,cards)
+
 
 leaders <- assists %>%
   inner_join(glsTeamSeason) %>%
@@ -775,7 +884,7 @@ oppGames <- teamGames %>%
 allMatches <-oppGames[oppGames$TEAMNAME!=oppGames$OppTeam,]
 
 allMatches <- allMatches %>%
-  select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue)
+  select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID)
 allMatches$points <- 3
 allMatches[allMatches$GF==allMatches$GA,]$points <- 1
 allMatches[allMatches$GF<allMatches$GA,]$points <- 0
@@ -851,13 +960,107 @@ completeRounds <-standings %>%
 newStandings <-standings %>%
   filter(season=="2015/16") %>% 
   group_by(season) %>%
- # mutate(finalGame==completeRounds$finalGame) %>%
+  # mutate(finalGame==completeRounds$finalGame) %>%
   filter(tmYrGameOrder==completeRounds$finalGame) %>%   
   select(final_Pos = position,team) %>%
   left_join(standings)
 
+# mow includes matchid
 standings <- rbind(oldStandings,newStandings)
-  
+
+
+
+
+# oppGames <- teamGames %>%
+#   select(MATCHID,GA=GOALS,OppTeam=TEAMNAME) %>%
+#   inner_join(teamGames)
+# 
+# allMatches <-oppGames[oppGames$TEAMNAME!=oppGames$OppTeam,]
+# 
+# allMatches <- allMatches %>%
+#   select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue)
+# allMatches$points <- 3
+# allMatches[allMatches$GF==allMatches$GA,]$points <- 1
+# allMatches[allMatches$GF<allMatches$GA,]$points <- 0
+# 
+# ## come back and do head to head
+# home <-allMatches %>%
+#   group_by(team,season) %>%
+#   filter(venue=="H")
+# # #%>%
+# #   arrange(tmYrGameOrder) %>%
+# #   mutate(hcumGF=cumsum(GF),hcumGA=cumsum(GA),hcumPts=cumsum(points))
+# 
+# away <-allMatches %>%
+#   group_by(team,season) %>%
+#   filter(venue=="A")
+# 
+# # %>%
+# #   arrange(tmYrGameOrder) %>%
+# #   mutate(acumGF=cumsum(GF),acumGA=cumsum(GA),acumPts=cumsum(points))
+# # does not have venue
+# 
+# both <- rbind(home,away)
+# 
+# both <-both %>%
+#   group_by(season,team) %>%
+#   arrange(tmYrGameOrder) %>%
+#   mutate(cumGF=cumsum(GF),cumGA=cumsum(GA),cumPts=cumsum(points),cumGD=cumGF-cumGA,allGames=max(tmYrGameOrder))
+# 
+# standings <- both %>% #17352
+#   group_by(season,tmYrGameOrder) %>%
+#   arrange(desc(cumPts),desc(cumGD),desc(GF),team) %>%
+#   mutate(position=row_number())
+# 
+# standings$res <- "Win"
+# standings[standings$GF==standings$GA,]$res <- "Draw"
+# standings[standings$GF<standings$GA,]$res <- "Loss"
+# 
+# standings$tt <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
+#                         <th>%1$s (%2$s)</th></tr>
+#                         <tr align='center'><td>%5$s</td></tr>
+#                         <tr align='center'><td>%3$s-%4$s</td></tr>
+#                         <tr align='center'><td>Pos: %6$s</td></tr>
+#                         </table>",
+#                         standings$OppTeam,
+#                         standings$venue,
+#                         standings$GF,
+#                         standings$GA,
+#                         standings$gameDate,
+#                         standings$position)
+# 
+# ## addd final_pos
+# ## NB needs to change for latest year if not all games played in round due to cup
+# 
+# oldStandings <-standings %>%
+#   filter(season<"2015/16") %>% 
+#   group_by(season) %>%
+#   mutate(finalGame=max(tmYrGameOrder)) %>%
+#   filter(tmYrGameOrder==finalGame) %>%   
+#   select(final_Pos = position,team) %>%
+#   left_join(standings)
+# 
+# 
+# 
+# completeRounds <-standings %>%
+#   filter(season=="2015/16") %>% 
+#   group_by(season,team) %>%
+#   mutate(finalGame=max(tmYrGameOrder)) %>%
+#   ungroup() %>% 
+#   arrange(finalGame) %>% 
+#   slice(1) %>% 
+#   select(finalGame)
+# 
+# newStandings <-standings %>%
+#   filter(season=="2015/16") %>% 
+#   group_by(season) %>%
+#  # mutate(finalGame==completeRounds$finalGame) %>%
+#   filter(tmYrGameOrder==completeRounds$finalGame) %>%   
+#   select(final_Pos = position,team) %>%
+#   left_join(standings)
+# 
+# standings <- rbind(oldStandings,newStandings)
+#   
 
 
 # goal categories
@@ -1208,7 +1411,7 @@ playerGame <- tbl_df(playerGame) # helps with snippets
 
 
 ## create the milestones (can put back into server if it has any interactivity
-)
+#)
 
 #latest info
 tw <- 
@@ -1219,15 +1422,25 @@ tw <-
 # previous data - may need to set date or from season maxround then gpo back one
 lw <- 
   playerGame %>% 
-  filter(gameDate<"2015-08-14") %>% 
+  filter(gameDate<milestoneDate) %>% 
   group_by(PLAYERID,name) %>% 
   summarize(Goals=sum(Gls))
 
 dd <- diff_data(tw,lw) #s
 write_diff(dd, "diff.csv")
-res <- read_csv("diff.csv") #Balotell still just 21
+res <- read_csv("diff.csv") #Inc new players 
 
+## this caters for players who score on debut I hope
+names(res)[1] <- "col1"
+dfDebs <- res %>% 
+    filter(col1=="---"&Goals>0)
+#names(dfDebs)[1] <- "@@"
+names(dfDebs)[4] <- "New"
+dfDebs$Old <- 0
+dfDebs$Old <- as.integer(dfDebs$Old)
+dfDebs$New <- as.integer(dfDebs$New)
 
+## this caters for regular players
 df <- separate(data=res,col= Goals,into=c("New","Old"),sep="->", extra="drop")
 
 # remove all na rows
@@ -1235,6 +1448,7 @@ df <- df[!is.na(df$Old),] # now down to 23 who scored
 
 df$Old <- as.integer(ifelse(is.na(df$Old),0,df$Old))
 df$New <- as.integer(df$New)
+df <-rbind(df,dfDebs)
 
 
 ## could also set it to ten presulably even if 11
@@ -1283,7 +1497,7 @@ tw <-
 # previous data - may need to set date or from season maxround then gpo back one
 lw <- 
   playerGame %>% 
-  filter(gameDate<"2015-08-14") %>% 
+  filter(gameDate<milestoneDate) %>% 
   group_by(PLAYERID,name) %>% 
   summarize(Assts=sum(Assists))
 
@@ -1291,6 +1505,16 @@ dd <- diff_data(tw,lw)
 write_diff(dd, "diff.csv")
 
 res <- read_csv("diff.csv") #Balotell still just 21
+
+## this caters for players who score on debut I hope
+names(res)[1] <- "col1"
+dfDebs <- res %>% 
+  filter(col1=="---"&Assts>0)
+#names(dfDebs)[1] <- "@@"
+names(dfDebs)[4] <- "New"
+dfDebs$Old <- 0
+dfDebs$Old <- as.integer(dfDebs$Old)
+dfDebs$New <- as.integer(dfDebs$New)
 
 
 df <- separate(data=res,col= Assts,into=c("New","Old"),sep="->", extra="drop")
@@ -1300,6 +1524,8 @@ df <- df[!is.na(df$Old),] # now down to 23 who scored
 
 df$Old <- as.integer(ifelse(is.na(df$Old),0,df$Old))
 df$New <- as.integer(df$New)
+
+df<- rbind(df,dfDebs)
 
 
 ## could also set it to ten presulably even if 11
@@ -1343,7 +1569,7 @@ milestoneAssists <-bind_rows(deb,ten,twentyFive,fifty,hundred,hundredfifty,twohu
 # previous data - may need to set date or from season maxround then gpo back one
 lw <- 
   playerGame %>% 
-  filter(gameDate<"2015-08-14"&(START+subOn)>0) %>% 
+  filter(gameDate<milestoneDate&(START+subOn)>0) %>% 
   group_by(PLAYERID,name) %>% 
   tally()
 
@@ -1426,12 +1652,59 @@ milestones <- bind_rows(milestoneGoals,milestoneAssists,milestoneApps) %>%
 
 
 
+# all palyer goals seqs - takes too long for interactive ------------------
+
+appeared <-playerGame %>%
+  filter((START+subOn)>0) %>%  # 380 as sh
+  arrange(gameDate) %>%
+  select(PLAYERID,Gls,plGameOrder,TEAMNAME,gameDate,Opponents)
+
+
+
+appeared$Scored <- 0
+appeared$Scored[appeared$Gls>0] <- 1
+
+
+
+by_player <- appeared %>% 
+  ungroup() %>% 
+  arrange(PLAYERID,gameDate) %>% 
+  group_by(PLAYERID) # this needs to be here to carry PLAYERID across
+
+
+
+goalSeqs <- do(by_player,subSeq(.$Scored)) %>% 
+  filter(value==1)
+
+appeared <-playerGame %>%
+filter((START+subOn)>0) %>%  # 380 as sh
+  arrange(gameDate) %>%
+  select(PLAYERID,Gls,plGameOrder,TEAMNAME,gameDate,Opponents)
+
+
+
+appeared$Scored <- 0
+appeared$Scored[appeared$Gls>0] <- 1
+
+
+
+by_playerClub <- appeared %>% 
+  ungroup() %>% 
+  arrange(PLAYERID,gameDate) %>% 
+  group_by(PLAYERID,TEAMNAME) # this needs to be here to carry PLAYERID across
+
+
+
+goalSeqsClub <- do(by_playerClub,subSeq(.$Scored)) %>% 
+  filter(value==1)
+
 print("endGlobal")
 
 
 ## matbe create some basic files as rds
 saveRDS(allPlayers,"allPlayers.rds")
 saveRDS(playerGame,"playerGame.rds")
+saveRDS(playerClub,"playerClub.rds")
 saveRDS(summary,"summary.rds")
 saveRDS(standings,"standings.rds")
 saveRDS(leaders,"leaders.rds")
@@ -1444,5 +1717,10 @@ saveRDS(Method,"Method.rds")
 saveRDS(Place,"Place.rds")
 saveRDS(teamGames,"teamGames.rds")
 write_csv(milestones,"milestones.csv")
+print(glimpse(managers))
+saveRDS(managers,"managers.rds")
+saveRDS(goalSeqs,"goalSeqs.rds")
+saveRDS(goalSeqsClub,"goalSeqsClub.rds")
 
 #Sys.time() # takes 15 secs- seems quicker in browser
+

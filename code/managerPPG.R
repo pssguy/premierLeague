@@ -34,8 +34,10 @@ allManagerStints[allManagerStints$Joined<="1992-08-15","Joined"] <- "1992-08-15"
 
 observe({
   
-  if(is.null(input$teamA)) return()
-  if(is.null(input$managerGames)) return()
+  req(input$teamA)
+  req(input$managerGames)
+  # if(is.null(input$teamA)) return()
+  # if(is.null(input$managerGames)) return()
   print(input$teamA)
   
 teamRecord <- ppgManagerTeamStint  %>% 
@@ -73,8 +75,8 @@ teamRecord %>%
 
 output$liverpool <- renderText({
   
-  if(is.null(input$teamA)) return()
-  
+#  if(is.null(input$teamA)) return()
+ req(input$teamA)
   if (input$teamA!="Liverpool") {
     
   } else {

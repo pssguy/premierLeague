@@ -1,10 +1,12 @@
 
 
 output$playerPic <- renderUI({
-  if (is.null(input$playerA)) return()
-  if (input$playerA=="") return()
-  print(input$playerA)
-  print("enter picture")
+  # if (is.null(input$playerA)) return()
+  # if (input$playerA=="") return()
+  # print(input$playerA)
+  # print("enter picture")
+  
+  req(input$playerA)
   playerName <- pgMini[pgMini$PLAYERID==input$playerA,]$name
      thePlayer <- tolower(str_replace(playerName," ","-"))
  # print(thePlayer) #"darren-bent"

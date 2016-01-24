@@ -3,7 +3,8 @@
 
 careerData <- reactive({
   
-   if (is.null(input$playerA)) return()
+  # if (is.null(input$playerA)) return()
+  req(input$playerA)
 #   #print(values$playerId)
    print(input$playerA)
    print("careerData")
@@ -61,7 +62,7 @@ careerData <- reactive({
 
 observe({
   
-  if(is.null(careerData())) return()
+ # if(is.null(careerData())) return()
   #print("enter observe")
   #print(glimpse(careerData()$dfChart))
   
@@ -113,7 +114,7 @@ output$career <- DT::renderDataTable({
 
 
 output$pointsByYearChart <- renderPlotly({
-  if (is.null(input$playerA)) return()
+  #if (is.null(input$playerA)) return()
   
   df <-playerGame %>% 
     filter(PLAYERID==input$playerA) %>% 

@@ -1,8 +1,9 @@
 ## using pgMini means only those who have played
 output$playerBirthplace <- renderLeaflet({
   
-  if(is.null(input$playerA)) return()
-  if(input$playerA=="") return()
+  # if(is.null(input$playerA)) return()
+  # if(input$playerA=="") return()
+  req(input$playerA)
  
   theLat <- pgMini[pgMini$PLAYERID==input$playerA,]$lat
   theLon <- pgMini[pgMini$PLAYERID==input$playerA,]$lon

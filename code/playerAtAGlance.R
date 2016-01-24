@@ -4,8 +4,8 @@
 glanceData <- reactive({
   
   print("enter ata aglance reactive") # this is not even being called?
-  if(is.null(input$playerA)) return()
-  
+  #if(is.null(input$playerA)) return()
+  req(input$playerA)
 
   
   basic <- summary %>%

@@ -1,10 +1,12 @@
 playerSeqData <- reactive ({
   ##print("psd reactive")
   
-  if (is.null(input$playerA)) return()
-  if (is.null(input$seqPlVenue)) return()
-  ##print("playerid")
-  print(input$playerA)
+  # if (is.null(input$playerA)) return()
+  # if (is.null(input$seqPlVenue)) return()
+  # ##print("playerid")
+  # print(input$playerA)
+  
+  req(input$playerA)
   
   if (input$seqPlVenue=="All") {
   appeared <- playerGame %>%
@@ -82,7 +84,7 @@ playerSeqData <- reactive ({
 
 
 output$gameNoGoal <- renderPlot({
-  if (is.null(playerSeqData()$runApp)) return()
+ # if (is.null(playerSeqData()$runApp)) return()
   
   run <- playerSeqData()$runApp
   
@@ -120,7 +122,7 @@ output$gameGoal <- renderPlot({
   #print(playerSeqData()$runApp)
   #print("#printed sheehan")  ## need to go back to reactive I think also look at aarons who should have data here
   
-  if (is.null(playerSeqData()$runApp)) return()
+#  if (is.null(playerSeqData()$runApp)) return()
   ##print("enter gameGoal")
   run <- playerSeqData()$runApp
   
@@ -156,7 +158,7 @@ output$gameGoal <- renderPlot({
 }, height=250)
 
 output$gameNoGoalStarter <- renderPlot({
-  if (is.null(playerSeqData()$runStarter)) return()
+ # if (is.null(playerSeqData()$runStarter)) return()
   
   run <- playerSeqData()$runStarter
   ##print("##print run ")
@@ -192,7 +194,7 @@ output$gameNoGoalStarter <- renderPlot({
 output$gameGoalStarter <- renderPlot({
 #   #print("test as starter")
 #   #print(playerSeqData()$runStarter)
-  if (is.null(playerSeqData()$runStarter)) return()
+#  if (is.null(playerSeqData()$runStarter)) return()
   
   run <- playerSeqData()$runStarter
   
@@ -300,7 +302,8 @@ output$gameGoalStarter <- renderPlot({
 observe({
  
   
-  if (is.null(input$playerA)) return()
+ # if (is.null(input$playerA)) return()
+  req(input$playerA)
   
   starter <- playerGame %>%
     filter(PLAYERID==input$playerA&(START+subOn)>0) %>%  # 380 as sh
@@ -350,7 +353,8 @@ observe({
   #print("enter observe")
   #print(input$playerA)
   
-  if (is.null(input$playerA)) return()
+  #if (is.null(input$playerA)) return()
+   req(input$playerA)
  # if (input$playerA<"a") return()
   #if (is.null(playerSeqData()$runStarter)) return()
   ##print ("enter gameGoalSeqStarter")

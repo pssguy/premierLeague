@@ -7,7 +7,8 @@ output$careerTots <- DT::renderDataTable({
 #     thePlayer=="ROONEYX"
 #   }
   
-  if (is.null(input$playerA)) return()
+  #if (is.null(input$playerA)) return()
+  req(input$playerA)
   thePlayer <- input$playerA
   
   # break into team summary? - think this can be done by datata
