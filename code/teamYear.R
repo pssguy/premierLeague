@@ -6,7 +6,8 @@ output$teamYear <- DT::renderDataTable({
  # print("enter teamYear")
  
   
-  if (is.null(input$teamYears)) return()
+  #if (is.null(input$teamYears)) return()
+  req(input$teamYears)
   
   theTeam <- input$teamA
   theYear <- input$teamYears

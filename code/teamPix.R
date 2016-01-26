@@ -2,7 +2,8 @@
 
 output$teamPic <- renderUI({
  
-  if (is.null(input$teamA)) return()
+  #if (is.null(input$teamA)) return()
+  req(input$teamA)
   
   id <- teamCodes[teamCodes$TEAMNAME==input$teamA,]$TEAMID
  
@@ -14,7 +15,8 @@ output$teamPic <- renderUI({
 
 output$squadPhoto <- renderUI({
   
-  if (is.null(input$teamA)) return()
+  #if (is.null(input$teamA)) return()
+  req(input$teamA)
   
   id <- teamCodes[teamCodes$TEAMNAME==input$teamA,]$TEAMID
   

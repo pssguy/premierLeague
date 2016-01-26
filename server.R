@@ -41,7 +41,11 @@ shinyServer(function(input, output, session) {
     } else if (input$sbMenu=="managers") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
                  sliderInput("managerGames", label="Min games in Stint", min=1,max=100,value=5))
-    
+      # specials 
+    } else if (input$sbMenu=="sp_playerByTeamPPG") {
+      inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
+                 selectInput("teamYears",label=NULL,seasonChoice)
+                 )
       
       # player ones
     } else if (input$sbMenu=="pl_career") {
@@ -615,6 +619,7 @@ shinyServer(function(input, output, session) {
   source("code/specials/deficitsOvercome.R", local=TRUE)
   source("code/managerPPG.R", local=TRUE)
   source("code/player_ppg.R", local=TRUE)
+  source("code/specials/playerByTeamPPG.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

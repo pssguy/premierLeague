@@ -59,7 +59,8 @@ teamData <- eventReactive(input$teamA,{
 })
 
 output$mostGames <- DT::renderDataTable({
-  if(is.null(teamData())) return()
+  if (is.null(teamData())) return()
+  
   teamData()$mostGames %>% 
     select(Player=name,Apps=n) %>% 
     DT::datatable(selection='single',class='compact stripe hover row-border',options= list(
@@ -68,7 +69,9 @@ output$mostGames <- DT::renderDataTable({
 })
 
 output$mostGoals <- DT::renderDataTable({
-  if(is.null(teamData())) return()
+ # if(is.null(teamData())) return()
+  
+  req(teamData())
   
 #   print("mostGoals")
 #   print(teamData()$mostGoals)
@@ -90,7 +93,8 @@ output$mostGoals <- DT::renderDataTable({
 })
 
 output$mostAssists <- DT::renderDataTable({
-  if(is.null(teamData())) return()
+ # if(is.null(teamData())) return()
+  req(teamData())
   teamData()$mostAssists %>% 
     select(Player=name,Assists=sumAssists) %>% 
     DT::datatable(class='compact stripe hover row-border',options= list(
@@ -100,7 +104,8 @@ output$mostAssists <- DT::renderDataTable({
 
 
 output$mostCards <- DT::renderDataTable({
-  if(is.null(teamData())) return()
+ # if(is.null(teamData())) return()
+  req(teamData())
   teamData()$mostCards %>% 
     select(Player=name,Cards=n) %>% 
     DT::datatable(class='compact stripe hover row-border',options= list(

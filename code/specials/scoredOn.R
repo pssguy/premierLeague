@@ -51,7 +51,9 @@ output$scoredOn <- DT::renderDataTable({
 scoredOnDetsData <- reactive({
   
  # print("enter scoredOnDetsData")
-  if(is.null(input$scoredOn_rows_selected)) return()
+  #if(is.null(input$scoredOn_rows_selected)) return()
+  
+  req(input$scoredOn_rows_selected)
   
   s = as.integer(input$scoredOn_rows_selected)
   
@@ -72,21 +74,9 @@ scoredOnDetsData <- reactive({
 
 output$scoredOn_dets <- DT::renderDataTable({
   
-  if (is.null(scoredOnDetsData()$df)) return()
+ # if (is.null(scoredOnDetsData()$df)) return()
   
-#   print("scoredOn_dets")
-#   if(is.null(input$scoredOn_rows_selected)) return()
-#   
-#   s = as.integer(input$scoredOn_rows_selected)
-#   
-#   print(s)
-#   player <- scoredOnData()$df[s,]$PLAYERID
-#   print(player)
-#   
-#   playerGame %>% 
-#     filter(PLAYERID==player&(START+subOn)>0) %>% 
-#     group_by(Opponents) %>% 
-#     summarise(apps=n(),goals=sum(Gls))
+req(scoredOnDetsData()$df)
   
   scoredOnDetsData()$df %>% 
     arrange(desc(goals)) %>% 
@@ -97,7 +87,8 @@ output$scoredOn_dets <- DT::renderDataTable({
 
 observe({
   
-  if (is.null(scoredOnDetsData()$df)) return()
+ # if (is.null(scoredOnDetsData()$df)) return()
+  req(scoredOnDetsData()$df)
   
   df <- scoredOnDetsData()$df
   

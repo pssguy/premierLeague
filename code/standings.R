@@ -3,7 +3,8 @@ output$st_round <- DT::renderDataTable({
 #   year <- "2014/15"
 #   games <- 38
   
-  if(is.null(input$gamesA)) return()
+  #if(is.null(input$gamesA)) return()
+  req(input$gamesA)
   
   
   df <-  data.frame(standings %>%
@@ -22,7 +23,8 @@ output$st_round <- DT::renderDataTable({
 
 output$st_position <- DT::renderDataTable({
   
-  if(is.null(input$gamesB)) return()
+ # if(is.null(input$gamesB)) return()
+  req(input$gamesB)
 
   standings %>% 
     ungroup() %>% 
@@ -41,7 +43,8 @@ DT::datatable(class='compact stripe hover row-border',
 
 observe({
   
-  if(is.null(input$gamesB)) return()
+ # if(is.null(input$gamesB)) return()
+  req(input$gamesB)
   
 
 df <-  standings %>% 
@@ -61,28 +64,9 @@ df %>%
 )
 
 output$st_team <- DT::renderDataTable({
-  if(is.null(input$gamesC)) return()
-  
-#   if (!is.null(input$games_4a)) {
-#     games <- input$games_4a
-#   } else {
-#     games <- currentRound 
-#   }
-#   if (!is.null(input$team_4a)) {
-#     theTeam <- input$team_4a
-#   } else {
-#     theTeam <- "Arsenal"
-#   }
-  
-  
-#   df <-  data.frame(standings %>%
-#                       filter(tmYrGameOrder==games&team==theTeam) %>%
-#                       select(Season=season,Pos=position,Pts=cumPts,GD=cumGD,GF=cumGF,Final=final_Pos)) 
-#   
-#   DT::datatable(df,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-#                                  
-#                                  order=list(c(0,'desc'))))
-  
+  #if(is.null(input$gamesC)) return()
+  req(input$gamesC) 
+
   
   standings %>% 
     ungroup() %>% 
@@ -155,7 +139,8 @@ output$currentForm <- DT::renderDataTable({
   
   output$st_dateLater <- DT::renderDataTable({
     
-    if(is.null(input$dateA)) return()
+    #if(is.null(input$dateA)) return()
+    req(input$dateA)
     
     theDate <- input$dateA
     
@@ -182,8 +167,8 @@ output$currentForm <- DT::renderDataTable({
   
   output$st_dateSeason <- DT::renderDataTable({
     
-    if(is.null(input$dateA)) return()
-    
+    #if(is.null(input$dateA)) return()
+    req(input$dateA)
     theDate <- input$dateA
     
     if (month(theDate)<6) {
@@ -206,36 +191,7 @@ output$currentForm <- DT::renderDataTable({
   }
   )
 
-# output$datetableRest <- DT::renderDataTable({
-#   
-#   
-#   if (!is.null(input$date_1)) {
-#     theDate <- input$date_1
-#   } else {
-#     theDate - Sys.Date()
-#   }
-#   
-#   if (month(theDate)<6) {
-#     yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
-#   }else {
-#     yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
-#   }
-#   table <-standings %>%
-#     filter(season==yr&gameDate>theDate)  %>%  
-#     group_by(team) %>%
-#     transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-#     mutate(GD=GF-GA) 
-#   table <- unique(table)
-#   
-#   table <- data.frame(table)
-#   table  %<>% 
-#     arrange(desc(Pts),desc(GD),desc(GF),team) %>%
-#     mutate(position=row_number()) %>%
-#     select(Pos=position,Team=team,Pl,Pts,GD)
-#   DT::datatable(table,options= list(paging = FALSE, searching = FALSE, info=FALSE,
-#                                     order=list(c(3,'desc'),c(4,'desc'),c(1,'asc'))))
-# } 
-# )
+
 
 output$datetableYear <- DT::renderDataTable({
   

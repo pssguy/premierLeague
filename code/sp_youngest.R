@@ -1,7 +1,9 @@
 ## latest App - subsequently switched to specials?? - decid on how names go
 
 observe({
-  if (is.null(input$teamC)) return()
+  #if (is.null(input$teamC)) return()
+  
+  req(input$teamC)
   
   ## easiest to put here
   apps <- summary %>% 

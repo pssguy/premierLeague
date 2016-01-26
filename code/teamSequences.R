@@ -5,9 +5,10 @@
 ## errro gets shown momentarily if this is first category in teams gone to - bit unlikely
   resData <- reactive({
   
-  if (is.null(input$teamA)) return()
- 
-  if (length(input$teamA)<1) return()
+    req(input$teamA)
+  # if (is.null(input$teamA)) return()
+  # 
+  # if (length(input$teamA)<1) return()
   if (input$seqVenue=="All") {
   W <-standings %>% 
     ungroup() %>% 
@@ -91,7 +92,7 @@
 output$tm_wins <- renderPlotly({
 
  
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   W <- resData()$W
   
  
@@ -134,7 +135,7 @@ output$tm_wins <- renderPlotly({
 
 output$tm_noWins <- renderPlotly({
   
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   W <- resData()$W
   
 
@@ -172,7 +173,7 @@ output$tm_noWins <- renderPlotly({
 
 output$tm_draws <- renderPlotly({
   
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   D <- resData()$D
   
   
@@ -214,7 +215,7 @@ output$tm_draws <- renderPlotly({
 ### native plotly
 
 output$tm_noDraws <- renderPlotly({
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   D <- resData()$D
   
   
@@ -255,7 +256,7 @@ output$tm_noDraws <- renderPlotly({
 
 output$tm_losses <- renderPlotly({
   
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   L <- resData()$L
   
   
@@ -298,7 +299,7 @@ output$tm_losses <- renderPlotly({
 
 output$tm_noLosses <- renderPlotly({
   
-  if(is.null(resData)) return()
+ # if(is.null(resData)) return()
   L <- resData()$L
   
   
@@ -342,7 +343,7 @@ output$tm_noLosses <- renderPlotly({
 
 
 output$tmWinSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
  
   # could put in reactive but not sure worthwhile
   long <- resData()$W %>% 
@@ -379,7 +380,7 @@ tbl <-  standings %>%
 })
 
 output$tmNoWinSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
   
   
   long <- resData()$W %>% 
@@ -416,7 +417,7 @@ output$tmNoWinSeq <- DT::renderDataTable({
 })
 
 output$tmDrawSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
   
   # could put in reactive but not sure worthwhile
   long <- resData()$D %>% 
@@ -455,7 +456,7 @@ output$tmDrawSeq <- DT::renderDataTable({
 })
 
 output$tmNoDrawSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
   
   
   long <- resData()$D %>% 
@@ -495,7 +496,7 @@ output$tmNoDrawSeq <- DT::renderDataTable({
 
 
 output$tmLossSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
   
   # could put in reactive but not sure worthwhile
   long <- resData()$L %>% 
@@ -534,7 +535,7 @@ output$tmLossSeq <- DT::renderDataTable({
 })
 
 output$tmNoLossSeq <- DT::renderDataTable({
-  if(is.null(resData())) return()
+  #if(is.null(resData())) return()
   
   
   long <- resData()$L %>% 

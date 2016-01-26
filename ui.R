@@ -60,7 +60,7 @@ dashboardPage(
       
       
       menuItem(
-        "Specials", tabName = "specials",
+        "Specials", tabName = "specials", 
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
       #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
@@ -68,6 +68,8 @@ dashboardPage(
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
         menuSubItem("Player % Goals by Category",tabName = "sp_pcPlayerGoals"),
+        menuSubItem("Player by Team av PPG",tabName = "sp_playerByTeamPPG", 
+                    icon = icon("star")),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
@@ -156,20 +158,21 @@ dashboardPage(
                 ),
                 column(
                   width = 8,
- 
-                  box(width=12,
-                    solidHeader = TRUE,status = 'warning',title="Latest App - Goals and Assists by Game",
-                    inputPanel(selectInput("playerppg", label="Type Name and Select", choices =playerChoice,selected="VARDYJ")),
-                   # footer = "Hover points for detail",
-                    plotlyOutput("player_ppg_hl")
-                  ),
-                  
                   box(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Team Leaders (Ties not shown)",
-                    collapsible = T,collapsed = F,
+                    collapsible = T,collapsed = T,
                     DT::dataTableOutput("teamLeadersCurrent")
+                  ),
+                  box(width=12,height= "1000px",collapsible = T,collapsed = F,
+                  solidHeader = TRUE,status = 'warning',title="Latest App - Av Team Points when Starting (still in beta)",
+                   inputPanel(selectInput("teamA_hl", label=NULL,selected="Man. City", teamsChoice),
+                              selectInput("teamYears_hl",label=NULL,seasonChoice)
+                   ),
+                   plotlyOutput("playerByTeamPPG_hl")
                   )
+                  
+                  
                 )
               )),
       
@@ -1106,6 +1109,19 @@ tabItem(
         plotlyOutput("pcPlayerGoals")
       )
     ),
+
+
+tabItem(
+  "sp_playerByTeamPPG",
+ # plotlyOutput("playerByTeamPPG")
+  
+   box( width= 6,
+    # title = "Proportion of Player Goals by Category", footer = "Pan and Zoom. Points are jittered for clarity. Hover points for detail",
+     solidHeader = FALSE,status = 'success',
+     footer="Beta Development", height= "800px",
+     plotlyOutput("playerByTeamPPG")
+   )
+),
     
     tabItem(
       "sp_deficits",

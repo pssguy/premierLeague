@@ -21,6 +21,8 @@ output$st_BoxAll <- renderPlotly({
 
 output$st_BoxSeason <- renderPlotly({
   #s <- cv$get()
+  
+  if (is.null(event_data("plotly_click"))) return()
   s <- event_data("plotly_click")
   
   if (length(s) == 0) {

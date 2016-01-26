@@ -3,7 +3,8 @@
 
 output$heatResults <- renderPlotly({
   
-  if (is.null(input$heatTeam)) return()
+  #if (is.null(input$heatTeam)) return()
+  req(input$heatTeam)
   
   temp <- standings %>%
     filter(team==input$heatTeam) %>%
@@ -52,11 +53,15 @@ output$heatResults <- renderPlotly({
 
 heatData <- reactive({
   
+  print("enter heatData")
+  
   # if(is.null(cv$get())) return
   # 
   # s <- cv$get()
   
-  if(is.null(event_data("plotly_selected"))) return
+  if(is.null(event_data("plotly_click"))) return()
+ # req(event_data("plotly_selected")) not appropriate use of req apparantly
+  
   s <- event_data("plotly_click")
   if (length(s)==0) return()
   
@@ -93,6 +98,7 @@ heatData <- reactive({
 output$heatHeader <- renderUI({
 
   if (is.null(heatData())) return()
+  #req()
   heatData()$header
   
 })
@@ -100,6 +106,8 @@ output$heatHeader <- renderUI({
 
 output$heatTable <- DT::renderDataTable({
   if (is.null(heatData())) return()
+  
+  
   heatData()$df %>%
       DT::datatable(selection='single',
                     class = 'compact stripe hover row-border order-column',rownames = FALSE,options = list(

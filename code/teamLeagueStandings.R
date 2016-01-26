@@ -1,11 +1,13 @@
 ## Problem
 observe({
  
+  req(input$teamA)
+  req(input$teamYears)
   
-  if (is.null(input$teamA)) return()
-  if (is.null(input$teamYears)) return()
-    print(input$teamA)
-    print(input$teamYears)
+  # if (is.null(input$teamA)) return()
+  # if (is.null(input$teamYears)) return()
+  #   print(input$teamA)
+  #   print(input$teamYears)
   
   theTeam <- input$teamA
   theSeason <- input$teamYears
