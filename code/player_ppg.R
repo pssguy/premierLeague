@@ -17,10 +17,10 @@ output$player_ppg <- renderPlotly({
   xTitle <- paste0("Appearance Order - Total ",games)
 
   
-  plot_ly(ppgPlayer , x=plGameOrder, y=Gls, name="Goals", type="bar",
+  plot_ly(ppgPlayer , x=gameOrder, y=Gls, name="Goals", type="bar",
           hoverinfo="text",
           text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
-    add_trace(x=plGameOrder,y=Assists, name="Assists (inc secondary)", type="bar",
+    add_trace(x=gameOrder,y=Assists, name="Assists (inc secondary)", type="bar",
               hoverinfo="text",
               text=paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder))  %>%
     layout(hovermode = "closest", barmode="stack",
