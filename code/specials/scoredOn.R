@@ -104,8 +104,8 @@ df   %>%
     mutate(apps=jitter(apps),goals=jitter(goals)) %>% 
     ggvis(~apps,~goals, key := ~id) %>% 
     layer_points() %>% 
-  add_axis('x',title="Appearances", format='d') %>% 
-  add_axis('y',title="Goals Scored", format='d') %>%
+  ggvis::add_axis('x',title="Appearances", format='d') %>% 
+  ggvis::add_axis('y',title="Goals Scored", format='d') %>%
   add_tooltip(all_values, "hover") %>%
     bind_shiny("scoredOnChart")
 })

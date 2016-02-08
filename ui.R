@@ -287,11 +287,11 @@ dashboardPage(
       tabItem("tm_leaguePosition",
               
               fluidRow(
-                box(
-                  width = 6,
-                  status = "success",solidHeader = TRUE,title = "Positon by Round. Hover points for Result, click for lineup",
-                  ggvisOutput("posGraph")
-                ),
+                # box(
+                #   width = 6,
+                #   status = "success",solidHeader = TRUE,title = "Positon by Round. Hover points for Result, click for lineup",
+                #   ggvisOutput("posGraph")
+                # ),
                 box(
                   width = 6,
                   status = "success",solidHeader = TRUE,title = "Team Lineup",
@@ -810,7 +810,7 @@ tabItem(
             width = 6,
             title = "Individual Goal Sequences By Date - All Games",solidHeader = TRUE,status = 'success',
             collapsible = TRUE, collapsed = TRUE,
-            plotOutput("gameGoalSeq")
+            ggvisOutput("gameGoalSeq")
           ),
           box(
             width = 6,

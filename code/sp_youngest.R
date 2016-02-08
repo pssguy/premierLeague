@@ -3,7 +3,7 @@
 observe({
   #if (is.null(input$teamC)) return()
   
-  req(input$teamC)
+  req(input$teamD)
   
   ## easiest to put here
   apps <- summary %>% 
@@ -45,8 +45,8 @@ observe({
     ggvis(~gameDate,~youngest, key:= ~id) %>% 
     layer_points(fill =~name) %>% 
     add_legend("fill", title="") %>% 
-    add_axis("x", title="") %>% 
-    add_axis("y", title="Age",title_offset=50) %>% 
+    ggvis::add_axis("x", title="") %>% 
+    ggvis::add_axis("y", title="Age",title_offset=50) %>% 
     add_tooltip(all_values,"hover") %>% 
     set_options(height = 300) %>% 
     bind_shiny("sp_ageRecord")

@@ -65,8 +65,8 @@ teamRecord %>%
   layer_rects(x2=~Left,y2=~ppg-0.01) %>% 
   layer_text(text:=~name, stroke:="red") %>% 
   scale_numeric("y",domain=c(minY,maxY)) %>% 
-  add_axis("x", title=" ") %>% 
-  add_axis("y", title="Av Points per Game") %>% 
+  ggvis::add_axis("x", title=" ") %>% 
+  ggvis::add_axis("y", title="Av Points per Game") %>% 
   add_tooltip(all_values,"hover") %>% 
   hide_legend("fill") %>% 
   bind_shiny("managerPPGbyTeam")

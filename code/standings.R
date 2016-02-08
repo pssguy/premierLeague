@@ -54,8 +54,8 @@ df <-  standings %>%
 df %>% 
   ggvis(~final_Pos) %>% 
   layer_histograms(fill:="lightblue") %>% 
-  add_axis("x", title="Final League Position", format='d') %>% 
-  add_axis("y", title="Seasons", format='d') %>% 
+  ggvis::add_axis("x", title="Final League Position", format='d') %>% 
+  ggvis::add_axis("y", title="Seasons", format='d') %>% 
   bind_shiny("st_position_chart")
 
 

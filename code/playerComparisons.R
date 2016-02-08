@@ -63,8 +63,8 @@ plot <- df %>%
 # create plot
 plot %>% 
   layer_lines(stroke= ~name) %>% 
-  add_axis("x", title=xTitle) %>% 
-  add_axis("y", title=yTitle) %>% 
+  ggvis::add_axis("x", title=xTitle) %>% 
+  ggvis::add_axis("y", title=yTitle) %>% 
   add_legend("stroke", title="") %>% 
   bind_shiny("sp_comparisons")
 

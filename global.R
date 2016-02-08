@@ -5,8 +5,9 @@ library(rvest)
 library(XML)
 library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
 library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
-library(timelineR) # conflict with ggvis on add_axis
+library(timelineR) # conflict with ggvis on add_axis so added to ggvis currently
 library(ggvis)
+
 library(RSQLite)
 library(lubridate)
 library(stringr)
@@ -30,6 +31,8 @@ library(plotly)
 #library(crosstalk) no longer needed as can now use event_data() in plotly
 library(explodingboxplotR)
 library(beeswarm) # just for test
+
+library(addins)
 
 
 

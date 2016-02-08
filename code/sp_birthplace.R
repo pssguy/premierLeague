@@ -71,8 +71,8 @@ observe({
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
       set_options(width=500) %>% 
-      add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
-      add_axis("x", properties = axis_props(labels = list(
+      ggvis::add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+      ggvis::add_axis("x", properties = axis_props(labels = list(
         angle = 45, align = "left", fontSize = 10
       )),title = "") %>% 
       bind_shiny("sp_birthplaceChart")
@@ -85,8 +85,8 @@ observe({
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
       scale_numeric("y",domain=c(0,100)) %>% 
-      add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
-      add_axis("x", properties = axis_props(labels = list(
+      ggvis::add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+      ggvis::add_axis("x", properties = axis_props(labels = list(
         angle = 45, align = "left", fontSize = 10
       )),title = "") %>% 
       bind_shiny("sp_birthplaceChart")
@@ -105,8 +105,8 @@ df %>%
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
       set_options(width=500) %>% 
-  add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
-  add_axis("x", properties = axis_props(labels = list(
+      ggvis::add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+      ggvis::add_axis("x", properties = axis_props(labels = list(
     angle = 45, align = "left", fontSize = 10
   )),title = "") %>% 
   bind_shiny("sp_birthplaceChart")
@@ -121,8 +121,8 @@ df %>%
       add_tooltip(all_values, "click") %>% 
       handle_click(getbpSeason) %>%
        scale_numeric("y",domain=c(0,100)) %>% 
-     add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
-      add_axis("x", properties = axis_props(labels = list(
+      ggvis::add_axis("y",title="% Mins played by English Born Players in BPL") %>% 
+      ggvis::add_axis("x", properties = axis_props(labels = list(
         angle = 45, align = "left", fontSize = 10
       )),title = "") %>% 
       bind_shiny("sp_birthplaceChart")
