@@ -50,7 +50,7 @@ shinyServer(function(input, output, session) {
       # player ones
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
-    } else if (input$sbMenu=="pl_career") {
+    } else if (input$sbMenu=="pl_goals") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_ppg") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))

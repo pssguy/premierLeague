@@ -810,7 +810,7 @@ tabItem(
             width = 6,
             title = "Individual Goal Sequences By Date - All Games",solidHeader = TRUE,status = 'success',
             collapsible = TRUE, collapsed = TRUE,
-            ggvisOutput("gameGoalSeq")
+            plotOutput("gameGoalSeq")
           ),
           box(
             width = 6,

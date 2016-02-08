@@ -335,10 +335,10 @@ observe({
   
   chart %>%     ggvis(~gameDate,~slength) %>% 
     layer_points(fill=~ Scored, size=2) %>% 
-    add_axis("x", properties = axis_props(labels = list(
+    ggvis::add_axis("x", properties = axis_props(labels = list(
       angle = 45, align = "left", fontSize = 11
     )),title = "") %>% 
-    add_axis("y", title="Run of Games") %>% 
+    ggvis::add_axis("y", title="Run of Games") %>% 
     set_options(width=400, height=400) %>% 
     bind_shiny("gameGoalSeq")
   
@@ -402,9 +402,9 @@ observe({
 chart %>%     ggvis(~gameDate,~slength) %>% 
     layer_points(fill=~ Scored, size=2) %>% 
     
-    add_axis("y", title="Run of Games as Starter") %>% 
+  ggvis::add_axis("y", title="Run of Games as Starter") %>% 
   
-  add_axis("x", properties = axis_props(labels = list(
+  ggvis::add_axis("x", properties = axis_props(labels = list(
     angle = 45, align = "left", fontSize = 11
   )),title = "") %>% 
   set_options(width=400, height=400) %>% 
