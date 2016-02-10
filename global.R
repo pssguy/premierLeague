@@ -32,7 +32,7 @@ library(plotly)
 library(explodingboxplotR)
 library(beeswarm) # just for test
 
-library(addins)
+#library(addins)
 
 
 
@@ -205,9 +205,9 @@ allPlayers <- playerGame %>%
 
 
 # standard map data for world
-mapData <- readOGR(dsn=".",
-                   layer = "ne_50m_admin_0_countries", 
-                   encoding = "UTF-8",verbose=FALSE)
+# mapData <- readOGR(dsn=".",
+#                    layer = "ne_50m_admin_0_countries", 
+#                    encoding = "UTF-8",verbose=FALSE)
 
 
 ## used in year on year change

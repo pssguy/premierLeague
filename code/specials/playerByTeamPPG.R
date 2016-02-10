@@ -131,7 +131,8 @@ output$playerByTeamPPG_hl <- renderPlotly({
            xaxis=list(title="Av points per Game"),
            yaxis=list(title=" "),
            title=theTitle, titlefont=list(size=16)
-    )
+    ) %>% 
+  config(displayModeBar = F)
   
   
 })
