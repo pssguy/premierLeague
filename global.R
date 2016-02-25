@@ -1,3 +1,4 @@
+options(warn=-1)
 library(shiny)
 library(shinydashboard)
 library(httr)
@@ -37,7 +38,7 @@ library(beeswarm) # just for test
 
 
 positions <- read_csv("positions.csv") ##
-playerGame <- readRDS("playerGame.rds")
+playerGame <- readRDS("playerGame.rds") # reducing columns would help - though might be offset by calcs needed later
 playerClub <- readRDS("playerClub.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")
@@ -203,7 +204,7 @@ allPlayers <- playerGame %>%
   select(name,PLAYERID,COUNTRY) %>% 
   unique()
 
-
+## removed as  not sure needed and took ages to load
 # standard map data for world
 # mapData <- readOGR(dsn=".",
 #                    layer = "ne_50m_admin_0_countries", 
