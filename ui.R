@@ -72,6 +72,8 @@ dashboardPage(
                     icon = icon("star")),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
+      menuSubItem("Player PPG by Country of Birth",tabName = "sp_playerByCountryPPG", 
+                  icon = icon("star")),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         # menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
@@ -165,11 +167,12 @@ dashboardPage(
                     DT::dataTableOutput("teamLeadersCurrent")
                   ),
                   box(width=12,height= "1000px",collapsible = T,collapsed = F,
-                  solidHeader = TRUE,status = 'warning',title="Latest App - Av Team Points when Starting (still in beta)",
-                   inputPanel(selectInput("teamA_hl", label=NULL,selected="Man. City", teamsChoice),
-                              selectInput("teamYears_hl",label=NULL,seasonChoice)
-                   ),
-                   plotlyOutput("playerByTeamPPG_hl")
+                  solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
+                  footer = "Unlike official Statistics, up to two assists are allowed per goal",
+                  inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
+                             selectInput("teamYears",label=NULL,seasonChoice)
+                  ),
+                   plotlyOutput("playerByCountryPPG_hl")
                   )
                   
                   
@@ -933,6 +936,18 @@ tabItem(
         ggvisOutput("sp_comparisons")
       )
     ),
+tabItem(
+  "sp_playerByCountryPPG",
+  box(
+    width = 12,
+    status = "success",solidHeader = TRUE,title = "PPG for Player by Country of Birth",
+    footer = "Unlike official Statistics, up to two assists are allowed per goal",
+    collapsible = T,collapsed = F,
+    plotlyOutput("sp_playerByCountryPPG")
+    
+   
+  )
+),
     tabItem("sp_scoredOn",
             fluidRow(
               column(

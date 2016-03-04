@@ -116,6 +116,8 @@ output$career <- DT::renderDataTable({
 output$pointsByYearChart <- renderPlotly({
   #if (is.null(input$playerA)) return()
   
+  req(input$playerA)
+  
   df <-playerGame %>% 
     filter(PLAYERID==input$playerA) %>% 
     group_by(season,PLAYERID,name) %>% 
