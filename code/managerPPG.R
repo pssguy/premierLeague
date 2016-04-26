@@ -15,7 +15,7 @@ managerGame <-managers %>%
 
 ppgManagerTeamStint <- managerGame %>% 
   group_by(TEAMNAME,ManagerID,ManagerTeam,name) %>% 
-  summarize(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
+  dplyr::summarize(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
   ungroup()
 
 
@@ -38,7 +38,7 @@ observe({
   req(input$managerGames)
   # if(is.null(input$teamA)) return()
   # if(is.null(input$managerGames)) return()
-  print(input$teamA)
+  print(paste(input$teamA,"managers"))
   
 teamRecord <- ppgManagerTeamStint  %>% 
   

@@ -8,9 +8,11 @@ diffTeams <-standings %>%
   group_by(season) %>% 
   tally() %>% 
   arrange(desc(n))  %>% 
-  rename(teams=n)
+ # rename(teams=n) for some reason started causing error ##Error in rename(., teams = n) : unused argument (teams = n)
+  select(season,teams=n)
 
 topChanges <- standings %>% 
+  ungroup() %>% 
   filter(position==1) %>% 
   select(season,team,tmYrGameOrder) %>% 
   arrange(tmYrGameOrder) %>% 
@@ -19,7 +21,7 @@ topChanges <- standings %>%
   filter(tmYrGameOrder!=1) %>% 
   mutate(change=ifelse(team==lastteam,0,1)) %>% 
   group_by(season) %>% 
-  summarize(changes=sum(change)) %>% 
+  dplyr::summarize(changes=sum(change)) %>% 
   inner_join(diffTeams)
 
 output$st_topChanges <- renderPlotly({

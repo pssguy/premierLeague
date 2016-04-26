@@ -55,79 +55,80 @@
 #   
 # })
 
+## causing error but canot find in ui - also thisn structure is need of overhaul
  
- observeEvent(input$hl_compBtn,{
-   
-   # base data.frame
-   df <-playerGame %>% 
-     filter((START+subOn>0)&PLAYERID %in% input$hl_playerComps) %>% 
-     select(name,PLAYERID,Gls,Assists,age,gameDate) %>% 
-     arrange(gameDate) %>% 
-     group_by(name,PLAYERID) %>% 
-     mutate(gameOrder=row_number(),points=Assists+Gls,
-            cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points)) 
-   
-   # set up plot from radio button choices
-   
-   if (input$hl_compCategory=="Points") {
-     yTitle <-"Cumulative Goals+ Assists (inc. secondary)"
-     if (input$hl_compTime=="Apps") {
-       xTitle <-"PL Apps"
-       plot <- df %>% 
-         ggvis(~gameOrder,~cumPoints) 
-     } else if (input$hl_compTime=="Age") {
-       xTitle <-"Age"
-       plot <- df %>% 
-         ggvis(~age,~cumPoints) 
-     } else if (input$hl_compTime=="Date") {
-       xTitle <-""
-       plot <- df %>% 
-         ggvis(~gameDate,~cumPoints) 
-     }
-     
-   } else if  (input$hl_compCategory=="Goals") {   
-     yTitle <-"Cumulative Goals"
-     if (input$hl_compTime=="Apps") {
-       xTitle <-"PL Apps"
-       plot <- df %>% 
-         ggvis(~gameOrder,~cumGoals) 
-     } else if (input$hl_compTime=="Age") {
-       xTitle <-"Age"
-       plot <- df %>% 
-         ggvis(~age,~cumGoals) 
-     } else if (input$hl_compTime=="Date") {
-       xTitle <-""
-       plot <- df %>% 
-         ggvis(~gameDate,~cumGoals) 
-     } 
-   } else if  (input$hl_compCategory=="Assists") {   
-     yTitle <-"Cumulative Assists (inc. secondary)"
-     if (input$hl_compTime=="Apps") {
-       xTitle <-"PL Apps"
-       plot <- df %>% 
-         ggvis(~gameOrder,~cumAssists) 
-     } else if (input$hl_compTime=="Age") {
-       xTitle <-"Age"
-       plot <- df %>% 
-         ggvis(~age,~cumAssists) 
-     } else if (input$hl_compTime=="Date") {
-       xTitle <-""
-       plot <- df %>% 
-         ggvis(~gameDate,~cumAssists) 
-     }
-   }
-   
-   # create plot
-   plot %>% 
-     layer_lines(stroke= ~name) %>% 
-     ggvis::add_axis("x", title=xTitle) %>% 
-     ggvis::add_axis("y", title=yTitle) %>% 
-     add_legend("stroke", title="") %>% 
-     bind_shiny("hl_comparisons")
-   
-   
- })
- 
+ # observeEvent(input$hl_compBtn,{
+ #   
+ #   # base data.frame
+ #   df <-playerGame %>% 
+ #     filter((START+subOn>0)&PLAYERID %in% input$hl_playerComps) %>% 
+ #     select(name,PLAYERID,Gls,Assists,age,gameDate) %>% 
+ #     arrange(gameDate) %>% 
+ #     group_by(name,PLAYERID) %>% 
+ #     mutate(gameOrder=row_number(),points=Assists+Gls,
+ #            cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points)) 
+ #   
+ #   # set up plot from radio button choices
+ #   
+ #   if (input$hl_compCategory=="Points") {
+ #     yTitle <-"Cumulative Goals+ Assists (inc. secondary)"
+ #     if (input$hl_compTime=="Apps") {
+ #       xTitle <-"PL Apps"
+ #       plot <- df %>% 
+ #         ggvis(~gameOrder,~cumPoints) 
+ #     } else if (input$hl_compTime=="Age") {
+ #       xTitle <-"Age"
+ #       plot <- df %>% 
+ #         ggvis(~age,~cumPoints) 
+ #     } else if (input$hl_compTime=="Date") {
+ #       xTitle <-""
+ #       plot <- df %>% 
+ #         ggvis(~gameDate,~cumPoints) 
+ #     }
+ #     
+ #   } else if  (input$hl_compCategory=="Goals") {   
+ #     yTitle <-"Cumulative Goals"
+ #     if (input$hl_compTime=="Apps") {
+ #       xTitle <-"PL Apps"
+ #       plot <- df %>% 
+ #         ggvis(~gameOrder,~cumGoals) 
+ #     } else if (input$hl_compTime=="Age") {
+ #       xTitle <-"Age"
+ #       plot <- df %>% 
+ #         ggvis(~age,~cumGoals) 
+ #     } else if (input$hl_compTime=="Date") {
+ #       xTitle <-""
+ #       plot <- df %>% 
+ #         ggvis(~gameDate,~cumGoals) 
+ #     } 
+ #   } else if  (input$hl_compCategory=="Assists") {   
+ #     yTitle <-"Cumulative Assists (inc. secondary)"
+ #     if (input$hl_compTime=="Apps") {
+ #       xTitle <-"PL Apps"
+ #       plot <- df %>% 
+ #         ggvis(~gameOrder,~cumAssists) 
+ #     } else if (input$hl_compTime=="Age") {
+ #       xTitle <-"Age"
+ #       plot <- df %>% 
+ #         ggvis(~age,~cumAssists) 
+ #     } else if (input$hl_compTime=="Date") {
+ #       xTitle <-""
+ #       plot <- df %>% 
+ #         ggvis(~gameDate,~cumAssists) 
+ #     }
+ #   }
+ #   
+ #   # create plot
+ #   plot %>% 
+ #     layer_lines(stroke= ~name) %>% 
+ #     ggvis::add_axis("x", title=xTitle) %>% 
+ #     ggvis::add_axis("y", title=yTitle) %>% 
+ #     add_legend("stroke", title="") %>% 
+ #     bind_shiny("hl_comparisons")
+ #   
+ #   
+ # })
+ # 
  
 
 
@@ -148,13 +149,14 @@ output$teamSeqCurrent <- DT::renderDataTable({
     arrange(tmGameOrder) %>% 
     select(res,tmGameOrder)
   
- 
+ ## think there is a problem here as last filter only results in one tem wheras should be a value for every team as is current
   Wx <- scores %>% 
     mutate(cat=ifelse(res=="Win",1,0)) %>% 
     do(subSeq(.$cat)) %>% 
     group_by(team) %>% 
     mutate(maxFirst=max(first)) %>% 
     filter(first==maxFirst)
+  
   
   Win <- 
     Wx  %>% filter(value==1) %>% 

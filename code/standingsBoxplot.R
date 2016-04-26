@@ -1,4 +1,8 @@
 
+boxData <- eventReactive(input$boxButton,{
+  
+})
+
 
 output$st_BoxAll <- renderPlotly({
   
@@ -65,7 +69,7 @@ output$st_explodingBoxAll <- renderExploding_boxplot({
   
   df <- standings %>% 
     ungroup() %>% 
-    filter(tmYrGameOrder==input$st_boxGames) %>% 
+    filter(tmYrGameOrder==input$st_boxGames&position>=st_boxPositions&position<=st_boxPositions) %>% 
     select(team,season,cumPts,tmYrGameOrder)  %>% 
     mutate(year=str_sub(season,1,4)) %>% 
     rename(points=cumPts)

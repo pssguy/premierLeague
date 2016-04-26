@@ -112,6 +112,8 @@ pboData <- reactive({
   
   print(glimpse(byOpponent))
   
+  write_csv(byOpponent,"byOpponent.csv")
+  
   info=list(byOpponent=byOpponent)
   return(info)
  
@@ -119,17 +121,39 @@ pboData <- reactive({
   
     
     output$playerByOpponent <- DT::renderDataTable({
-      # print("enter pbo")
-      # if(is.null(pboData())) return()
-      print("entered pbo")
+      
       pboData()$byOpponent %>% 
             DT::datatable(selection='single',class='compact stripe hover row-border',
                   colnames = c('Opponents', 'Apps', 'St', 'On', 'Off', 'Bnch', 'Gls','Ass','R','Y','W','D','L'),
                   rownames=FALSE,options = list(
       searching = FALSE,info = FALSE,
-      pageLength = 15
+      pageLength = 10
     ))
   
+    })
+    
+    
+    
+      output$playerByOpponentChart <- renderPlotly({
+        
+        pboData()$byOpponent %>% 
+          arrange(desc(goals+assists)) %>% 
+          plot_ly(y=goals,x=Opponents,type="bar",name="Goals",
+                  hoverinfo="text",
+                  text=paste0("<br>Opp: ",Opponents,
+                              "<br>Games: ",apps,
+                              "<br>Goals: ",goals,
+                              "<br>Assists: ",assists)) %>% 
+          add_trace(y=assists,x=Opponents,type="bar",name="Assists",
+                    hoverinfo="text",
+                    text=paste0("<br>Opp: ",Opponents,
+                                "<br>Games: ",apps,
+                                "<br>Goals: ",goals,
+                                "<br>Assists: ",assists)) %>% 
+          layout(barmode = "stack",
+                 xaxis=list(title=""),
+                 yaxis=list(title="Goals and Assists"),
+                 margin=list(b=70))
   
 })
 

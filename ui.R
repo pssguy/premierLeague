@@ -542,10 +542,18 @@ dashboardPage(
           width = 6, height = 600,
           collapsed = F,collapsible = T,
           title = "Points Range by Games played - Click plot for Season standings",solidHeader = TRUE,status = 'success',
-          sliderInput(
-            "st_boxGames","Games Played", min = 1,max = 42, value = currentRound
+          div(
+            style = "display:inline-block; padding-right: 20px;", sliderInput(
+            "st_boxGames","Games Played", min = 1,max = 42, value = currentRound, width='300px')
           ),
-          plotlyOutput("st_BoxAll")
+          div(
+            style = "display:inline-block; padding-right: 20px;", sliderInput(
+            "st_boxPositions","Team Positions", min = 1,max = 22, value = c(1,20), width='300px')
+          ),
+          div(
+            actionButton("boxButton","get Chart")
+          ),exploding_boxplotOutput("st_explodingBoxAll")
+         # plotlyOutput("st_BoxAll")
         ),
         box(
           width = 6,height = 600,
@@ -830,7 +838,8 @@ tabItem(
         box(
           width = 7,title = "Summary By Opponent - click for Game Info",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
-          DT::dataTableOutput("playerByOpponent")
+          DT::dataTableOutput("playerByOpponent"),
+          plotlyOutput("playerByOpponentChart")
         ),
         box(
           width = 5,title = "Games By Selected Opponent",solidHeader = TRUE,status = 'success',
@@ -909,22 +918,24 @@ tabItem(
       )
     ),
     
-    tabItem(
-      "sp_youngest",
-      box(
-        width = 12,
-        status = "success",solidHeader = TRUE,title = "Youngest Players",
-        collapsible = T,collapsed = F,
-        helpText(
-          "Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
-          never played an EPL game again. Click for Team. Hover for Details"
-        ),
-        selectInput(
-          "teamD", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
-        ),
-        ggvisOutput("sp_ageRecord")
-        )
-    ),
+## taken out as causing error- may want to switch from ggvis
+
+    # tabItem(
+    #   "sp_youngest",
+    #   box(
+    #     width = 12,
+    #     status = "success",solidHeader = TRUE,title = "Youngest Players",
+    #     collapsible = T,collapsed = F,
+    #     helpText(
+    #       "Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
+    #       never played an EPL game again. Click for Team. Hover for Details"
+    #     ),
+    #     selectInput(
+    #       "teamD", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
+    #     ),
+    #     ggvisOutput("sp_ageRecord")
+    #     )
+    # ),
     tabItem(
       "sp_comparisons",
       box(
