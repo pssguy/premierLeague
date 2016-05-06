@@ -41,7 +41,7 @@ output$playerByCountryPPG_hl    <- renderPlotly({
 
   test <- playerGame %>%
     ungroup() %>% 
-    filter(COUNTRY==input$country&season==input$teamYears)  %>%
+    filter(COUNTRY==input$country&season==input$teamYears_ppg)  %>%
     group_by(PLAYERID,name) %>%
     select(Gls,Assists,mins) %>%
     dplyr::summarize(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>%

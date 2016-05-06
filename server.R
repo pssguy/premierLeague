@@ -7,6 +7,8 @@ values <- reactiveValues()
  values$Opponents <- NULL
  values$MATCHID <- NULL
 
+ values$teamYears <- NULL
+ 
 shinyServer(function(input, output, session) {
   
   ## set up input menu in sidebar
@@ -46,7 +48,11 @@ shinyServer(function(input, output, session) {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
                  selectInput("teamYears",label=NULL,seasonChoice)
                  )
-      
+     } else if (input$sbMenu=="sp_playerByCountryPPG") {
+        inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
+                   selectInput("teamYears",label=NULL,seasonChoice)
+        )
+        
       # player ones
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
@@ -82,10 +88,19 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$teamA,{
-    
+    print("enter observeEvent(input$teamA,{")
     values$TEAMNAME <- input$teamA
+    print(values$TEAMNAME)
     
   })
+  
+  
+  # observeEvent(input$teamYears,{
+  #   print("enter observeEvent(input$teamA,{")
+  #   values$teamYears <- input$teamYears
+  # 
+  #   
+  # })
 #   
 #   observeEvent(input$playerB,{
 #     print("enter input$PlayerA in observeEvent")
@@ -94,12 +109,15 @@ shinyServer(function(input, output, session) {
 #     updateSelectizeInput(session,"playerA", "Player", playerChoice,selected=input$playerB,   options=list(maxOptions=10000))
 #   })
   
+  # Not sure how this can be applied to all
   output$teamYear_ui <- renderUI({
     if (input$sbMenu=="tm_playerSummary"|input$sbMenu=="tm_leaguePosition") {
+      print("right start") # comes in intially ok
       print(input$teamA)
       yrs <- sort(unique(tmYrs[tmYrs$team==input$teamA,]$season),decreasing = T) # thinka bout + inc all
-      
-      inputPanel(selectInput("teamYears",label=NULL,yrs, selected=yrs[1]))
+    #  updateSelectInput(session, "teamYears", choices = yrs)
+      inputPanel(selectInput("teamYears",label=NULL,yrs, selected=yrs[1]))# - this was here and working
+      #inputPanel(selectInput("teamYears",label=NULL,yrs,selected=values$teamYears))
     } else if (input$sbMenu=="pl_goals"){
       #print("here u are")
     }
@@ -108,6 +126,14 @@ shinyServer(function(input, output, session) {
       #selectInput("teamYears",label=NULL,yrs, selected=yrs[length(yrs)]) # need to readdress
       #  return()
     }
+  })
+  
+  output$teamYear_cpc <- renderUI({
+    
+      yrs <- sort(unique(tmYrs[tmYrs$team==input$team_cpc,]$season),decreasing = T)
+      
+      inputPanel(selectInput("teamYear_cpc",label=NULL,yrs, selected=yrs[1]))
+      
   })
   
   output$c <- renderUI({
@@ -620,6 +646,8 @@ shinyServer(function(input, output, session) {
   source("code/managerPPG.R", local=TRUE)
   source("code/player_ppg.R", local=TRUE)
   source("code/specials/playerByTeamPPG.R", local=TRUE)
+  source("code/specials/playerByCountryPPG.R", local=TRUE)
+  source("code/specials/cardsPerClub.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

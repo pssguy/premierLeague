@@ -3,11 +3,14 @@
 ## could add some formatting by cell but would be quite long
 
 output$teamYear <- DT::renderDataTable({
- # print("enter teamYear")
- 
+  req(input$teamYears)
+  req(input$teamA)
+  print("enter teamYear")
+ print(paste0(input$teamYears," teamYear"))
+ print(input$teamA)
   
   #if (is.null(input$teamYears)) return()
-  req(input$teamYears)
+  #req(input$teamYears)
   
   theTeam <- input$teamA
   theYear <- input$teamYears

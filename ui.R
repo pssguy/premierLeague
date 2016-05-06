@@ -63,6 +63,7 @@ dashboardPage(
         "Specials", tabName = "specials", 
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
       #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
+      menuSubItem("Cards Per Club",tabName = "sp_cardsClub"),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
@@ -170,7 +171,7 @@ dashboardPage(
                   solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
                   footer = "Unlike official Statistics, up to two assists are allowed per goal",
                   inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
-                             selectInput("teamYears",label=NULL,seasonChoice)
+                             selectInput("teamYears_ppg",label=NULL,seasonChoice)
                   ),
                    plotlyOutput("playerByCountryPPG_hl")
                   )
@@ -1159,6 +1160,21 @@ tabItem(
         plotlyOutput("relegationOvercome")
       )
     ),
+
+tabItem(
+  "sp_cardsClub",
+  
+  
+  box(
+    solidHeader = FALSE,status = 'success',
+    footer = "Hover points for detail",
+    inputPanel(
+      selectInput("team_cpc",NULL,teamsChoice,selected="Tottenham H")
+    ),
+    uiOutput("teamYear_cpc"),
+    plotlyOutput("sp_cardsClub")
+  )
+),
     
     
     tabItem("info", includeMarkdown("info.md"))
