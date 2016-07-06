@@ -1,0 +1,118 @@
+---
+title: "Shearer Book "
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(readr)
+library(dplyr)
+
+pgMini <- read_csv("pgMini.csv")
+summary <- readRDS("summary.rds")
+
+pgMini <- pgMini %>% 
+  arrange(name)
+
+playerChoice <- pgMini$PLAYERID
+names(playerChoice) <- pgMini$name  # need to get sorted also selectize
+
+print(playerChoice)
+
+```
+
+Summary
+===================================== 
+
+### Select Player
+
+``` {r}
+
+inputPanel(selectInput("player", label=NULL,selected="SHEAREA", playerChoice, selectize = FALSE))
+
+```
+
+``` {r summary carpentry}
+
+### creating data for value boxes
+glanceData <- reactive({
+  req(input$player)
+  
+  
+  basic <- summary %>%
+  filter(PLAYERID == input$player)
+  
+  teams <- length(unique(basic$TEAMNAME)) # 6
+  seasons <- length(unique(basic$season))
+  
+  
+  
+  bySeason <- summary %>%
+  filter(PLAYERID == input$player) %>%
+  ungroup() %>%
+  group_by(season) %>%
+  summarize(
+  apps = sum(St + On),
+  goals = sum(StGls + subGls),
+  cards = sum(Y + R),
+  assists = sum(Assists)
+  )
+  
+  
+  
+  max <- bySeason %>%
+  summarize(
+  maxApps = max(apps),
+  maxCards = max(cards),
+  maxGoals = max(goals),
+  maxAssists = max(assists)
+  )
+  
+  tot <- bySeason %>%
+  summarize(
+  apps = sum(apps),
+  goals = sum(goals),
+  cards = sum(cards),
+  assists = sum(assists)
+  )
+  
+  career <- cbind(max, tot)  %>%
+  mutate(
+  showApps = paste(apps, "-", maxApps),
+  showCards = paste(cards, "-", maxCards),
+  showGoals = paste(goals, "-", maxGoals),
+  showAssists = paste(assists, "-", maxAssists)
+  )
+  
+  
+  
+  info = list(teams = teams,
+  seasons = seasons,
+  career = career)
+  return(info)
+  
+})
+
+
+```
+
+### Appearances Tot - Max(Year)
+
+``` {r}
+
+
+renderValueBox({
+  
+  req(glanceData())
+  
+  valueBox(
+        value=glanceData()$career$showApps,
+        icon="ion-person-add"
+      )
+
+})
+```

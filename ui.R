@@ -63,18 +63,19 @@ dashboardPage(
         "Specials", tabName = "specials", 
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
       #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
-      menuSubItem("Cards Per Club",tabName = "sp_cardsClub"),
+      menuSubItem("Cards Per Club",tabName = "sp_cardsClub", 
+                  icon = icon("star")),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
+        menuSubItem("League position - Alternates",tabName = "sp_finishingPos", 
+                    icon = icon("star")),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
         menuSubItem("Player % Goals by Category",tabName = "sp_pcPlayerGoals"),
-        menuSubItem("Player by Team av PPG",tabName = "sp_playerByTeamPPG", 
-                    icon = icon("star")),
+        menuSubItem("Player by Team av PPG",tabName = "sp_playerByTeamPPG"),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
-      menuSubItem("Player PPG by Country of Birth",tabName = "sp_playerByCountryPPG", 
-                  icon = icon("star")),
+        menuSubItem("Player PPG by Country of Birth",tabName = "sp_playerByCountryPPG"),
         menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         # menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
@@ -167,17 +168,36 @@ dashboardPage(
                     collapsible = T,collapsed = T,
                     DT::dataTableOutput("teamLeadersCurrent")
                   ),
-                  box(width=12,height= "1000px",collapsible = T,collapsed = F,
-                  solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
-                  footer = "Unlike official Statistics, up to two assists are allowed per goal",
-                  inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
-                             selectInput("teamYears_ppg",label=NULL,seasonChoice)
-                  ),
-                   plotlyOutput("playerByCountryPPG_hl")
+                  # box(width=12,height= "1000px",collapsible = T,collapsed = F,
+                  # solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
+                  # footer = "Unlike official Statistics, up to two assists are allowed per goal",
+                  # inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
+                  #            selectInput("teamYears_ppg",label=NULL,seasonChoice)
+                  # ),
+                  #  plotlyOutput("playerByCountryPPG_hl")
+                  # )
+                  # box(width=12,height= "1000px",collapsible = T,collapsed = F,
+                  #     solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
+                  #     footer = "Unlike official Statistics, up to two assists are allowed per goal",
+                  #     inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
+                  #                selectInput("teamYears_ppg",label=NULL,seasonChoice)
+                  #     ),
+                  #     plotlyOutput("playerByCountryPPG_hl")
+                  # )
+                  
+                  box(
+                    width=12,collapsible = T,collapsed = F,
+                    solidHeader = TRUE,status = 'warning',title="Latest App - Finishing position alternate years given chosen year's data",
+                    footer = "Only 38 game seasons shown. Hover points for detail",
+                    inputPanel(
+                      selectInput("team_fp_front",NULL,teamsChoice,selected="Leicester C")
+                    ),
+                    uiOutput("teamYear_fp_front"),
+                    plotlyOutput("sp_finishingPos_front")
                   )
-                  
-                  
                 )
+                  
+                
               )),
       
       #managers
@@ -1176,6 +1196,21 @@ tabItem(
   )
 ),
     
+tabItem(
+  "sp_finishingPos",
+  
+  
+  box(
+    solidHeader = FALSE,status = 'success',
+    title="Latest App - Finishing position alternate years given chosen year's data",
+    footer = "Only 38 game seasons shown. Hover points for detail",
+    inputPanel(
+      selectInput("team_fp",NULL,teamsChoice,selected="Leicester C")
+    ),
+    uiOutput("teamYear_fp"),
+    plotlyOutput("sp_finishingPos")
+  )
+),
     
     tabItem("info", includeMarkdown("info.md"))
     
