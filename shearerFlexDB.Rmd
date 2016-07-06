@@ -1,19 +1,24 @@
 ---
-title: "Shearer Book "
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: rows
     vertical_layout: fill
+    social: [ menu ]
+    source_code: embed
 runtime: shiny    
 ---
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(readr)
+library(plotly)
+library(DT)
 library(dplyr)
 
 pgMini <- read_csv("pgMini.csv")
 summary <- readRDS("summary.rds")
+playerGame <- readRDS("playerGame.rds")
+standings <- readRDS("standings.rds")
 
 pgMini <- pgMini %>% 
   arrange(name)
@@ -28,7 +33,7 @@ print(playerChoice)
 Summary
 ===================================== 
 
-### Select Player
+### Select Player 
 
 ``` {r}
 
@@ -100,19 +105,312 @@ glanceData <- reactive({
 
 ```
 
-### Appearances Tot - Max(Year)
+Row
+-----------------------------------------------------------------------
+
+### Seasons
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$seasons,
+icon = "fa-calendar")
+
+})
+```
+
+### Teams Played For 
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$teams,
+icon = "ion-person-add")
+
+})
+```
+
+
+### Appearances Tot - Max(Year) 
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$career$showApps,
+icon = "fa-soccer-ball-o")
+
+})
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Goals Tot - Max(Year) 
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$career$showGoals,
+icon = "fa-bullseye")
+
+})
+```
+
+
+
+### Assists Tot - Max(Year) 
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$career$showAssists,
+icon = "fa-heart")
+
+})
+```
+
+### Cards Tot - Max(Year) 
+
+``` {r}
+
+renderValueBox({
+  
+req(glanceData())
+
+valueBox(value = glanceData()$career$showCards,
+icon = "fa-book")
+
+})
+```
+
+Opponents
+===================================== 
+
+### Select Player 
+
+``` {r}
+
+inputPanel(selectInput("player_Opp", label=NULL,selected="SHEAREA", playerChoice, selectize = FALSE))
+
+```
+
+``` {r opponents carpentry}
+
+oppData <- reactive({
+  
+ 
+  req(input$player_Opp)
+  
+  player <- playerGame %>% 
+    filter(PLAYERID==input$player_Opp)
+  #filter(PLAYERID=="ROONEYX")
+  
+  squad <-player %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(squad=n)
+  
+  starts <-player %>% 
+    filter(START>0) %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(starts=n)
+  
+  on  <- player %>% 
+    filter(subOn>0) %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(on=n)
+  
+  
+  bench  <- player %>% 
+    filter(subOn==0&START==0) %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(bench=n)
+  
+  off  <- player %>% 
+    filter(OFF>0) %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(Off=n)
+  
+  R <- player %>% 
+    filter(CARD>"a"&CARD!="Y") %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(R=n)
+  
+  Y <- player %>% 
+    filter(CARD=="Y") %>% 
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(Y=n)
+  
+  
+  goals <- player %>% 
+    group_by(Opponents) %>% 
+    summarize(goals=sum(Gls)) 
+  
+  assists <- player %>% 
+    group_by(Opponents) %>% 
+    summarize(assists=sum(Assists)) 
+  
+ 
+  
+  results <- 
+    player %>% 
+    filter((START+subOn)>0) %>% 
+    select(team=TEAMNAME,gameDate,Opponents) %>% 
+    inner_join(standings)
+  
+  wins <- results %>% 
+    filter(res=="Win") %>%
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(W=n)
+  
+  draws <- results %>% 
+    filter(res=="Draw") %>%
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(D=n)
+  
+  losses <- results %>% 
+    filter(res=="Loss") %>%
+    group_by(Opponents) %>% 
+    tally() %>% 
+    rename(L=n)
+  
+  byOpponent <-
+    squad %>% 
+    left_join(starts) %>% 
+    left_join(on) %>% 
+    left_join(off) %>% 
+    left_join(bench) %>% 
+    left_join(goals) %>% 
+    left_join(assists) %>% 
+    left_join(R) %>% 
+    left_join(Y) %>% 
+    left_join(wins) %>% 
+    left_join(draws) %>% 
+    left_join(losses) 
+  
+  byOpponent[is.na(byOpponent)]<-0
+  
+ 
+  
+  byOpponent <-  byOpponent %>% 
+    mutate(apps=starts+on) %>% 
+    select(Opponents,apps,starts:L)
+  
+  print(glimpse(byOpponent))
+  
+ # write_csv(byOpponent,"byOpponent.csv")
+  
+  info=list(byOpponent=byOpponent)
+  return(info)
+ 
+}) 
+  
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Summary By Opposition
+
+``` {r}
+
+output$playerByOpponent <- DT::renderDataTable({
+      
+      oppData()$byOpponent %>% 
+            DT::datatable(selection='single',class='compact stripe hover row-border',
+                  colnames = c('Opponents', 'Apps', 'St', 'On', 'Off', 'Bnch', 'Gls','Ass','R','Y','W','D','L'),
+                  rownames=FALSE,options = list(
+      searching = FALSE,info = FALSE,
+      pageLength = 10
+    ))
+  
+    })
+
+DT::dataTableOutput("playerByOpponent")
+
+  oppInfo <- eventReactive(input$playerByOpponent_rows_selected,{
+  print("in code")
+   s = as.integer(input$playerByOpponent_rows_selected)
+
+})
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Individual Games
 
 ``` {r}
 
 
-renderValueBox({
+DT:: renderDataTable({
+ 
+  opponents <- oppData()$byOpponent[oppInfo(),]$Opponents
   
-  req(glanceData())
   
-  valueBox(
-        value=glanceData()$career$showApps,
-        icon="ion-person-add"
-      )
+  playerGame %>% 
+    filter(PLAYERID==input$player_Opp&Opponents==opponents) %>% 
+    arrange(desc(gameDate)) %>% 
+    inner_join(standings,by = c("gameDate" = "gameDate","Opponents"="OppTeam")) %>% 
+    mutate(res=paste0(GF,"-",GA)) %>%
+    select(gameDate,TEAMNAME,res,st,on,off,Gls,Assists,CARD) %>% 
+    DT::datatable(class='compact stripe hover row-border',colnames = c('Date', 'Team','Res ', 'St', 'On', 'Off', 'Gls', 'Ass','Card'),rownames=FALSE,options= list(pageLength = 10, searching = FALSE,info=FALSE))
+})   
 
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Goal Chart
+
+``` {r}
+
+renderPlotly({
+        
+        oppData()$byOpponent %>% 
+          arrange(desc(goals+assists)) %>% 
+          plot_ly(y=goals,x=Opponents,type="bar",name="Goals",
+                  hoverinfo="text",
+                  text=paste0("<br>Opp: ",Opponents,
+                              "<br>Games: ",apps,
+                              "<br>Goals: ",goals,
+                              "<br>Assists: ",assists)) %>% 
+          add_trace(y=assists,x=Opponents,type="bar",name="Assists",
+                    hoverinfo="text",
+                    text=paste0("<br>Opp: ",Opponents,
+                                "<br>Games: ",apps,
+                                "<br>Goals: ",goals,
+                                "<br>Assists: ",assists)) %>% 
+          layout(barmode = "stack",
+                 xaxis=list(title=""),
+                 yaxis=list(title="Goals and Assists"),
+                 margin=list(b=70))
+  
 })
+
+
 ```
