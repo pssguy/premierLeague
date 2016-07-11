@@ -4,7 +4,7 @@ output:
     orientation: rows
     vertical_layout: fill
     social: [ menu ]
-    source_code: embed
+    source_code: embeda
 runtime: shiny    
 ---
 
@@ -13,6 +13,7 @@ library(flexdashboard)
 library(readr)
 library(plotly)
 library(DT)
+library(stringr)
 library(dplyr)
 
 pgMini <- read_csv("pgMini.csv")
@@ -385,7 +386,7 @@ DT:: renderDataTable({
 Row
 -----------------------------------------------------------------------
 
-### Goal Chart
+### Goal and Assists Chart
 
 ``` {r}
 
@@ -411,6 +412,55 @@ renderPlotly({
                  margin=list(b=70))
   
 })
+
+
+```
+
+
+Transfers
+===================================== 
+
+### All Transfers 
+
+
+``` {r}
+
+# load precompiled data of every player - this could be changed
+#playerGame<- readRDS("data/playerGame.rds")
+
+# reduce to just transfer information 
+df <- playerGame %>% 
+    select(FEE,name,TEAMNAME,joined) %>% 
+    unique() %>% 
+  # exclude academy talent, free and unknown fees 
+    filter(FEE>0&!is.na(FEE)&&FEE!=99)
+
+# bin transfers by season
+years <- c(1992:2016)
+df$season <- as.character(cut(df$joined,  breaks=as.Date(paste(years,"-05-15",sep="")),  labels=paste(years[-length(years)],str_sub(years[-length(years)]+1,3,4),sep="/")))
+
+
+
+
+initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham H")
+
+df <-df %>%
+   arrange(season,TEAMNAME)
+  
+  
+   plot_ly(data=df[which(df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
+           text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>%
+     add_trace((data=df[which(!df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
+           text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>% 
+   layout(hovermode = "closest",
+          title="Estimated Transfer Fees <br> (may be subject to performance)",
+          xaxis=list(title="Fee, million"),
+          yaxis=list(title=""
+          )
+   ) %>%
+   config(displayModeBar = F,showLink = F)
+
+
 
 
 ```
