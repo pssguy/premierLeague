@@ -14,6 +14,7 @@ library(readr)
 library(plotly)
 library(DT)
 library(stringr)
+library(readr)
 library(dplyr)
 
 pgMini <- read_csv("pgMini.csv")
@@ -420,15 +421,10 @@ renderPlotly({
 Transfers
 ===================================== 
 
-### All Transfers 
 
+``` {r transfer data carpentry}
 
-``` {r}
-
-# load precompiled data of every player - this could be changed
-#playerGame<- readRDS("data/playerGame.rds")
-
-# reduce to just transfer information 
+transferData <- reactive({
 df <- playerGame %>% 
     select(FEE,name,TEAMNAME,joined) %>% 
     unique() %>% 
@@ -439,19 +435,32 @@ df <- playerGame %>%
 years <- c(1992:2016)
 df$season <- as.character(cut(df$joined,  breaks=as.Date(paste(years,"-05-15",sep="")),  labels=paste(years[-length(years)],str_sub(years[-length(years)]+1,3,4),sep="/")))
 
+ info=list(df=df)
+  return(info)
 
+})
 
+```
 
+### All Transfers 
+
+``` {r} 
+
+renderPlotly({
+  
+  df <-transferData()$df %>%
+   arrange(TEAMNAME)
+
+  # Set inital clubs to show on chart (could add selectInput)
 initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham H")
 
-df <-df %>%
-   arrange(season,TEAMNAME)
+
   
   
    plot_ly(data=df[which(df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
            text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>%
-     add_trace((data=df[which(!df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
-           text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>% 
+     add_trace(data=df[which(!df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, sort=TRUE,
+            visible="legendonly",text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>%
    layout(hovermode = "closest",
           title="Estimated Transfer Fees <br> (may be subject to performance)",
           xaxis=list(title="Fee, million"),
@@ -460,7 +469,7 @@ df <-df %>%
    ) %>%
    config(displayModeBar = F,showLink = F)
 
-
+})
 
 
 ```
