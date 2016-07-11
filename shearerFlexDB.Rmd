@@ -4,7 +4,7 @@ output:
     orientation: rows
     vertical_layout: fill
     social: [ menu ]
-    source_code: embeda
+    source_code: embed
 runtime: shiny    
 ---
 
@@ -28,7 +28,7 @@ pgMini <- pgMini %>%
 playerChoice <- pgMini$PLAYERID
 names(playerChoice) <- pgMini$name  # need to get sorted also selectize
 
-print(playerChoice)
+
 
 ```
 
@@ -429,7 +429,7 @@ df <- playerGame %>%
     select(FEE,name,TEAMNAME,joined) %>% 
     unique() %>% 
   # exclude academy talent, free and unknown fees 
-    filter(FEE>0&!is.na(FEE)&&FEE!=99)
+    filter(FEE>0&!is.na(FEE)&&FEE!=99&joined>="1992-05-15")
 
 # bin transfers by season
 years <- c(1992:2016)
@@ -441,6 +441,9 @@ df$season <- as.character(cut(df$joined,  breaks=as.Date(paste(years,"-05-15",se
 })
 
 ```
+
+Row
+-----------------------------------------------------------------------
 
 ### All Transfers 
 
@@ -471,5 +474,57 @@ initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham 
 
 })
 
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### By Season
+
+
+``` {r}
+
+
+
+
+sliderInput("fee_season","Minimum Fee (thousand)",min=0, max=60000,value=3300, step=100)
+
+
+renderPlotly({
+  
+  
+    req(transferData())
+  
+ 
+  
+
+
+theFee <- input$fee_season/1000
+
+theTitle <- paste0("Transfers in of at least ",theFee," million by Season")
+
+
+
+df <-transferData()$df %>% 
+  filter(FEE>=input$fee_season) %>% 
+  group_by(season) %>% 
+  tally() 
+  
+  maxY <- max(df$n,na.rm=T)
+  
+  
+
+df %>% 
+  arrange(season) %>% 
+  plot_ly(x=season,y=n,type="bar", opacity=0.5) %>% 
+  layout(barmode="stack")  %>% 
+  layout(margin=list(b=80),
+        
+        title=theTitle,
+          xaxis = list(title=""),
+         yaxis = list(title="Count",autotick = FALSE, tickmode="linear", tick0 =0, dtick=10, range=c(0,maxY)) ) %>% 
+  config(displayModeBar = F,showLink = F)
+})
 
 ```
