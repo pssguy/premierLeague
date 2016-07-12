@@ -1,7 +1,7 @@
 ---
 output: 
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
     vertical_layout: fill
     social: [ menu ]
     source_code: embed
@@ -477,10 +477,12 @@ initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham 
 
 ```
 
-Row
------------------------------------------------------------------------
+MinFeeClub
+===================================== 
 
-### By Season
+
+
+### By Club
 
 
 ``` {r}
@@ -488,16 +490,73 @@ Row
 
 
 
-sliderInput("fee_season","Minimum Fee (thousand)",min=0, max=60000,value=3300, step=100)
+sliderInput("fee_club","Minimum Fee (thousand)",min=0, max=60000,value=3300, step=100)
 
 
 renderPlotly({
+
+
+    #req(transferData())
+
+
+
+theFee <- input$fee_club/1000
+
+theTitle <- paste0("Transfers in of at least ",theFee," million by Season")
+
+print(glimpse(transferData()$df))
+
+df <-transferData()$df %>%
+  select(FEE,TEAMNAME) %>%
+  filter(FEE>=input$fee_club) %>%
+  group_by(TEAMNAME) %>%
+  tally() %>%
+  arrange(n)
+
+#maxY <- max(df$n,na.rm=T)
+
+
+
+df %>%
+  #arrange(season) %>%
+  plot_ly(x=n,y=TEAMNAME,mode="markers", opacity=0.5) %>%
   
-  
+  layout(margin=list(l=120,b=130),
+         #title="Transfers in of more than 3.3 million",
+         xaxis=list(title=""),
+         yaxis=list(title="")
+  ) %>%
+  config(displayModeBar = F,showLink = F)
+
+})
+
+
+
+```
+
+MinFeeSeason
+===================================== 
+
+Row
+-----------------------------------------------------------------------
+
+### By Season
+
+``` {r}
+
+
+sliderInput("fee_season","Minimum Fee (thousand)",min=0, max=60000,value=3300, step=100)
+
+
+
+
+renderPlotly({
+
+
     req(transferData())
-  
- 
-  
+
+
+
 
 
 theFee <- input$fee_season/1000
@@ -506,24 +565,23 @@ theTitle <- paste0("Transfers in of at least ",theFee," million by Season")
 
 
 
-df <-transferData()$df %>% 
-  filter(FEE>=input$fee_season) %>% 
-  group_by(season) %>% 
-  tally() 
-  
-  maxY <- max(df$n,na.rm=T)
-  
-  
+df <-transferData()$df %>%
+  filter(FEE>=input$fee_season) %>%
+  group_by(season) %>%
+  tally()
 
-df %>% 
-  arrange(season) %>% 
-  plot_ly(x=season,y=n,type="bar", opacity=0.5) %>% 
-  layout(barmode="stack")  %>% 
-  layout(margin=list(b=80),
-        
+  maxY <- max(df$n,na.rm=T)
+
+
+
+df %>%
+  arrange(season) %>%
+  plot_ly(x=season,y=n,type="bar", opacity=0.5) %>%
+    layout(margin=list(b=130),
+
         title=theTitle,
           xaxis = list(title=""),
-         yaxis = list(title="Count",autotick = FALSE, tickmode="linear", tick0 =0, dtick=10, range=c(0,maxY)) ) %>% 
+         yaxis = list(title="Count",autotick = FALSE, tickmode="linear", tick0 =0, dtick=10, range=c(0,maxY)) ) %>%
   config(displayModeBar = F,showLink = F)
 })
 
