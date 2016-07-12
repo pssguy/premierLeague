@@ -28,7 +28,7 @@ pgMini <- pgMini %>%
 playerChoice <- pgMini$PLAYERID
 names(playerChoice) <- pgMini$name  # need to get sorted also selectize
 
-
+teamsChoice <- sort(unique(summary$TEAMNAME))
 
 ```
 
@@ -442,6 +442,7 @@ df$season <- as.character(cut(df$joined,  breaks=as.Date(paste(years,"-05-15",se
 
 ```
 
+
 Row
 -----------------------------------------------------------------------
 
@@ -449,17 +450,22 @@ Row
 
 ``` {r} 
 
+## adding slider input leads to years being in wrong order
+#sliderInput("fee_all","Minimum Fee (thousand)",min=0, max=60000,value=3300, step=100)
+radioButtons("feeteams","Teams Included",c("Big Spenders", "All Teams"),inline=T)
+
 renderPlotly({
   
   df <-transferData()$df %>%
+    # filter(FEE>=input$fee_all) %>%
    arrange(TEAMNAME)
 
-  # Set inital clubs to show on chart (could add selectInput)
+
+  if (input$feeteams=="Big Spenders") {
 initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham H")
-
-
+  } 
   
-  
+  if (input$feeteams=="Big Spenders") {
    plot_ly(data=df[which(df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
            text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE)) %>%
      add_trace(data=df[which(!df$TEAMNAME %in% initial),],x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, sort=TRUE,
@@ -471,7 +477,17 @@ initial <- c("Arsenal","Chelsea","Liverpool","Man. City","Man. Utd.","Tottenham 
           )
    ) %>%
    config(displayModeBar = F,showLink = F)
-
+  } else {
+    plot_ly(data=df,x=FEE/1000,y=season,mode="markers",hoverinfo = "text", color=TEAMNAME, colors = "Set3",
+           text = paste(name,"<br>",TEAMNAME,"<br>",joined,"<br>",FEE))
+   layout(hovermode = "closest",
+          title="Estimated Transfer Fees <br> (may be subject to performance)",
+          xaxis=list(title="Fee, million"),
+          yaxis=list(title=""
+          )
+   ) %>%
+   config(displayModeBar = F,showLink = F)
+}
 })
 
 
