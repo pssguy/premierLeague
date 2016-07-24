@@ -59,35 +59,53 @@ careerData <- reactive({
   
 })
 
+# may come back to if cannot sort colors
+# observe({
+#   
+#  # if(is.null(careerData())) return()
+#   #print("enter observe")
+#   #print(glimpse(careerData()$dfChart))
+#   
+#   df <- careerData()$dfChart
+#   
+#   df <- cbind(df, id = seq_len(nrow(df)))
+#   
+#   all_values <- function(x) {
+#     if(is.null(x)) return(NULL)
+#     row <- df[df$id == x$id,c("date","Opponents","on","off","Goals","Assists") ]
+#     paste0( names(row),": ",format(row), collapse = "<br />") 
+#   }
+#   
+#   
+#   df %>% 
+#     ggvis(~plGameOrder, ~mins, key := ~id) %>%
+#     layer_points(fill = ~Team, size = ~ points) %>% 
+#     add_tooltip(all_values,"hover") %>% 
+#     
+#     ggvis::add_axis("y", title="Minutes Played", format='d') %>% # attempt to enforxe 0 , values=c(0,15,30,45,60,75,90)
+#     ggvis::add_axis("x", title="Match Day Squad Game Order", format='d') %>% 
+#     hide_legend("size") %>% 
+#     bind_shiny("careerChart")
+#   
+# })
 
-observe({
+output$careerChart <- renderPlotly({
   
- # if(is.null(careerData())) return()
-  #print("enter observe")
-  #print(glimpse(careerData()$dfChart))
-  
-  df <- careerData()$dfChart
-  
-  df <- cbind(df, id = seq_len(nrow(df)))
-  
-  all_values <- function(x) {
-    if(is.null(x)) return(NULL)
-    row <- df[df$id == x$id,c("date","Opponents","on","off","Goals","Assists") ]
-    paste0( names(row),": ",format(row), collapse = "<br />") 
-  }
-  
-  
-  df %>% 
-    ggvis(~plGameOrder, ~mins, key := ~id) %>%
-    layer_points(fill = ~Team, size = ~ points) %>% 
-    add_tooltip(all_values,"hover") %>% 
-    
-    ggvis::add_axis("y", title="Minutes Played", format='d') %>% # attempt to enforxe 0 , values=c(0,15,30,45,60,75,90)
-    ggvis::add_axis("x", title="Match Day Squad Game Order", format='d') %>% 
-    hide_legend("size") %>% 
-    bind_shiny("careerChart")
+  careerData()$dfChart %>% 
+    plot_ly(x=date,y=mins,mode="markers",color=Team,
+            hoverinfo = "text",
+            text = paste(date,"<br>v ",Opponents,"<br>on:",on,"<br>off:",off,"<br>Goals:",Goals,"<br>Assists:",Assists),
+            marker=list(size=points*2+6)) %>% 
+    layout(hovermode = "closest",
+           title="",
+           xaxis=list(title="Match day Squad Game order"),
+           yaxis=list(title="Minutes played"
+           )
+    ) %>% 
+    config(displayModeBar = F,showLink = F)
   
 })
+
 
 
 output$careerYear <- DT::renderDataTable({
