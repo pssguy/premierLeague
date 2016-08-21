@@ -1,6 +1,4 @@
 
-
-
 careerData <- reactive({
   
   # if (is.null(input$playerA)) return()
@@ -91,11 +89,27 @@ careerData <- reactive({
 
 output$careerChart <- renderPlotly({
   
+  # careerData()$dfChart %>% 
+  #   plot_ly(x=~date,y=~mins,mode="markers",color=~Team,
+  #           hoverinfo = "text",
+  #           text = ~paste(date,"<br>v ",Opponents,"<br>on:",on,"<br>off:",off,"<br>Goals:",Goals,"<br>Assists:",Assists),
+  #           marker=list(size=~points*2+6)) %>% 
+  #   layout(hovermode = "closest",
+  #          title="",
+  #          xaxis=list(title="Match day Squad Game order"),
+  #          yaxis=list(title="Minutes played"
+  #          )
+  #   ) %>% 
+  #   config(displayModeBar = F,showLink = F)
+  # 
+  
+  
   careerData()$dfChart %>% 
-    plot_ly(x=date,y=mins,mode="markers",color=Team,
+    plot_ly() %>% 
+    add_markers(x=~date,y=~mins,color=~Team,
             hoverinfo = "text",
-            text = paste(date,"<br>v ",Opponents,"<br>on:",on,"<br>off:",off,"<br>Goals:",Goals,"<br>Assists:",Assists),
-            marker=list(size=points*2+6)) %>% 
+            text = ~paste(date,"<br>v ",Opponents,"<br>on:",on,"<br>off:",off,"<br>Goals:",Goals,"<br>Assists:",Assists),
+            marker=list(size=~points*2+6)) %>% 
     layout(hovermode = "closest",
            title="",
            xaxis=list(title="Match day Squad Game order"),
@@ -154,10 +168,11 @@ output$pointsByYearChart <- renderPlotly({
 #     tau_tooltip(c("Goals","Assists")) %>% 
 #     tau_guide_x(label="") %>% 
 #     tau_guide_y(label ='Points per 90 mins')
-  
-  plot_ly(df, x = season, y = Ppm, mode = "markers", hoverinfo = "text",
-          marker=list(size=Mins/10, sizemode="area"),
-          text = paste(
+  df %>% 
+  plot_ly() %>% 
+  add_markers(x = ~season, y = ~Ppm,  hoverinfo = "text",
+          marker=list(size=~Mins/10, sizemode="area"),
+          text = ~paste(
             "<br>Goals: ",Goals,
             "<br>Assists: ",Assists,
             "<br>Points: ",Points,

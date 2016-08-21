@@ -138,15 +138,15 @@ pboData <- reactive({
         
         pboData()$byOpponent %>% 
           arrange(desc(goals+assists)) %>% 
-          plot_ly(y=goals,x=Opponents,type="bar",name="Goals",
+          plot_ly(y=~goals,x=~Opponents,type="bar",name="Goals",
                   hoverinfo="text",
-                  text=paste0("<br>Opp: ",Opponents,
+                  text=~paste0("<br>Opp: ",Opponents,
                               "<br>Games: ",apps,
                               "<br>Goals: ",goals,
                               "<br>Assists: ",assists)) %>% 
-          add_trace(y=assists,x=Opponents,type="bar",name="Assists",
+          add_trace(y=~assists,x=~Opponents,type="bar",name="Assists",
                     hoverinfo="text",
-                    text=paste0("<br>Opp: ",Opponents,
+                    text=~paste0("<br>Opp: ",Opponents,
                                 "<br>Games: ",apps,
                                 "<br>Goals: ",goals,
                                 "<br>Assists: ",assists)) %>% 
