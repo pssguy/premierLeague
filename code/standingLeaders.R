@@ -27,8 +27,9 @@ topChanges <- standings %>%
 output$st_topChanges <- renderPlotly({
   
 
-  
-  plot_ly(topChanges, x = season, y = changes, type = "bar", marker=list(color=teams), showlegend=TRUE, key=season) %>%
+  topChanges %>% 
+    plot_ly() %>% 
+  add_bars( x = ~season, y = ~changes,  marker=list(color=~teams), showlegend=TRUE, key=~season) %>%
     layout(hovermode = "closest",
            xaxis=list(title="",tickfont=list(size=9),tickcolor="#000",tickangle=45),
            yaxis=list(title="Changes in Team Leading Table"),
@@ -69,14 +70,18 @@ output$st_topChanges <- renderPlotly({
       theTitle<-paste0(yr, " (click Team-name
  in legend to show/no show)")
       
-      plot_ly(df,x=tmYrGameOrder, y=position, mode="markers+lines", color=team,
+      df %>% 
+        plot_ly() %>% 
+      
+      add_markers(x=~tmYrGameOrder, y=~position,  color=~team,
               hoverinfo = "text",
-              text = paste(team,
+              text = ~paste(team,
                            #"<br>",Date,
                            "<br> v ",OppTeam," "," ",GF,"-",GA,
                            "<br> Position:",position,
                            "<br> Played:",tmYrGameOrder,
                            "<br> Points:",cumPts))  %>%
+        #add_lines(data=df,x=~tmYrGameOrder, y=~position, color=~team) %>% #NB want to come back to
         layout(hovermode = "closest",
                xaxis=list(title="Games Played"),
                yaxis=list(title="League Position", autorange="reversed"),
