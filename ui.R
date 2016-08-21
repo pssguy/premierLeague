@@ -1,7 +1,7 @@
 dashboardPage(
   title = "BPL",
   skin = "yellow",
-  dashboardHeader(title = "Barclays Premier League", titleWidth = 300),
+  dashboardHeader(title = "Premier League", titleWidth = 300),
   
   dashboardSidebar(
     includeCSS("custom.css"),
@@ -428,7 +428,7 @@ dashboardPage(
       tabItem(
         "tm_seqs",
         box(
-          width = 12, height = 550,title = "Result Sequences - Most Recent in bold - Hover bar for details",
+          width = 12, height = 550,title = "Result Sequences - Most Recent Highlighted - Hover bar for details",
           solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
           radioButtons(
@@ -573,8 +573,8 @@ dashboardPage(
           ),
           div(
             actionButton("boxButton","get Chart")
-          ),exploding_boxplotOutput("st_explodingBoxAll")
-         # plotlyOutput("st_BoxAll")
+          ),#exploding_boxplotOutput("st_explodingBoxAll")
+          plotlyOutput("st_BoxAll")
         ),
         box(
           width = 6,height = 600,
@@ -747,9 +747,10 @@ dashboardPage(
         fluidRow(column(
           width = 7,
           box(
-            width = 12,title = "Game Summaries. Point size relates to Goals/Assists. Hover for details. Values of 99 indicate time of substitution unknown",solidHeader = TRUE,status = 'success',
+            width = 12,title = "Game Summaries. Point size relates to Goals/Assists. Zoom and Hover for details. Values of 99 indicate time of substitution unknown",solidHeader = TRUE,status = 'success',
             collapsible = TRUE, collapsed = FALSE,
-            ggvisOutput("careerChart")
+            #ggvisOutput("careerChart")
+            plotlyOutput("careerChart")
           )
         ),
         column(

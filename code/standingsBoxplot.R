@@ -9,18 +9,20 @@ output$st_BoxAll <- renderPlotly({
   df <- standings %>% 
     ungroup() %>% 
     filter(tmYrGameOrder==input$st_boxGames) %>% 
-    select(team,season,cumPts,tmYrGameOrder)
+    select(team,season,cumPts,tmYrGameOrder) 
   
-  plot_ly(df,y=cumPts,x=season, type = "box", key=season) %>% 
+  df %>% 
+    plot_ly() %>% 
+  add_boxplot(y=~cumPts,x=~season,  key=~season) %>%
   layout(hovermode = "closest", autosize= F, width=800, ## width does not seem to have effect
-         title = paste0("Points after ",input$st_boxGames," Games"),
+         title = ~paste0("Points after ",input$st_boxGames," Games"),
          xaxis = list(title = "",tickfont=list(size=10)),
          yaxis = list(title="")
   )
   
 })
 
-## crosstalk to get to table of those results
+## crosstalk to get to table of tho(se results
 #cv <- crosstalk::ClientValue$new("plotly_click", group = "A")
 
 output$st_BoxSeason <- renderPlotly({
@@ -48,8 +50,10 @@ output$st_BoxSeason <- renderPlotly({
   print(df)
   theTitle <- paste0(yr, " - Points after ",input$st_boxGames," Games")
   
-  plot_ly(df,y=cumPts, type = "box", boxpoints = "all", jitter = 0.3, color=team,
-          pointpos = -1.8, hoverinfo="text", text = paste(team,"<br> Points:",cumPts)) %>%
+  df %>% 
+  plot_ly() %>% 
+    add_boxplot(y=~cumPts,  boxpoints = "all", jitter = 0.3, color=~team,
+          pointpos = -1.8, hoverinfo="text", text = ~paste(team,"<br> Points:",cumPts)) %>%
     layout(hovermode = "closest", autosize= F, width=800, 
            title = theTitle,
            xaxis = list( title = "",tickfont=list(size=0,color="#fff")),
@@ -69,7 +73,7 @@ output$st_explodingBoxAll <- renderExploding_boxplot({
   
   df <- standings %>% 
     ungroup() %>% 
-    filter(tmYrGameOrder==input$st_boxGames&position>=st_boxPositions&position<=st_boxPositions) %>% 
+    filter(tmYrGameOrder==input$st_boxGames&position>=st_boxPositions&position<=st_boxPositions) %>% ##??
     select(team,season,cumPts,tmYrGameOrder)  %>% 
     mutate(year=str_sub(season,1,4)) %>% 
     rename(points=cumPts)
