@@ -113,20 +113,35 @@ output$tm_wins <- renderPlotly({
     Win$opacity <- 0.3
   }
 
+  Win %>% 
+    plot_ly() %>% 
+    add_bars(data=subset(Win,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    add_bars(data=subset(Win,opacity==1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    layout(hovermode = "closest", title= "Wins",
+           xaxis=list(title="Run"),
+           yaxis=list(title="Count"
+           )) %>% 
+    config(displayModeBar = F,showLink = F)
 
-  plot_ly(Win,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, # could equally be slength
-          hoverinfo="text",
-           text=paste("Run:",slength,"<br> Count:",n)) %>% 
-                layout(hovermode = "closest", title= "Wins",
-                       xaxis=list(title="Run"),
-                       yaxis=list(title="Count"
-                       ))
+  # plot_ly(Win,x=~slength,
+  #         y=~n,
+  #         type="bar",
+  #         marker=list(color='blue'),
+  #         opacity=opacity,
+  #         showlegend=F,
+  #         group= ~slength, # could equally be slength
+  #         hoverinfo="text",
+  #          text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+  #               layout(hovermode = "closest", title= "Wins",
+  #                      xaxis=list(title="Run"),
+  #                      yaxis=list(title="Count"
+  #                      ))
  
 
 })
@@ -154,22 +169,37 @@ output$tm_noWins <- renderPlotly({
     Win$opacity <- 0.3
   }
   
-  
-  plot_ly(Win,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, 
-          hoverinfo="text",
-          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+  Win %>% 
+    plot_ly() %>% 
+    add_bars(data=subset(Win,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    add_bars(data=subset(Win,opacity==1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
     layout(hovermode = "closest", title= "No Wins",
            xaxis=list(title="Run"),
            yaxis=list(title="Count"
-           ))
+           )) %>% 
+    config(displayModeBar = F,showLink = F)
   
-})
+#   plot_ly(Win,x=slength,
+#           y=n,
+#           type="bar",
+#           marker=list(color='blue'),
+#           opacity=opacity,
+#           showlegend=F,
+#           group= slength, 
+#           hoverinfo="text",
+#           text=paste("Run:",slength,"<br> Count:",n)) %>% 
+#     layout(hovermode = "closest", title= "No Wins",
+#            xaxis=list(title="Run"),
+#            yaxis=list(title="Count"
+#            ))
+#   
+ })
 
 output$tm_draws <- renderPlotly({
   
@@ -194,20 +224,23 @@ output$tm_draws <- renderPlotly({
     Draw$opacity <- 0.3
   }
   
+ write_csv(Draw,"problemA.csv")
   
-  plot_ly(Draw,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, 
-          hoverinfo="text",
-          text=paste("Run:",slength,"<br> Count:",n)) %>% 
-    layout(hovermode = "closest", title= "Draws",
-           xaxis=list(title="Run"),
-           yaxis=list(title="Count"
-           ))
+  
+   plot_ly() %>% 
+   add_bars(data=subset(Draw,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+            #group= ~slength, # could equally be slength
+            hoverinfo="text",
+            text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+   add_bars(data=subset(Draw,opacity==1.0),x=~slength,y=~n,showlegend=F,
+            #group= ~slength, # could equally be slength
+            hoverinfo="text",
+            text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+   layout(hovermode = "closest", title= "Draws",
+          xaxis=list(title="Run"),
+          yaxis=list(title="Count"
+          )) %>% 
+   config(displayModeBar = F,showLink = F)
   
   
 })
@@ -237,19 +270,21 @@ output$tm_noDraws <- renderPlotly({
   }
   
   
-  plot_ly(Draw,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, 
-          hoverinfo="text",
-          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+  
+    plot_ly() %>% 
+    add_bars(data=subset(Draw,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    add_bars(data=subset(Draw,opacity==1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
     layout(hovermode = "closest", title= "No Draws",
            xaxis=list(title="Run"),
            yaxis=list(title="Count"
-           ))
+           )) %>% 
+    config(displayModeBar = F,showLink = F)
   
 })
 
@@ -278,19 +313,21 @@ output$tm_losses <- renderPlotly({
   }
   
   
-  plot_ly(Loss,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, 
-          hoverinfo="text",
-          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+
+    plot_ly() %>% 
+    add_bars(data=subset(Loss,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    add_bars(data=subset(Loss,opacity==1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
     layout(hovermode = "closest", title= "Losses",
            xaxis=list(title="Run"),
            yaxis=list(title="Count"
-           ))
+           )) %>% 
+    config(displayModeBar = F,showLink = F)
   
   
 })
@@ -321,19 +358,21 @@ output$tm_noLosses <- renderPlotly({
   }
   
   
-  plot_ly(Loss,x=slength,
-          y=n,
-          type="bar",
-          marker=list(color='blue'),
-          opacity=opacity,
-          showlegend=F,
-          group= slength, 
-          hoverinfo="text",
-          text=paste("Run:",slength,"<br> Count:",n)) %>% 
+  plot_ly() %>% 
+    add_bars(data=subset(Loss,opacity!=1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="text",
+             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
+    add_bars(data=subset(Loss,opacity==1.0),x=~slength,y=~n,showlegend=F,
+             #group= ~slength, # could equally be slength
+             hoverinfo="textA",
+             textA=~paste("Run:",slength,"<br> Count:",n)) %>% 
     layout(hovermode = "closest", title= "No Losses",
            xaxis=list(title="Run"),
            yaxis=list(title="Count"
-           ))
+           )) %>% 
+    config(displayModeBar = F,showLink = F)
+  
   
   
   
