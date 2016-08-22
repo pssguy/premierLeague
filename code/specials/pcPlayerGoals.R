@@ -4,13 +4,15 @@ pcPlayerGoalsData <- reactive({
   # set minimum goals 
   minGoals <- Place %>% 
     mutate(goals=(SixYd+PenArea+LongRange)) %>% 
-    group_by(PLAYERID) %>% 
+    group_by(PLAYERID,name) %>% 
     summarize(tot=sum(goals)) %>% 
     filter(tot>=input$pcPlGoals) %>% 
     .$PLAYERID
   
-
+print(glimpse(Place))
+  
   if (input$pcPlGoalsCat=="Long Range") {
+    
   df <- Place %>% 
     filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
     mutate(goals=(SixYd+PenArea+LongRange)) %>% 
@@ -120,9 +122,13 @@ output$pcPlayerGoals <- renderPlotly({
 
   
   df <- pcPlayerGoalsData()$df
-
-plot_ly(df, x = jittot, y = jitpc, mode = "markers", hoverinfo = "text",
-        text = paste(name,
+  
+  print(glimpse(df))
+  
+df %>% 
+  plot_ly() %>% 
+  add_markers(x = ~jittot, y = ~jitpc,  hoverinfo = "text",
+        text = ~ paste(name,
                      "<br>Category: ",lr,
                      "<br>Total: ",tot,
                      "<br>PerCent: ",pc,"%")) %>%
@@ -131,6 +137,7 @@ plot_ly(df, x = jittot, y = jitpc, mode = "markers", hoverinfo = "text",
          xaxis=list(title="Total Goals"),
          yaxis=list(title="% By category"
          )
-  )
+  )  %>% 
+  config(displayModeBar = F,showLink = F)
 
 })
