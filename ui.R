@@ -879,7 +879,7 @@ tabItem(
           status = "success",solidHeader = TRUE,title = "Leading Goalscorers. Amend minimum goals as required. Teams can be de(selected) via legend. Hover for details",
           collapsible = T,collapsed = F,
           helpText(
-            "Elite Goalscorers are always difficult to find which made home-grown Harry Kane's 21 league goals scored last year such a fairy tale
+            "Elite Goalscorers are always difficult to find which made home-grown Harry Kane's 21 league goals scored in 2014/15 such a fairy tale
             "
           ),
           div(
@@ -892,8 +892,10 @@ tabItem(
             style = "display:inline-block",selectInput(
               "teamE", label = "Select Teams", c("All Teams",teamsChoice), selected =
                 c("All Teams"), multiple = T, width = 150
-            )
-          ),
+            )),
+          #   div(
+          #     style = "display:inline-block",actionButton("twenty","Redo chart")  ##NB revisit - may need reactive
+          # ),
           tauchartsOutput("leadingGoalscorers_tau")
           )
     ),
@@ -942,22 +944,22 @@ tabItem(
     
 ## taken out as causing error- may want to switch from ggvis
 
-    # tabItem(
-    #   "sp_youngest",
-    #   box(
-    #     width = 12,
-    #     status = "success",solidHeader = TRUE,title = "Youngest Players",
-    #     collapsible = T,collapsed = F,
-    #     helpText(
-    #       "Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
-    #       never played an EPL game again. Click for Team. Hover for Details"
-    #     ),
-    #     selectInput(
-    #       "teamD", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
-    #     ),
-    #     ggvisOutput("sp_ageRecord")
-    #     )
-    # ),
+    tabItem(
+      "sp_youngest",
+      box(
+        width = 12,
+        status = "success",solidHeader = TRUE,title = "Youngest Players",
+        collapsible = T,collapsed = F,
+        helpText(
+          "Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
+          never played an EPL game again. Click for Team. Hover for Details"
+        ),
+        selectInput(
+          "teamD", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
+        ),
+        ggvisOutput("sp_ageRecord")
+        )
+    ),
     tabItem(
       "sp_comparisons",
       box(
@@ -1014,13 +1016,7 @@ tabItem(
     
     tabItem(
       "sp_plGoalSeqs",
-      #   box(
-      #     title = "Best Goal Scoring Sequence (click for player)", solidHeader = TRUE,status = 'success',
-      #     footer ="Data is jittered to make players more easily identifiable",
-      #     width = 6#,
-      #   #  ggvisOutput("allPlayerGoalSeqs")
-      #
-      #   ),
+     
       box(
         title = "Best Goal Scoring Sequence (hover for player details, zoom and pan)", solidHeader = TRUE,status = 'success',
         footer = "Data is jittered to make players more easily identifiable",
