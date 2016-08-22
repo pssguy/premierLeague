@@ -46,7 +46,12 @@ teamRecord <- ppgManagerTeamStint  %>%
   inner_join(allManagerStints) %>% 
   filter(TEAMNAME==input$teamA&games>=input$managerGames) 
 
-teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
+#teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
+
+teamRecord <- teamRecord %>% 
+  mutate(id=row_number())
+
+
   all_values <- function(x) {
     if(is.null(x)) return(NULL)
     row <- teamRecord[teamRecord$id == x$id,c("games","ppg")]
@@ -68,7 +73,7 @@ teamRecord %>%
   ggvis::add_axis("x", title=" ") %>% 
   ggvis::add_axis("y", title="Av Points per Game") %>% 
   add_tooltip(all_values,"hover") %>% 
-  hide_legend("fill") %>% 
+  #hide_legend(c("fill","stroke")) %>%  Warning: Error in hide_legend: unused argument (c("fill", "stroke"))
   bind_shiny("managerPPGbyTeam")
 })
 
