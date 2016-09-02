@@ -24,7 +24,7 @@ dashboardPage(
         "Teams", tabName = "teams",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "tm_glance"),
         menuSubItem("Player Summary",tabName = "tm_playerSummary"),
-        menuSubItem("League Position",tabName = "tm_leaguePosition"),
+       # menuSubItem("League Position",tabName = "tm_leaguePosition"), NB need to look at code
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
@@ -675,9 +675,9 @@ dashboardPage(
           column(
             width = 4,
             box(
-              width = 12,title = "In Action",solidHeader = TRUE,status = 'success',
-              collapsible = TRUE, collapsed = FALSE,
-              htmlOutput("playerPic", height = 250)
+              width = 12,title = "In Action None currently available",solidHeader = TRUE,status = 'success',
+              collapsible = TRUE, collapsed = FALSE#,
+              #htmlOutput("playerPic", height = 250)
             )
           ),
           column(
