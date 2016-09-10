@@ -2,7 +2,7 @@
 title: "Premier League annual (constant updates!)"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: rows
     vertical_layout: fill
 runtime: shiny    
 ---
@@ -76,7 +76,7 @@ allPlayers <- readRDS("allPlayers.rds")
 ```
 
 
-Column {data-width=650}
+Row 
 -----------------------------------------------------------------------
 
 ### Successive years Scoring at least 1 goal
@@ -144,18 +144,30 @@ df %>%
 
 ```
 
-Column {data-width=350}
------------------------------------------------------------------------
 
-### Chart B
 
-```{r}
-
-```
-
-### Chart C
+### Final Standings of Team at Selected Position after Chosen Round
 
 ```{r}
 
+sliderInput("round_wk1","Select Round (max 38 after 1994/5)", min=1,max=42,value=1)
+sliderInput("rank_wk1","Select Position (max 20 after 1994/5)", min=1,max=22,value=1)
+
+renderPlotly({
+standings %>% 
+  filter(tmYrGameOrder==input$round_wk1&position==input$rank_wk1&season<"2016/17") %>% 
+  select(final=final_Pos,team,season) %>% 
+  plot_ly() %>% 
+  add_markers(y = ~final,x=~season,color=~team,colors="Paired",
+              hoverinfo="text",marker=list(size=10),
+              text=~paste0(season,"<br>",team,"<br>Pos: ",final)) %>% 
+  layout(
+    title="Final positions of Teams Leading after Round 1 of PL",
+    margin=list(b=60),
+    yaxis=list(title="",range=c(18.5,0.5),title="Final Position"),
+    xaxis=list(title=""))
+})
+
 ```
+
 
