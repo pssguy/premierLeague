@@ -1,0 +1,161 @@
+---
+title: "Premier League annual (constant updates!)"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(shinydashboard)
+library(httr)
+library(rvest)
+library(XML)
+#library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
+#library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
+library(timelineR) # conflict with ggvis on add_axis so added to ggvis currently
+library(ggvis)
+library(ggthemes)
+library(RSQLite)
+library(lubridate)
+library(stringr)
+library(markdown)
+library(tidyr)
+library(shinyBS)
+library(scales)
+library(ggplot2)
+library(ggrepel)
+library(leaflet)
+library(rCharts)
+library(shinythemes)
+library(DT)
+library(readr)
+library(ggmap)
+library(rgdal)
+library(choroplethr)
+library(choroplethrMaps)
+library(taucharts)
+library(daff)
+library(plotly)
+#library(crosstalk) no longer needed as can now use event_data() in plotly
+library(explodingboxplotR)
+library(beeswarm) # just for test
+#library(addins)
+library(feather)
+library(doBy) # look to replac with appropriate code
+library(dplyr)
+```
+
+``` {r tables}
+positions <- read_csv("positions.csv") ##
+playerGame <- readRDS("playerGame.rds") # reducing columns would help - though might be offset by calcs needed later
+#playerGame <- read_feather("playerGame.feather")
+playerClub <- readRDS("playerClub.rds")
+summary <- readRDS("summary.rds")
+leaders <- readRDS("leaders.rds")
+standings <- readRDS("standings.rds")
+allGoalsPlayer <- readRDS("allGoalsPlayer.rds")
+goals <- readRDS("goals.rds")
+Goals_team_for <- readRDS("Goals_team_for.rds")
+Goals_team_ag <- readRDS("Goals_team_ag.rds")
+Play <- readRDS("Play.rds")
+Place <- readRDS("Place.rds")
+Method<- readRDS("Method.rds")
+teamGames <- readRDS("teamGames.rds")
+managers <- readRDS("managers.rds")
+milestones<- read_csv("milestones.csv")
+#playerGeos <- read_csv("playerGeos.csv") backup
+playerGeos <- readRDS("playerGeos.rds")
+goalSeqs <- readRDS("goalSeqs.rds")
+goalSeqsClub <- readRDS("goalSeqsClub.rds")
+allPlayers <- readRDS("allPlayers.rds")
+
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Successive years Scoring at least 1 goal
+
+```{r }
+
+# offer selection
+sliderInput("yrs_wk1","Select Years",min=1,max=21,value=10)
+
+## need to create a matrix of all possible player/year length combos
+yrs <- tmYrs %>% 
+  ungroup() %>% 
+  select(season)  %>% 
+  unique() %>% 
+  arrange(season) %>% 
+  .$season
+
+scorers <- playerGame %>% 
+  ungroup() %>% 
+  group_by(PLAYERID,name,season) %>% 
+  summarize(goals=sum(Gls))
+
+
+
+allScorers <- playerGame %>% 
+  ungroup() %>% 
+  group_by(PLAYERID,name,season) %>% 
+  summarize(goals=sum(Gls)) %>% 
+  .$PLAYERID
+
+
+
+totPoss <- expand.grid(season=yrs,PLAYERID=allScorers)
+
+
+# make database showing whether player has scored in particular season
+df <- totPoss  %>% 
+  left_join(scorers) %>% 
+  mutate(sc=ifelse(is.na(goals),0,goals)) %>% 
+  unique() %>% 
+  mutate(x=ifelse(sc==0,0,1))
+
+
+
+# process and produce table
+DT::renderDataTable({
+df %>% 
+    arrange(season) %>% 
+  group_by(PLAYERID) %>% 
+    do(subSeq(.$x)) %>% # crucial function collating sequences
+   filter(value==1) %>% # scored in season
+  filter(slength==max(slength,na.rm=TRUE)) %>% 
+  arrange(desc(slength)) %>% 
+  filter(PLAYERID!="OWNGOAL"&slength>=input$yrs_wk1) %>% 
+  left_join(playerGame) %>% 
+  ungroup() %>% 
+    
+  select(name,seasons=slength) %>%
+  unique() %>% 
+     mutate(rank=min_rank(-seasons)) %>%
+    select(rank,name,seasons) %>% 
+                         DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=FALSE),width=300)
+})
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
