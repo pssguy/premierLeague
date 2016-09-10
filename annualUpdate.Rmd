@@ -1,5 +1,5 @@
 ---
-title: "Premier League annual (constant updates!)"
+title: "Premier League 2016/17 Annual (constant updates!)"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -73,15 +73,32 @@ goalSeqs <- readRDS("goalSeqs.rds")
 goalSeqsClub <- readRDS("goalSeqsClub.rds")
 allPlayers <- readRDS("allPlayers.rds")
 
+
+tmYrs <-standings %>%
+  select(season,team) %>%
+  unique(.)
+
+hth<-data.frame(standings %>%
+                  select(team,OppTeam:gameDate,venue,points,res))
+hth$tmYrGameOrder <- NULL
+
+## set up order for sequences (got to be prob after changing standings added team back in)
+hth <-data.frame(hth %>%
+                   group_by(team,OppTeam) %>%
+                   arrange(gameDate) %>%
+                   dplyr::mutate(gameOrder=row_number(gameDate)))
+
 ```
 
+Round 1
+=====================================  
 
 Row 
 -----------------------------------------------------------------------
 
 ### Successive years Scoring at least 1 goal
 
-```{r }
+```{r scoring_wk1}
 
 # offer selection
 sliderInput("yrs_wk1","Select Years",min=1,max=21,value=10)
@@ -148,7 +165,7 @@ df %>%
 
 ### Final Standings of Team at Selected Position after Chosen Round
 
-```{r}
+```{r standings_wk1}
 
 sliderInput("round_wk1","Select Round (max 38 after 1994/5)", min=1,max=42,value=1)
 sliderInput("rank_wk1","Select Position (max 20 after 1994/5)", min=1,max=22,value=1)
@@ -170,4 +187,119 @@ standings %>%
 
 ```
 
+Round 2
+=====================================  
 
+Row 
+-----------------------------------------------------------------------
+
+### Standings By Time Period
+
+``` {r standings_wk2}
+
+dateInput("dateA_wk2","Enter Date",value="2015-09-18", startview="year", min="1992-08-15", max=Sys.Date())
+      
+output$st_dateNow <- DT::renderDataTable({
+  
+    if(is.null(input$dateA_wk2)) return()
+    print("a")
+  theDate <- input$dateA_wk2
+  
+  if (month(theDate)<6) {
+    yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+  }else {
+    yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+  }
+
+  table <-standings %>%
+    filter(season==yr&gameDate<=theDate)  %>%  #478 loks good
+    group_by(team) %>%
+    transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+    mutate(GD=GF-GA) %>% 
+    unique(.) %>% 
+    ungroup() %>% 
+    arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
+    select(Team=team,Pl,GD,Pts) %>% 
+  DT::datatable(options= list(searching = FALSE, info=FALSE))
+                                   
+}
+)
+
+
+DT::dataTableOutput("st_dateNow")  
+
+```
+
+### Subsequent Games
+
+```{r}
+
+output$st_dateLater <- DT::renderDataTable({
+  
+    if(is.null(input$dateA_wk2)) return()
+    
+  theDate <- input$dateA_wk2
+  
+ if (month(theDate)<6) {
+      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+    }else {
+      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+    }
+    
+    table <-standings %>%
+      filter(season==yr&gameDate>theDate)  %>%  #478 loks good
+      group_by(team) %>%
+      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+      mutate(GD=GF-GA) %>% 
+      unique(.) %>% 
+      ungroup() %>% 
+      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
+      select(Team=team,Pl,GD,Pts) %>% 
+      DT::datatable(options= list(searching = FALSE, info=FALSE))
+                                   
+}
+)
+
+
+DT::dataTableOutput("st_dateLater")  
+
+
+```
+
+
+### Complete Season
+
+```{r}
+
+output$st_dateSeason <- DT::renderDataTable({
+  
+    if(is.null(input$dateA_wk2)) return()
+    
+  theDate <- input$dateA_wk2
+  
+ if (month(theDate)<6) {
+      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
+    }else {
+      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+    }
+    
+    table <-standings %>%
+      filter(season==yr)  %>%  #478 loks good
+      group_by(team) %>%
+      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
+      mutate(GD=GF-GA) %>% 
+      unique(.) %>% 
+      ungroup() %>% 
+      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
+      select(Team=team,Pl,GD,Pts) %>% 
+      DT::datatable(options= list(searching = FALSE, info=FALSE))
+    %>%
+                                             
+}
+)
+
+
+DT::dataTableOutput("st_dateSeason")  
+
+
+```
