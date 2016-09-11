@@ -45,7 +45,8 @@ library(explodingboxplotR)
 library(beeswarm) # just for test
 #library(addins)
 library(feather)
-library(doBy) # look to replac with appropriate code
+library(doBy) # look to replac with appropriate function
+library(engsoccerdata)
 library(dplyr)
 ```
 
@@ -87,6 +88,23 @@ hth <-data.frame(hth %>%
                    group_by(team,OppTeam) %>%
                    arrange(gameDate) %>%
                    dplyr::mutate(gameOrder=row_number(gameDate)))
+
+
+pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
+  select(PLAYERID,name,city,COUNTRY) %>% 
+  unique() %>% 
+  
+  left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
+  filter(PLAYERID!="OWNGOAL") %>% 
+  mutate(place=ifelse(is.na(city),COUNTRY,paste0(city," ",COUNTRY)))
+
+    # premier league
+playerChoice <- pgMini$PLAYERID
+names(playerChoice) <- pgMini$name
+
+## all english
+
+esdTeams <- sort(as.character(unique(england$home)))
 
 ```
 
@@ -292,8 +310,9 @@ output$st_dateSeason <- DT::renderDataTable({
       ungroup() %>% 
       arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
       select(Team=team,Pl,GD,Pts) %>% 
-      DT::datatable(options= list(searching = FALSE, info=FALSE))
-    %>%
+      DT::datatable(options= list(class='compact stripe hover row-border order-column',searching = FALSE, info=FALSE))
+                         
+    
                                              
 }
 )
@@ -303,3 +322,140 @@ DT::dataTableOutput("st_dateSeason")
 
 
 ```
+
+Row 
+-----------------------------------------------------------------------
+
+### Player Goals and Assists per Game
+
+```{r ppg_wk2}
+
+selectInput("player_wk2",
+            label = "Type Name and Select",
+            choices = playerChoice,
+            selected = "VOKESS")
+            
+            output$player_ppg <- renderPlotly({
+            req(input$player_wk2)
+            
+            
+            
+            ppgPlayer <- playerGame %>%
+            filter(PLAYERID == input$player_wk2 & (START + subOn) > 0) %>%
+            mutate(gameOrder = row_number())
+            
+            games <- nrow(ppgPlayer)
+            
+            xTitle <- paste0("Appearance Order - Total ", games)
+            
+            ppgPlayer %>%
+            
+            plot_ly() %>%
+            add_bars(
+            x =  ~ gameOrder,
+            y =  ~ Gls,
+            name = "Goals",
+            hoverinfo = "text",
+            text =  ~ paste(
+            TEAMNAME,
+            "<br>v ",
+            Opponents,
+            "<br>",
+            gameDate,
+            "<br>Game ",
+            gameOrder
+            )
+            ) %>%
+            add_bars(
+            x =  ~ gameOrder,
+            y =  ~ Assists,
+            name = "Assists (inc secondary)",
+            hoverinfo = "text",
+            text =  ~ paste(
+            TEAMNAME,
+            "<br>v ",
+            Opponents,
+            "<br>",
+            gameDate,
+            "<br>Game ",
+            gameOrder
+            )
+            )  %>%
+            layout(
+            hovermode = "closest",
+            barmode = "stack",
+            height = 250,
+            autosize = F,
+            
+            xaxis = list(title = xTitle),
+            yaxis = list(title = "Points"),
+            title = " Hover bar for details",
+            titlefont = list(size = 16)
+            )  %>%
+            config(displayModeBar = F, showLink = F)
+            
+            })
+
+
+plotlyOutput("player_ppg")
+
+```
+
+### Teams in Top Tier By Year
+
+``` {r esd_wk2}
+
+selectInput(
+  "esdTeams_wk2",
+  "Select Teams",
+  choices = esdTeams,
+  selected = c("Middlesbrough", "Newcastle United", "Sunderland"),
+  multiple = TRUE,
+  width = 400
+  )
+  output$esd_wk2 <- renderPlotly({
+  df <- england # from engsoccerdata package
+  
+  
+  yrs <- sort(unique(df$Season))
+  yrs <- tibble(season = sort(unique(df$Season)))
+  
+  
+  
+  test <- df %>%
+  select(season = Season, team = home, tier) %>%
+  unique() %>%
+  filter(team %in% input$esdTeams_wk2 & tier == 1) %>%
+  mutate(value = 1, team = as.character(team))
+  
+  
+  
+  test %>%
+  right_join(yrs) %>%
+  mutate(team = ifelse(is.na(team), "None", team),
+  value = ifelse(is.na(value), 0.1, value)) %>%
+  plot_ly() %>%
+  add_bars(x =  ~ season,
+  y = ~ value,
+  color = ~ team) %>%
+  layout(
+  barmode = "stack",
+  height = 250,
+  autosize = F,
+  xaxis = list(title = ""),
+  yaxis = list(title = "", tickmode = "linear")
+  ) %>%
+  config(displayModeBar = F, showLink = F)
+  })
+  
+  plotlyOutput("esd_wk2")
+
+```
+
+R 3
+=====================================  
+
+Row 
+-----------------------------------------------------------------------
+
+
