@@ -24,6 +24,7 @@ library(lubridate)
 library(stringr)
 library(markdown)
 library(tidyr)
+library(rcdimple)
 library(shinyBS)
 library(scales)
 library(ggplot2)
@@ -97,6 +98,16 @@ pgMini <- playerGame %>%  ## so wil only show those that have made an appearance
   left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
   filter(PLAYERID!="OWNGOAL") %>% 
   mutate(place=ifelse(is.na(city),COUNTRY,paste0(city," ",COUNTRY)))
+
+
+seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
+seasonChoice_2 <- c("All Seasons",seasonChoice)
+seasonChoice_3 <- c("All Seasons",seasonChoice[-1])
+
+managers <- managers %>% 
+  mutate(name=paste0(FirstName," ",Lastname))
+
+managerChoice <- sort(unique(managers$name))
 
     # premier league
 playerChoice <- pgMini$PLAYERID
@@ -205,7 +216,7 @@ standings %>%
 
 ```
 
-Round 2
+R2
 =====================================  
 
 Row 
@@ -458,4 +469,186 @@ R 3
 Row 
 -----------------------------------------------------------------------
 
+### Last Minute Goals
 
+``` {r lateGoals_wk3}
+selectInput("season_wk3",label=NULL,choices=seasonChoice_3,selected="All Seasons", multiple=TRUE)
+
+output$lateGoals_wk3 <- renderDimple({
+  
+  req(input$season_wk3)
+  
+  print(input$season_wk3)
+
+  if(input$season_wk3!="All Seasons") {
+lastFor <- goals %>% 
+  left_join(playerGame) %>% 
+  filter(TIME==90&season %in% input$season_wk3) %>% 
+  select(TIME,TEAMMATCHID,MATCHID,TEAMNAME) %>% 
+
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+  select(For=n,TEAMNAME)
+
+
+lastMin <- goals %>% 
+  left_join(playerGame) %>% 
+  filter(TIME==90&season %in% input$season_wk3) %>% 
+  select(MATCHID,Scorer=TEAMNAME) %>% 
+  left_join(teamGames) %>% 
+  filter(Scorer!=TEAMNAME) %>% 
+  select(TEAMNAME) %>% 
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  select(Ag=n,TEAMNAME) %>% 
+  left_join(lastFor) %>% 
+  mutate(Ag=ifelse(is.na(Ag),0,Ag),For=ifelse(is.na(For),0,For)) %>% 
+  mutate(Ag=-Ag) # to get left side of mid line
+} else {
+  lastFor <- goals %>% 
+  left_join(playerGame) %>% 
+  filter(TIME==90) %>% 
+  select(TIME,TEAMMATCHID,MATCHID,TEAMNAME) %>% 
+
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+  select(For=n,TEAMNAME)
+
+
+lastMin <- goals %>% 
+  left_join(playerGame) %>% 
+  filter(TIME==90) %>% 
+  select(MATCHID,Scorer=TEAMNAME) %>% 
+  left_join(teamGames) %>% 
+  filter(Scorer!=TEAMNAME) %>% 
+  select(TEAMNAME) %>% 
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  select(Ag=n,TEAMNAME) %>% 
+  left_join(lastFor) %>% 
+  mutate(Ag=ifelse(is.na(Ag),0,Ag),For=ifelse(is.na(For),0,For)) %>% 
+  mutate(Ag=-Ag) # to get left side of mid line
+}
+
+lastMin_gather <- lastMin %>% 
+  gather(place,goals,-TEAMNAME)
+
+
+theMax <- max(lastMin_gather$goals)
+theMin <- min(lastMin_gather$goals)
+title <- "90+ minute PL goals For and Against Selected Seasons"
+
+teamOrder <-sort(unique(lastMin_gather$TEAMNAME),decreasing = TRUE)
+
+lastMin_gather %>%
+  dimple(x = "goals", y = "TEAMNAME", group = "place", type = 'bar',height=500,width=500) %>%
+  
+  yAxis(title="",type = "addCategoryAxis", orderRule = teamOrder) %>%
+  xAxis(title="Goals ",type = "addMeasureAxis", overrideMax = theMax, overrideMin = theMin) %>%
+  add_legend() %>%
+  add_title(html = paste0("<h3 style='font-family:Helvetica; text-align: center;'>",title,"</h3>")) %>%
+  tack(., options = list(
+    chart = htmlwidgets::JS("
+                              function(){
+                              var self = this;
+                              // x axis should be first or [0] but filter to make sure
+                              self.axes.filter(function(ax){
+                              return ax.position == 'x'
+                              })[0] // now we have our x axis set _getFormat as before
+                              ._getFormat = function () {
+                              return function(d) {
+                              return d3.format(',.0f')(Math.abs(d)) ;
+                              };
+                              };
+                              // return self to return our chart
+                              return self;
+                              }
+                              "))
+  )
+
+})
+
+dimpleOutput("lateGoals_wk3")
+
+
+
+```
+
+### Youngest Scorer by Manager
+
+``` {r manager_wk3}
+
+selectInput("manager_wk3", label=NULL,selected="Jose Mourinho", choices=managerChoice)
+
+managerData_wk3 <- reactive({
+  
+  req(input$manager_wk3)
+  
+
+stints <- managers %>% 
+  filter(name==input$manager_wk3) %>% 
+  mutate(Left=as_date(ifelse(is.na(Left),Sys.Date(),Left)))
+
+
+# this gives all player games played for etc...
+#i <- 1
+for (i in 1:nrow(stints)) {
+  
+  tempdf <-playerGame %>% 
+    filter(gameDate>=stints$Joined[i]&gameDate<=stints$Left[i]&TEAMNAME==stints$TEAMNAME[i])
+  
+  if (i!=1) {
+    df <- bind_rows(df,tempdf)
+  } else {
+    df <- tempdf
+  }
+  
+}
+
+
+
+young<-df %>% 
+  filter(mins>0&Gls>0) %>% #2992
+  select(name,PLAYERID,age,gameDate,TEAMNAME,LASTNAME) %>% 
+  arrange(gameDate,age) %>% 
+  group_by(gameDate) %>% 
+  slice(1) %>% 
+  ungroup()  %>% 
+  mutate(age = as.numeric(age),cumminAge=cummin(age)) %>% 
+  group_by(name,PLAYERID) %>% 
+  slice(1) %>% 
+  mutate(label=paste0(LASTNAME," ",round(age,2))) %>% 
+  rename(Team=TEAMNAME) %>% 
+  mutate(alpha=ifelse(age==cumminAge,0.8,0.2)) %>% ## not working yet
+  arrange(gameDate) 
+
+
+
+info=list(young=young)
+return(info)
+
+})
+
+output$managerPlayersAge <- renderPlot({
+
+  
+  req(managerData_wk3())
+title <- paste0("Players age when first scoring for ",input$manager_wk3," in Premier League")
+
+
+p <- ggplot(managerData_wk3()$young, aes(gameDate, round(age,2), label = label))
+
+p + geom_text_repel(aes(colour = factor(Team))) +
+ theme(axis.title.x = element_blank()) +   # Remove x-axis label
+  ylab("Age")            + 
+  ggtitle(title)    +
+  theme_fivethirtyeight() +  
+  scale_color_fivethirtyeight() #+
+  #theme(legend.title=element_blank()) ## stil not aPPEARING NOT SURE WHY
+
+})
+
+plotOutput("managerPlayersAge")
+```
