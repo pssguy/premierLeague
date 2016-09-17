@@ -81,7 +81,7 @@ tmYrs <-standings %>%
   unique(.)
 
 hth<-data.frame(standings %>%
-                  select(team,OppTeam:gameDate,venue,points,res))
+                  select(team,OppTeam:gameDate,venue,points,res,MATCHID))
 hth$tmYrGameOrder <- NULL
 
 ## set up order for sequences (got to be prob after changing standings added team back in)
@@ -103,6 +103,9 @@ pgMini <- playerGame %>%  ## so wil only show those that have made an appearance
 seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
 seasonChoice_2 <- c("All Seasons",seasonChoice)
 seasonChoice_3 <- c("All Seasons",seasonChoice[-1])
+
+teamsChoice <- sort(unique(playerGame$TEAMNAME))
+teamsChoice_2 <- c("All Teams",teamsChoice)
 
 managers <- managers %>% 
   mutate(name=paste0(FirstName," ",Lastname))
@@ -143,14 +146,14 @@ yrs <- tmYrs %>%
 scorers <- playerGame %>% 
   ungroup() %>% 
   group_by(PLAYERID,name,season) %>% 
-  summarize(goals=sum(Gls))
+  summarise(goals=sum(Gls))
 
 
 
 allScorers <- playerGame %>% 
   ungroup() %>% 
   group_by(PLAYERID,name,season) %>% 
-  summarize(goals=sum(Gls)) %>% 
+  summarise(goals=sum(Gls)) %>% 
   .$PLAYERID
 
 
@@ -463,7 +466,7 @@ selectInput(
 
 ```
 
-R 3
+R3
 =====================================  
 
 Row 
@@ -651,4 +654,181 @@ p + geom_text_repel(aes(colour = factor(Team))) +
 })
 
 plotOutput("managerPlayersAge")
+```
+
+
+R4
+=====================================  
+
+Row 
+-----------------------------------------------------------------------
+
+### Expensive Lineups
+
+
+``` {r lineups_wk4}
+
+
+
+ ## fixed data 
+matchFees <-playerGame %>% 
+  filter(!is.na(FEE)&FEE!=99) %>% 
+  group_by(MATCHID) %>% 
+  summarise(totFee=sum(FEE)) %>% 
+  arrange(desc(totFee))
+
+
+pal <- c("lightblue","red")
+
+## select teams
+
+selectInput("team1_wk4",label="Team",selected="Man. Utd.", choices = teamsChoice)
+
+ output$opp_wk4 <- renderUI({
+   oppTeam <-hth %>% 
+  filter(team==input$team1_wk4) %>% 
+  .$OppTeam %>% 
+  unique() %>% 
+  sort()
+   
+  selectInput("opp_wk4",label="Opponents",selected="Man. City", choices = oppTeam) 
+ })
+   
+   
+uiOutput("opp_wk4")
+
+# output$matches_wk4 <- DT::renderDataTable({
+#   
+#   print("enter")
+#   print(input$team1_wk4)
+#   print("c")
+#   print(input$opp_wk4)
+#   print("d")
+#   
+# hth <-  hth %>% 
+#   #filter(team=="Man. Utd."&OppTeam=="Man. City") %>% 
+#      filter(team==input$team1_wk4&OppTeam==input$opp_wk4) %>% 
+#   arrange(desc(gameDate)) %>% 
+#   mutate(score=paste0(GF,"-",GA)) %>% 
+#   select(date=gameDate,score) 
+#   
+#   print(nrow(hth))
+#   
+# table <-  hth %>% 
+#  DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,
+#                selection='single',
+#                width=200,
+#                options= list(paging = TRUE, searching = FALSE,info=FALSE))
+# 
+# })
+# 
+# DT::dataTableOutput("matches_wk4")
+
+
+ data_wk4 <- reactive({ 
+  print("enter")
+  print(input$team1_wk4)
+  print("c")
+  print(input$opp_wk4)
+  print("d")
+  
+  if (is.null(input$opp_wk4)) {
+    theOpp <- "Man. City"
+  } else {
+    theOpp <- input$opp_wk4
+  }
+  
+hth <-  hth %>% 
+  #filter(team=="Man. Utd."&OppTeam=="Man. City") %>% 
+     filter(team==input$team1_wk4&OppTeam==theOpp) %>% 
+  arrange(desc(gameDate)) %>% 
+  mutate(score=paste0(GF,"-",GA)) %>% 
+  select(date=gameDate,score) 
+  
+  print(nrow(hth))
+  
+  info=list(hth=hth)
+  return(info)
+  
+ }) 
+  
+  output$matches_wk4 <- DT::renderDataTable({
+    
+    print(data_wk4()$hth)
+    
+table <-  data_wk4()$hth %>% 
+ DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,
+               selection='single',
+               width=200,
+               options= list(paging = TRUE, searching = FALSE,info=FALSE))
+print("got here")
+table
+
+})
+
+DT::dataTableOutput("matches_wk4")
+
+
+
+# output$lineupFees <- renderPlotly({
+# playerGame %>% 
+#   filter(MATCHID==9600) %>% 
+#   arrange(FEE) %>% 
+#   mutate(shape=ifelse(START>0,1,0)) %>% 
+#   plot_ly() %>% 
+#     add_markers(x=~FEE/1000,y=~ name, color= ~TEAMNAME, colors= pal, symbol = ~ shape,
+#                 hoverinfo="text",
+#                 text=~paste(name,"<br>",FEE/1000,"mill.<br>",joined)) %>% 
+#   layout(margin=list(l=120),
+#          hovermode = "closest",
+#          title="Estimated transfer fees of players Man Utd v Man City",
+#          xaxis=list(title="Million Pounds"),
+#          yaxis=list(title="",categoryarray = ~name, categoryorder = "array")) %>% 
+# 
+#   config(displayModeBar = F,showLink = F)
+# 
+# })
+
+#plotlyOutput("lineupFees")
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### Conceding Goals at Home
+
+``` {r goals_wk4}
+
+
+numericInput("goalsAg_wk4", "Min Goals Conceded", value=4, min = 1, max = 9, step = NA,
+  width = 100)
+
+output$concedeGoals_wk4 <- renderPlotly({
+test <- standings %>% 
+   ungroup() %>% 
+   filter(venue=="H") %>% 
+   select(team,GA) %>% 
+   mutate(big=ifelse(GA>=input$goalsAg_wk4,1,0)) %>% 
+   group_by(team) %>% 
+   summarize(tot=n(),bad=sum(big),pc=round(100*bad/tot,1)) %>% 
+   arrange(desc(pc)) 
+
+title=paste0("Total and % Games conceding ",input$goalsAg_wk4,"+ goals at Home")
+
+test %>% 
+  plot_ly() %>% 
+  add_markers(x=~tot,y=~pc,hoverinfo="text",
+              text=~paste0(team,"<br>Tot:",bad,"<br>",pc,"%")) %>% 
+  layout(hovermode="closest",
+         height = 250,
+            autosize = F,
+         title=title,
+         xaxis=list(title="Games played"),
+         yaxis=list(title="Per Cent")) %>% 
+  
+  config(displayModeBar = F,showLink = F)
+})
+
+plotlyOutput(("concedeGoals_wk4"))
+
 ```
