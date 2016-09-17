@@ -829,6 +829,68 @@ test %>%
   config(displayModeBar = F,showLink = F)
 })
 
-plotlyOutput(("concedeGoals_wk4"))
+plotlyOutput("concedeGoals_wk4")
 
 ```
+
+### Cumulative Goal Comparison
+
+
+``` {r cumGls_wk4}
+
+selectInput("playerComps_wk4", label="Select player(s)", choices= playerChoice, selected = c("ROONEYX","KANEH","FOWLERR","OWENM","LUKAKUR","RONALDC"), multiple = TRUE,
+  selectize = TRUE, width = NULL, size = NULL)
+
+radioButtons(inputId="compTime_wk4", label=NULL, choices=c("Age","Apps","Date"), selected = NULL, inline = TRUE,
+  width = 200)
+
+output$playerComps <- renderPlotly({
+  
+df <-playerGame %>%
+  filter((START+subOn>0)&PLAYERID %in% input$playerComps_wk4) %>%
+  select(name,PLAYERID,Gls,Assists,age,gameDate) %>%
+  arrange(gameDate) %>%
+  group_by(name,PLAYERID) %>%
+  mutate(gameOrder=row_number(),points=Assists+Gls,
+         cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points))
+
+print(glimpse(df))
+
+ yTitle <-"Cumulative Goals"
+ 
+ print(input$compTime_wk4)
+ 
+    if (input$compTime_wk4=="Apps") {
+      print("apps")
+      xTitle <-"PL Apps"
+      plot <- df %>%
+        plot_ly() %>%
+         group_by(PLAYERID) %>% 
+  add_lines(~gameOrder,~cumGoals, color=~name)
+      write_csv(df,"problem.csv")
+    } else if (input$compTime_wk4=="Age") {
+      print("age")
+      xTitle <-"Age"
+      plot <- df %>%
+        plot_ly() %>%
+        group_by(PLAYERID) %>% 
+  add_lines(~gameOrder,~cumGoals, color=~name)
+    } else if (input$compTime_wk4=="Date") {
+      print("date")
+      xTitle <-""
+      plot <- df %>%
+        group_by(PLAYERID) %>% 
+        plot_ly() %>%
+         
+  add_lines(~gameOrder,~cumGoals, color=~name)
+    }
+ print("xx")
+  plot
+
+    })
+
+plotlyOutput("playerComps")
+
+
+```
+
