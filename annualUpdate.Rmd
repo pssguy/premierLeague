@@ -7,15 +7,13 @@ output:
 runtime: shiny    
 ---
 
-```{r setup, include=FALSE}
+```{r libraries, include=FALSE}
 library(flexdashboard)
 library(shiny)
 library(shinydashboard)
 library(httr)
 library(rvest)
 library(XML)
-#library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
-#library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
 library(timelineR) # conflict with ggvis on add_axis so added to ggvis currently
 library(ggvis)
 library(ggthemes)
@@ -44,7 +42,6 @@ library(plotly)
 #library(crosstalk) no longer needed as can now use event_data() in plotly
 library(explodingboxplotR)
 library(beeswarm) # just for test
-#library(addins)
 library(feather)
 library(doBy) # look to replac with appropriate function
 library(engsoccerdata)
@@ -52,9 +49,8 @@ library(dplyr)
 ```
 
 ``` {r tables}
-positions <- read_csv("positions.csv") ##
-playerGame <- readRDS("playerGame.rds") # reducing columns would help - though might be offset by calcs needed later
-#playerGame <- read_feather("playerGame.feather")
+positions <- read_csv("positions.csv")
+playerGame <- readRDS("playerGame.rds")
 playerClub <- readRDS("playerClub.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")
@@ -65,59 +61,59 @@ Goals_team_for <- readRDS("Goals_team_for.rds")
 Goals_team_ag <- readRDS("Goals_team_ag.rds")
 Play <- readRDS("Play.rds")
 Place <- readRDS("Place.rds")
-Method<- readRDS("Method.rds")
+Method <- readRDS("Method.rds")
 teamGames <- readRDS("teamGames.rds")
 managers <- readRDS("managers.rds")
-milestones<- read_csv("milestones.csv")
-#playerGeos <- read_csv("playerGeos.csv") backup
+milestones <- read_csv("milestones.csv")
 playerGeos <- readRDS("playerGeos.rds")
 goalSeqs <- readRDS("goalSeqs.rds")
 goalSeqsClub <- readRDS("goalSeqsClub.rds")
 allPlayers <- readRDS("allPlayers.rds")
 
 
-tmYrs <-standings %>%
-  select(season,team) %>%
-  unique(.)
+tmYrs <- standings %>%
+select(season, team) %>%
+unique(.)
 
-hth<-data.frame(standings %>%
-                  select(team,OppTeam:gameDate,venue,points,res,MATCHID))
+hth <- data.frame(standings %>%
+select(team, OppTeam:gameDate, venue, points, res, MATCHID))
 hth$tmYrGameOrder <- NULL
 
-## set up order for sequences (got to be prob after changing standings added team back in)
-hth <-data.frame(hth %>%
-                   group_by(team,OppTeam) %>%
-                   arrange(gameDate) %>%
-                   dplyr::mutate(gameOrder=row_number(gameDate)))
+## set up order for sequences
+hth <- data.frame(
+hth %>%
+group_by(team, OppTeam) %>%
+arrange(gameDate) %>%
+dplyr::mutate(gameOrder = row_number(gameDate))
+)
 
 
-pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
-  select(PLAYERID,name,city,COUNTRY) %>% 
-  unique() %>% 
-  
-  left_join(playerGeos,by=c("PLAYERID"="playerID")) %>% 
-  filter(PLAYERID!="OWNGOAL") %>% 
-  mutate(place=ifelse(is.na(city),COUNTRY,paste0(city," ",COUNTRY)))
+pgMini <- playerGame %>%
+select(PLAYERID, name, city, COUNTRY) %>%
+unique() %>%
+
+left_join(playerGeos, by = c("PLAYERID" = "playerID")) %>%
+filter(PLAYERID != "OWNGOAL") %>%
+mutate(place = ifelse(is.na(city), COUNTRY, paste0(city, " ", COUNTRY)))
 
 
 seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
-seasonChoice_2 <- c("All Seasons",seasonChoice)
-seasonChoice_3 <- c("All Seasons",seasonChoice[-1])
+seasonChoice_2 <- c("All Seasons", seasonChoice)
+seasonChoice_3 <- c("All Seasons", seasonChoice[-1])
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
-teamsChoice_2 <- c("All Teams",teamsChoice)
+teamsChoice_2 <- c("All Teams", teamsChoice)
 
-managers <- managers %>% 
-  mutate(name=paste0(FirstName," ",Lastname))
+managers <- managers %>%
+mutate(name = paste0(FirstName, " ", Lastname))
 
 managerChoice <- sort(unique(managers$name))
 
-    # premier league
+# premier league
 playerChoice <- pgMini$PLAYERID
 names(playerChoice) <- pgMini$name
 
-## all english
-
+## all english tiers
 esdTeams <- sort(as.character(unique(england$home)))
 
 ```
@@ -133,61 +129,76 @@ Row
 ```{r scoring_wk1}
 
 # offer selection
-sliderInput("yrs_wk1","Select Years",min=1,max=21,value=10)
+sliderInput(
+"yrs_wk1",
+"Select Years",
+min = 1,
+max = 21,
+value = 10
+)
 
 ## need to create a matrix of all possible player/year length combos
-yrs <- tmYrs %>% 
-  ungroup() %>% 
-  select(season)  %>% 
-  unique() %>% 
-  arrange(season) %>% 
-  .$season
+yrs <- tmYrs %>%
+ungroup() %>%
+select(season)  %>%
+unique() %>%
+arrange(season) %>%
+.$season
 
-scorers <- playerGame %>% 
-  ungroup() %>% 
-  group_by(PLAYERID,name,season) %>% 
-  summarise(goals=sum(Gls))
-
-
-
-allScorers <- playerGame %>% 
-  ungroup() %>% 
-  group_by(PLAYERID,name,season) %>% 
-  summarise(goals=sum(Gls)) %>% 
-  .$PLAYERID
+scorers <- playerGame %>%
+ungroup() %>%
+group_by(PLAYERID, name, season) %>%
+summarise(goals = sum(Gls))
 
 
 
-totPoss <- expand.grid(season=yrs,PLAYERID=allScorers)
+allScorers <- playerGame %>%
+ungroup() %>%
+group_by(PLAYERID, name, season) %>%
+summarise(goals = sum(Gls)) %>%
+.$PLAYERID
+
+
+
+totPoss <- expand.grid(season = yrs, PLAYERID = allScorers)
 
 
 # make database showing whether player has scored in particular season
-df <- totPoss  %>% 
-  left_join(scorers) %>% 
-  mutate(sc=ifelse(is.na(goals),0,goals)) %>% 
-  unique() %>% 
-  mutate(x=ifelse(sc==0,0,1))
+df <- totPoss  %>%
+left_join(scorers) %>%
+mutate(sc = ifelse(is.na(goals), 0, goals)) %>%
+unique() %>%
+mutate(x = ifelse(sc == 0, 0, 1))
 
 
 
 # process and produce table
 DT::renderDataTable({
-df %>% 
-    arrange(season) %>% 
-  group_by(PLAYERID) %>% 
-    do(subSeq(.$x)) %>% # crucial function collating sequences
-   filter(value==1) %>% # scored in season
-  filter(slength==max(slength,na.rm=TRUE)) %>% 
-  arrange(desc(slength)) %>% 
-  filter(PLAYERID!="OWNGOAL"&slength>=input$yrs_wk1) %>% 
-  left_join(playerGame) %>% 
-  ungroup() %>% 
-    
-  select(name,seasons=slength) %>%
-  unique() %>% 
-     mutate(rank=min_rank(-seasons)) %>%
-    select(rank,name,seasons) %>% 
-                         DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=FALSE),width=300)
+df %>%
+arrange(season) %>%
+group_by(PLAYERID) %>%
+do(subSeq(.$x)) %>% # crucial function collating sequences
+filter(value == 1) %>% # scored in season
+filter(slength == max(slength, na.rm = TRUE)) %>%
+arrange(desc(slength)) %>%
+filter(PLAYERID != "OWNGOAL" & slength >= input$yrs_wk1) %>%
+left_join(playerGame) %>%
+ungroup() %>%
+
+select(name, seasons = slength) %>%
+unique() %>%
+mutate(rank = min_rank(-seasons)) %>%
+select(rank, name, seasons) %>%
+DT::datatable(
+class = 'compact stripe hover row-border order-column',
+rownames = FALSE,
+options = list(
+paging = TRUE,
+searching = TRUE,
+info = FALSE
+),
+width = 300
+)
 })
 
 
@@ -199,24 +210,48 @@ df %>%
 
 ```{r standings_wk1}
 
-sliderInput("round_wk1","Select Round (max 38 after 1994/5)", min=1,max=42,value=1)
-sliderInput("rank_wk1","Select Position (max 20 after 1994/5)", min=1,max=22,value=1)
-
-renderPlotly({
-standings %>% 
-  filter(tmYrGameOrder==input$round_wk1&position==input$rank_wk1&season<"2016/17") %>% 
-  select(final=final_Pos,team,season) %>% 
-  plot_ly() %>% 
-  add_markers(y = ~final,x=~season,color=~team,colors="Paired",
-              hoverinfo="text",marker=list(size=10),
-              text=~paste0(season,"<br>",team,"<br>Pos: ",final)) %>% 
+sliderInput(
+  "round_wk1",
+  "Select Round (max 38 after 1994/5)",
+  min = 1,
+  max = 42,
+  value = 1
+  )
+  sliderInput(
+  "rank_wk1",
+  "Select Position (max 20 after 1994/5)",
+  min = 1,
+  max = 22,
+  value = 1
+  )
+  
+  renderPlotly({
+  standings %>%
+  filter(tmYrGameOrder == input$round_wk1 &
+  position == input$rank_wk1 & season < "2016/17") %>%
+  select(final = final_Pos, team, season) %>%
+  plot_ly() %>%
+  add_markers(
+  y = ~ final,
+  x =  ~ season,
+  color =  ~ team,
+  colors = "Paired",
+  hoverinfo = "text",
+  marker = list(size = 10),
+  text =  ~ paste0(season, "<br>", team, "<br>Pos: ", final)
+  ) %>%
   layout(
-    title="Final positions of Teams Leading after Round 1 of PL",
-    margin=list(b=60),
-    yaxis=list(title="",range=c(18.5,0.5),title="Final Position"),
-    xaxis=list(title=""))
-})
-
+  title = "Final positions of Teams Leading after Round 1 of PL",
+  margin = list(b = 60),
+  yaxis = list(
+  title = "",
+  range = c(18.5, 0.5),
+  title = "Final Position"
+  ),
+  xaxis = list(title = "")
+  )
+  })
+  
 ```
 
 R2
@@ -229,37 +264,50 @@ Row
 
 ``` {r standings_wk2}
 
-dateInput("dateA_wk2","Enter Date",value="2015-09-18", startview="year", min="1992-08-15", max=Sys.Date())
-      
-output$st_dateNow <- DT::renderDataTable({
+dateInput(
+  "dateA_wk2",
+  "Enter Date",
+  value = "2015-09-18",
+  startview = "year",
+  min = "1992-08-15",
+  max = Sys.Date()
+  )
   
-    if(is.null(input$dateA_wk2)) return()
-    print("a")
+  output$st_dateNow <- DT::renderDataTable({
+  if (is.null(input$dateA_wk2))
+  return()
+  print("a")
   theDate <- input$dateA_wk2
   
-  if (month(theDate)<6) {
-    yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
-  }else {
-    yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
+  if (month(theDate) < 6) {
+  yr <- paste(year(theDate) - 1, str_sub(year(theDate), 3, 4), sep = "/")
+  } else {
+  yr <-
+  paste(year(theDate), as.integer(str_sub(year(theDate), 3, 4)) + 1, sep =
+  "/")
   }
-
-  table <-standings %>%
-    filter(season==yr&gameDate<=theDate)  %>%  #478 loks good
-    group_by(team) %>%
-    transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-    mutate(GD=GF-GA) %>% 
-    unique(.) %>% 
-    ungroup() %>% 
-    arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
-    select(Team=team,Pl,GD,Pts) %>% 
-  DT::datatable(options= list(searching = FALSE, info=FALSE))
-                                   
-}
-)
-
-
-DT::dataTableOutput("st_dateNow")  
-
+  
+  table <- standings %>%
+  filter(season == yr & gameDate <= theDate)  %>%  #478 loks good
+  group_by(team) %>%
+  transmute(
+  Pl = n(),
+  Pts = sum(points),
+  GA = sum(GA),
+  GF = sum(GF)
+  ) %>%
+  mutate(GD = GF - GA) %>%
+  unique(.) %>%
+  ungroup() %>%
+  arrange(desc(Pts), desc(GD), desc(GF), team) %>%
+  select(Team = team, Pl, GD, Pts) %>%
+  DT::datatable(options = list(searching = FALSE, info = FALSE))
+  
+  })
+  
+  
+  DT::dataTableOutput("st_dateNow")
+  
 ```
 
 ### Subsequent Games
@@ -267,34 +315,40 @@ DT::dataTableOutput("st_dateNow")
 ```{r}
 
 output$st_dateLater <- DT::renderDataTable({
+  if (is.null(input$dateA_wk2))
+  return()
   
-    if(is.null(input$dateA_wk2)) return()
-    
   theDate <- input$dateA_wk2
   
- if (month(theDate)<6) {
-      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
-    }else {
-      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
-    }
-    
-    table <-standings %>%
-      filter(season==yr&gameDate>theDate)  %>%  #478 loks good
-      group_by(team) %>%
-      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-      mutate(GD=GF-GA) %>% 
-      unique(.) %>% 
-      ungroup() %>% 
-      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
-      select(Team=team,Pl,GD,Pts) %>% 
-      DT::datatable(options= list(searching = FALSE, info=FALSE))
-                                   
-}
-)
-
-
-DT::dataTableOutput("st_dateLater")  
-
+  if (month(theDate) < 6) {
+  yr <- paste(year(theDate) - 1, str_sub(year(theDate), 3, 4), sep = "/")
+  } else {
+  yr <-
+  paste(year(theDate), as.integer(str_sub(year(theDate), 3, 4)) + 1, sep =
+  "/")
+  }
+  
+  table <- standings %>%
+  filter(season == yr & gameDate > theDate)  %>%  #478 loks good
+  group_by(team) %>%
+  transmute(
+  Pl = n(),
+  Pts = sum(points),
+  GA = sum(GA),
+  GF = sum(GF)
+  ) %>%
+  mutate(GD = GF - GA) %>%
+  unique(.) %>%
+  ungroup() %>%
+  arrange(desc(Pts), desc(GD), desc(GF), team) %>%
+  select(Team = team, Pl, GD, Pts) %>%
+  DT::datatable(options = list(searching = FALSE, info = FALSE))
+  
+  })
+  
+  
+  DT::dataTableOutput("st_dateLater")
+  
 
 ```
 
@@ -304,36 +358,48 @@ DT::dataTableOutput("st_dateLater")
 ```{r}
 
 output$st_dateSeason <- DT::renderDataTable({
+  if (is.null(input$dateA_wk2))
+  return()
   
-    if(is.null(input$dateA_wk2)) return()
-    
   theDate <- input$dateA_wk2
   
- if (month(theDate)<6) {
-      yr <-paste(year(theDate)-1,str_sub(year(theDate),3,4),sep="/")
-    }else {
-      yr <-paste(year(theDate),as.integer(str_sub(year(theDate),3,4))+1,sep="/")
-    }
-    
-    table <-standings %>%
-      filter(season==yr)  %>%  #478 loks good
-      group_by(team) %>%
-      transmute(Pl=n(),Pts=sum(points),GA=sum(GA),GF=sum(GF)) %>%
-      mutate(GD=GF-GA) %>% 
-      unique(.) %>% 
-      ungroup() %>% 
-      arrange(desc(Pts),desc(GD),desc(GF),team) %>% 
-      select(Team=team,Pl,GD,Pts) %>% 
-      DT::datatable(options= list(class='compact stripe hover row-border order-column',searching = FALSE, info=FALSE))
-                         
-    
-                                             
-}
-)
-
-
-DT::dataTableOutput("st_dateSeason")  
-
+  if (month(theDate) < 6) {
+  yr <- paste(year(theDate) - 1, str_sub(year(theDate), 3, 4), sep = "/")
+  } else {
+  yr <-
+  paste(year(theDate), as.integer(str_sub(year(theDate), 3, 4)) + 1, sep =
+  "/")
+  }
+  
+  table <- standings %>%
+  filter(season == yr)  %>%  #478 loks good
+  group_by(team) %>%
+  transmute(
+  Pl = n(),
+  Pts = sum(points),
+  GA = sum(GA),
+  GF = sum(GF)
+  ) %>%
+  mutate(GD = GF - GA) %>%
+  unique(.) %>%
+  ungroup() %>%
+  arrange(desc(Pts), desc(GD), desc(GF), team) %>%
+  select(Team = team, Pl, GD, Pts) %>%
+  DT::datatable(
+  options = list(
+  class = 'compact stripe hover row-border order-column',
+  searching = FALSE,
+  info = FALSE
+  )
+  )
+  
+  
+  
+  })
+  
+  
+  DT::dataTableOutput("st_dateSeason")
+  
 
 ```
 
@@ -355,7 +421,8 @@ selectInput("player_wk2",
             
             
             ppgPlayer <- playerGame %>%
-            filter(PLAYERID == input$player_wk2 & (START + subOn) > 0) %>%
+            filter(PLAYERID == input$player_wk2 &
+            (START + subOn) > 0) %>%
             mutate(gameOrder = row_number())
             
             games <- nrow(ppgPlayer)
@@ -409,9 +476,9 @@ selectInput("player_wk2",
             config(displayModeBar = F, showLink = F)
             
             })
-
-
-plotlyOutput("player_ppg")
+            
+            
+            plotlyOutput("player_ppg")
 
 ```
 
@@ -463,7 +530,7 @@ selectInput(
   })
   
   plotlyOutput("esd_wk2")
-
+  
 ```
 
 R3
@@ -475,107 +542,133 @@ Row
 ### Last Minute Goals
 
 ``` {r lateGoals_wk3}
-selectInput("season_wk3",label=NULL,choices=seasonChoice_3,selected="All Seasons", multiple=TRUE)
-
-output$lateGoals_wk3 <- renderDimple({
+selectInput(
+  "season_wk3",
+  label = NULL,
+  choices = seasonChoice_3,
+  selected = "All Seasons",
+  multiple = TRUE
+  )
   
+  output$lateGoals_wk3 <- renderDimple({
   req(input$season_wk3)
   
   print(input$season_wk3)
-
-  if(input$season_wk3!="All Seasons") {
-lastFor <- goals %>% 
-  left_join(playerGame) %>% 
-  filter(TIME==90&season %in% input$season_wk3) %>% 
-  select(TIME,TEAMMATCHID,MATCHID,TEAMNAME) %>% 
-
-  group_by(TEAMNAME) %>% 
-  tally() %>% 
-  arrange(desc(n)) %>% 
-  select(For=n,TEAMNAME)
-
-
-lastMin <- goals %>% 
-  left_join(playerGame) %>% 
-  filter(TIME==90&season %in% input$season_wk3) %>% 
-  select(MATCHID,Scorer=TEAMNAME) %>% 
-  left_join(teamGames) %>% 
-  filter(Scorer!=TEAMNAME) %>% 
-  select(TEAMNAME) %>% 
-  group_by(TEAMNAME) %>% 
-  tally() %>% 
-  select(Ag=n,TEAMNAME) %>% 
-  left_join(lastFor) %>% 
-  mutate(Ag=ifelse(is.na(Ag),0,Ag),For=ifelse(is.na(For),0,For)) %>% 
-  mutate(Ag=-Ag) # to get left side of mid line
-} else {
-  lastFor <- goals %>% 
-  left_join(playerGame) %>% 
-  filter(TIME==90) %>% 
-  select(TIME,TEAMMATCHID,MATCHID,TEAMNAME) %>% 
-
-  group_by(TEAMNAME) %>% 
-  tally() %>% 
-  arrange(desc(n)) %>% 
-  select(For=n,TEAMNAME)
-
-
-lastMin <- goals %>% 
-  left_join(playerGame) %>% 
-  filter(TIME==90) %>% 
-  select(MATCHID,Scorer=TEAMNAME) %>% 
-  left_join(teamGames) %>% 
-  filter(Scorer!=TEAMNAME) %>% 
-  select(TEAMNAME) %>% 
-  group_by(TEAMNAME) %>% 
-  tally() %>% 
-  select(Ag=n,TEAMNAME) %>% 
-  left_join(lastFor) %>% 
-  mutate(Ag=ifelse(is.na(Ag),0,Ag),For=ifelse(is.na(For),0,For)) %>% 
-  mutate(Ag=-Ag) # to get left side of mid line
-}
-
-lastMin_gather <- lastMin %>% 
-  gather(place,goals,-TEAMNAME)
-
-
-theMax <- max(lastMin_gather$goals)
-theMin <- min(lastMin_gather$goals)
-title <- "90+ minute PL goals For and Against Selected Seasons"
-
-teamOrder <-sort(unique(lastMin_gather$TEAMNAME),decreasing = TRUE)
-
-lastMin_gather %>%
-  dimple(x = "goals", y = "TEAMNAME", group = "place", type = 'bar',height=500,width=500) %>%
   
-  yAxis(title="",type = "addCategoryAxis", orderRule = teamOrder) %>%
-  xAxis(title="Goals ",type = "addMeasureAxis", overrideMax = theMax, overrideMin = theMin) %>%
+  if (input$season_wk3 != "All Seasons") {
+  lastFor <- goals %>%
+  left_join(playerGame) %>%
+  filter(TIME == 90 & season %in% input$season_wk3) %>%
+  select(TIME, TEAMMATCHID, MATCHID, TEAMNAME) %>%
+  
+  group_by(TEAMNAME) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  select(For = n, TEAMNAME)
+  
+  
+  lastMin <- goals %>%
+  left_join(playerGame) %>%
+  filter(TIME == 90 & season %in% input$season_wk3) %>%
+  select(MATCHID, Scorer = TEAMNAME) %>%
+  left_join(teamGames) %>%
+  filter(Scorer != TEAMNAME) %>%
+  select(TEAMNAME) %>%
+  group_by(TEAMNAME) %>%
+  tally() %>%
+  select(Ag = n, TEAMNAME) %>%
+  left_join(lastFor) %>%
+  mutate(Ag = ifelse(is.na(Ag), 0, Ag),
+  For = ifelse(is.na(For), 0, For)) %>%
+  mutate(Ag = -Ag) # to get left side of mid line
+  } else {
+  lastFor <- goals %>%
+  left_join(playerGame) %>%
+  filter(TIME == 90) %>%
+  select(TIME, TEAMMATCHID, MATCHID, TEAMNAME) %>%
+  
+  group_by(TEAMNAME) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  select(For = n, TEAMNAME)
+  
+  
+  lastMin <- goals %>%
+  left_join(playerGame) %>%
+  filter(TIME == 90) %>%
+  select(MATCHID, Scorer = TEAMNAME) %>%
+  left_join(teamGames) %>%
+  filter(Scorer != TEAMNAME) %>%
+  select(TEAMNAME) %>%
+  group_by(TEAMNAME) %>%
+  tally() %>%
+  select(Ag = n, TEAMNAME) %>%
+  left_join(lastFor) %>%
+  mutate(Ag = ifelse(is.na(Ag), 0, Ag),
+  For = ifelse(is.na(For), 0, For)) %>%
+  mutate(Ag = -Ag) # to get left side of mid line
+  }
+  
+  lastMin_gather <- lastMin %>%
+  gather(place, goals, -TEAMNAME)
+  
+  
+  theMax <- max(lastMin_gather$goals)
+  theMin <- min(lastMin_gather$goals)
+  title <- "90+ minute PL goals For and Against Selected Seasons"
+  
+  teamOrder <- sort(unique(lastMin_gather$TEAMNAME), decreasing = TRUE)
+  
+  lastMin_gather %>%
+  dimple(
+  x = "goals",
+  y = "TEAMNAME",
+  group = "place",
+  type = 'bar',
+  height = 500,
+  width = 500
+  ) %>%
+  
+  yAxis(title = "",
+  type = "addCategoryAxis",
+  orderRule = teamOrder) %>%
+  xAxis(
+  title = "Goals ",
+  type = "addMeasureAxis",
+  overrideMax = theMax,
+  overrideMin = theMin
+  ) %>%
   add_legend() %>%
-  add_title(html = paste0("<h3 style='font-family:Helvetica; text-align: center;'>",title,"</h3>")) %>%
+  add_title(html = paste0(
+  "<h3 style='font-family:Helvetica; text-align: center;'>",
+  title,
+  "</h3>"
+  )) %>%
   tack(., options = list(
-    chart = htmlwidgets::JS("
-                              function(){
-                              var self = this;
-                              // x axis should be first or [0] but filter to make sure
-                              self.axes.filter(function(ax){
-                              return ax.position == 'x'
-                              })[0] // now we have our x axis set _getFormat as before
-                              ._getFormat = function () {
-                              return function(d) {
-                              return d3.format(',.0f')(Math.abs(d)) ;
-                              };
-                              };
-                              // return self to return our chart
-                              return self;
-                              }
-                              "))
+  chart = htmlwidgets::JS(
+  "
+  function(){
+  var self = this;
+  // x axis should be first or [0] but filter to make sure
+  self.axes.filter(function(ax){
+  return ax.position == 'x'
+  })[0] // now we have our x axis set _getFormat as before
+  ._getFormat = function () {
+  return function(d) {
+  return d3.format(',.0f')(Math.abs(d)) ;
+  };
+  };
+  // return self to return our chart
+  return self;
+  }
+  "
   )
-
-})
-
-dimpleOutput("lateGoals_wk3")
-
-
+  ))
+  
+  })
+  
+  dimpleOutput("lateGoals_wk3")
+  
 
 ```
 
@@ -583,73 +676,80 @@ dimpleOutput("lateGoals_wk3")
 
 ``` {r manager_wk3}
 
-selectInput("manager_wk3", label=NULL,selected="Jose Mourinho", choices=managerChoice)
+
+selectInput(
+"manager_wk3",
+label = NULL,
+selected = "Jose Mourinho",
+choices = managerChoice
+)
 
 managerData_wk3 <- reactive({
-  
-  req(input$manager_wk3)
-  
+req(input$manager_wk3)
 
-stints <- managers %>% 
-  filter(name==input$manager_wk3) %>% 
-  mutate(Left=as_date(ifelse(is.na(Left),Sys.Date(),Left)))
+
+stints <- managers %>%
+filter(name == input$manager_wk3) %>%
+mutate(Left = as_date(ifelse(is.na(Left), Sys.Date(), Left)))
 
 
 # this gives all player games played for etc...
 #i <- 1
 for (i in 1:nrow(stints)) {
-  
-  tempdf <-playerGame %>% 
-    filter(gameDate>=stints$Joined[i]&gameDate<=stints$Left[i]&TEAMNAME==stints$TEAMNAME[i])
-  
-  if (i!=1) {
-    df <- bind_rows(df,tempdf)
-  } else {
-    df <- tempdf
-  }
-  
+tempdf <- playerGame %>%
+filter(gameDate >= stints$Joined[i] &
+gameDate <= stints$Left[i] & TEAMNAME == stints$TEAMNAME[i])
+
+if (i != 1) {
+df <- bind_rows(df, tempdf)
+} else {
+df <- tempdf
+}
+
 }
 
 
 
-young<-df %>% 
-  filter(mins>0&Gls>0) %>% #2992
-  select(name,PLAYERID,age,gameDate,TEAMNAME,LASTNAME) %>% 
-  arrange(gameDate,age) %>% 
-  group_by(gameDate) %>% 
-  slice(1) %>% 
-  ungroup()  %>% 
-  mutate(age = as.numeric(age),cumminAge=cummin(age)) %>% 
-  group_by(name,PLAYERID) %>% 
-  slice(1) %>% 
-  mutate(label=paste0(LASTNAME," ",round(age,2))) %>% 
-  rename(Team=TEAMNAME) %>% 
-  mutate(alpha=ifelse(age==cumminAge,0.8,0.2)) %>% ## not working yet
-  arrange(gameDate) 
+young <- df %>%
+filter(mins > 0 & Gls > 0) %>% #2992
+select(name, PLAYERID, age, gameDate, TEAMNAME, LASTNAME) %>%
+arrange(gameDate, age) %>%
+group_by(gameDate) %>%
+slice(1) %>%
+ungroup()  %>%
+mutate(age = as.numeric(age), cumminAge = cummin(age)) %>%
+group_by(name, PLAYERID) %>%
+slice(1) %>%
+mutate(label = paste0(LASTNAME, " ", round(age, 2))) %>%
+rename(Team = TEAMNAME) %>%
+mutate(alpha = ifelse(age == cumminAge, 0.8, 0.2)) %>% ## not working yet
+arrange(gameDate)
 
 
 
-info=list(young=young)
+info = list(young = young)
 return(info)
 
 })
 
 output$managerPlayersAge <- renderPlot({
+req(managerData_wk3())
+title <-
+paste0("Players age when first scoring for ",
+input$manager_wk3,
+" in Premier League")
 
-  
-  req(managerData_wk3())
-title <- paste0("Players age when first scoring for ",input$manager_wk3," in Premier League")
 
-
-p <- ggplot(managerData_wk3()$young, aes(gameDate, round(age,2), label = label))
+p <-
+ggplot(managerData_wk3()$young, aes(gameDate, round(age, 2), label = label))
 
 p + geom_text_repel(aes(colour = factor(Team))) +
- theme(axis.title.x = element_blank()) +   # Remove x-axis label
-  ylab("Age")            + 
-  ggtitle(title)    +
-  theme_fivethirtyeight() +  
-  scale_color_fivethirtyeight() #+
-  #theme(legend.title=element_blank()) ## stil not aPPEARING NOT SURE WHY
+theme(axis.title.x = element_blank()) +   # Remove x-axis label
+ylab("Age")            +
+ggtitle(title)    +
+theme_fivethirtyeight() +
+scale_color_fivethirtyeight() #+
+#theme(legend.title=element_blank()) ## stil not aPPEARING NOT SURE WHY
 
 })
 
@@ -670,56 +770,67 @@ Column
 
 
 
- ## fixed data 
-matchFees <-playerGame %>% 
-  filter(!is.na(FEE)&FEE!=99) %>% 
-  group_by(MATCHID) %>% 
-  summarise(totFee=sum(FEE)) %>% 
-  arrange(desc(totFee))
+
+## fixed data
+matchFees <- playerGame %>%
+filter(!is.na(FEE) & FEE != 99) %>%
+group_by(MATCHID) %>%
+summarise(totFee = sum(FEE)) %>%
+arrange(desc(totFee))
 
 
-pal <- c("lightblue","red")
+pal <- c("lightblue", "red")
 
 ## select teams
 
-selectInput("team1_wk4",label="Team",selected="Man. Utd.", choices = teamsChoice, width=120)
+selectInput(
+"team1_wk4",
+label = "Team",
+selected = "Man. Utd.",
+choices = teamsChoice,
+width = 120
+)
 
- output$opp_wk4 <- renderUI({
-   oppTeam <-hth %>% 
-  filter(team==input$team1_wk4) %>% 
-  .$OppTeam %>% 
-  unique() %>% 
-  sort()
-   
-  selectInput("opp_wk4",label="Opponents",selected="Man. City", choices = oppTeam,  width=120) 
- })
-   
-   
+output$opp_wk4 <- renderUI({
+oppTeam <- hth %>%
+filter(team == input$team1_wk4) %>%
+.$OppTeam %>%
+unique() %>%
+sort()
+
+selectInput(
+"opp_wk4",
+label = "Opponents",
+selected = "Man. City",
+choices = oppTeam,
+width = 120
+)
+})
+
+
 uiOutput("opp_wk4")
 
 
- data_wk4 <- reactive({ 
-  
-  
-  if (is.null(input$opp_wk4)) {
-    theOpp <- "Man. City"
-  } else {
-    theOpp <- input$opp_wk4
-  }
-  
-hth <-  hth %>% 
-  filter(team==input$team1_wk4&OppTeam==theOpp) %>% 
-  arrange(desc(gameDate)) %>% 
-  mutate(score=paste0(GF,"-",GA)) %>% 
-  select(date=gameDate,score,MATCHID) 
-  
- 
-  info=list(hth=hth)
-  return(info)
-  
- }) 
-  
- 
+data_wk4 <- reactive({
+if (is.null(input$opp_wk4)) {
+theOpp <- "Man. City"
+} else {
+theOpp <- input$opp_wk4
+}
+
+hth <-  hth %>%
+filter(team == input$team1_wk4 & OppTeam == theOpp) %>%
+arrange(desc(gameDate)) %>%
+mutate(score = paste0(GF, "-", GA)) %>%
+select(date = gameDate, score, MATCHID)
+
+
+info = list(hth = hth)
+return(info)
+
+})
+
+
  
 ```
 
@@ -727,16 +838,23 @@ hth <-  hth %>%
 
 
 ``` {r}
- 
-  output$lineup_wk4 <- DT::renderDataTable({
 
-
-    data_wk4()$hth %>%
-DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,
-              selection='single',
-              width=200,
-              options= list(paging = TRUE, searching = FALSE,info=FALSE,
-                             columnDefs= list(list(visible=FALSE,targets=list(2)))))
+output$lineup_wk4 <- DT::renderDataTable({
+data_wk4()$hth %>%
+DT::datatable(
+class = 'compact stripe hover row-border order-column',
+rownames = FALSE,
+selection = 'single',
+width = 200,
+options = list(
+paging = TRUE,
+searching = FALSE,
+info = FALSE,
+columnDefs = list(list(
+visible = FALSE, targets = list(2)
+))
+)
+)
 })
 
 DT::dataTableOutput("lineup_wk4")
@@ -749,36 +867,45 @@ DT::dataTableOutput("lineup_wk4")
 ``` {r}
 
 
-output$lineupFees <- renderPlotly({
-  
-  
-   
-  
-   if(is.null(input$lineup_wk4_rows_selected)) {
-     matchID <- 9600
-   } else {
-     print("enter select")
-  s = as.integer(input$lineup_wk4_rows_selected)
-     print(s)
-   matchID <-  data_wk4()$hth[s,]$MATCHID
-   print(matchID)
-   }
-  
-playerGame %>%
-  filter(MATCHID==matchID) %>%  #was 9600
-  arrange(FEE) %>%
-  mutate(shape=ifelse(START>0,1,0)) %>%
-  plot_ly() %>%
-    add_markers(x=~FEE/1000,y=~ name, color= ~TEAMNAME, colors= pal, symbol = ~ shape,
-                hoverinfo="text",
-                text=~paste(name,"<br>",FEE/1000,"mill.<br>",joined)) %>%
-  layout(margin=list(l=120),
-         hovermode = "closest",
-         title="Estimated transfer fees of players Man Utd v Man City",
-         xaxis=list(title="Million Pounds"),
-         yaxis=list(title="",categoryarray = ~name, categoryorder = "array")) %>%
 
-  config(displayModeBar = F,showLink = F)
+output$lineupFees <- renderPlotly({
+if (is.null(input$lineup_wk4_rows_selected)) {
+matchID <- 9600
+} else {
+print("enter select")
+s = as.integer(input$lineup_wk4_rows_selected)
+print(s)
+matchID <-  data_wk4()$hth[s, ]$MATCHID
+print(matchID)
+}
+
+playerGame %>%
+filter(MATCHID == matchID) %>%  #was 9600
+arrange(FEE) %>%
+mutate(shape = ifelse(START > 0, 1, 0)) %>%
+plot_ly() %>%
+add_markers(
+x =  ~ FEE / 1000,
+y =  ~ name,
+color = ~ TEAMNAME,
+colors = pal,
+symbol = ~ shape,
+hoverinfo = "text",
+text =  ~ paste(name, "<br>", FEE / 1000, "mill.<br>", joined)
+) %>%
+layout(
+margin = list(l = 120),
+hovermode = "closest",
+title = "Estimated transfer fees of players Man Utd v Man City",
+xaxis = list(title = "Million Pounds"),
+yaxis = list(
+title = "",
+categoryarray = ~ name,
+categoryorder = "array"
+)
+) %>%
+
+config(displayModeBar = F, showLink = F)
 
 })
 
@@ -793,33 +920,51 @@ Column
 ``` {r goals_wk4}
 
 
-numericInput("goalsAg_wk4", "Min Goals Conceded", value=4, min = 1, max = 9, step = NA,
-  width = 100)
+
+numericInput(
+"goalsAg_wk4",
+"Min Goals Conceded",
+value = 4,
+min = 1,
+max = 9,
+step = NA,
+width = 100
+)
 
 output$concedeGoals_wk4 <- renderPlotly({
 test <- standings %>%
-   ungroup() %>%
-   filter(venue=="H") %>%
-   select(team,GA) %>%
-   mutate(big=ifelse(GA>=input$goalsAg_wk4,1,0)) %>%
-   group_by(team) %>%
-   summarize(tot=n(),bad=sum(big),pc=round(100*bad/tot,1)) %>%
-   arrange(desc(pc))
+ungroup() %>%
+filter(venue == "H") %>%
+select(team, GA) %>%
+mutate(big = ifelse(GA >= input$goalsAg_wk4, 1, 0)) %>%
+group_by(team) %>%
+summarize(tot = n(),
+bad = sum(big),
+pc = round(100 * bad / tot, 1)) %>%
+arrange(desc(pc))
 
-title=paste0("Total and % Games conceding ",input$goalsAg_wk4,"+ goals at Home")
+title = paste0("Total and % Games conceding ",
+input$goalsAg_wk4,
+"+ goals at Home")
 
 test %>%
-  plot_ly() %>%
-  add_markers(x=~tot,y=~pc,hoverinfo="text",
-              text=~paste0(team,"<br>Tot:",bad,"<br>",pc,"%")) %>%
-  layout(hovermode="closest",
-         height = 250,
-            autosize = F,
-         title=title,
-         xaxis=list(title="Games played"),
-         yaxis=list(title="Per Cent")) %>%
+plot_ly() %>%
+add_markers(
+x =  ~ tot,
+y =  ~ pc,
+hoverinfo = "text",
+text =  ~ paste0(team, "<br>Tot:", bad, "<br>", pc, "%")
+) %>%
+layout(
+hovermode = "closest",
+height = 250,
+autosize = F,
+title = title,
+xaxis = list(title = "Games played"),
+yaxis = list(title = "Per Cent")
+) %>%
 
-  config(displayModeBar = F,showLink = F)
+config(displayModeBar = F, showLink = F)
 })
 
 plotlyOutput("concedeGoals_wk4")
@@ -831,68 +976,84 @@ plotlyOutput("concedeGoals_wk4")
 
 ``` {r cumGls_wk4}
 
-selectInput("playerComps_wk4", label="Select player(s)", choices= playerChoice, selected = c("ROONEYX","KANEH","FOWLERR","OWENM","LUKAKUR","RONALDC"), multiple = TRUE,
-  selectize = TRUE, width = 600, size = NULL)
-
-radioButtons(inputId="compTime_wk4", label=NULL, choices=c("Age","Apps","Date"), selected = NULL, inline = TRUE,
-  width = 200)
-
-output$playerComps <- renderPlotly({
-
-df <-playerGame %>%
-  filter((START+subOn>0)&PLAYERID %in% input$playerComps_wk4) %>%
-  select(name,PLAYERID,Gls,Assists,age,gameDate) %>%
+selectInput(
+  "playerComps_wk4",
+  label = "Select player(s)",
+  choices = playerChoice,
+  selected = c("ROONEYX", "KANEH", "FOWLERR", "OWENM", "LUKAKUR", "RONALDC"),
+  multiple = TRUE,
+  selectize = TRUE,
+  width = 600,
+  size = NULL
+  )
+  
+  radioButtons(
+  inputId = "compTime_wk4",
+  label = NULL,
+  choices = c("Age", "Apps", "Date"),
+  selected = NULL,
+  inline = TRUE,
+  width = 200
+  )
+  
+  output$playerComps <- renderPlotly({
+  df <- playerGame %>%
+  filter((START + subOn > 0) &
+  PLAYERID %in% input$playerComps_wk4) %>%
+  select(name, PLAYERID, Gls, Assists, age, gameDate) %>%
   arrange(gameDate) %>%
-  group_by(name,PLAYERID) %>%
-  mutate(gameOrder=row_number(),points=Assists+Gls,
-         cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points))
-
-
-
- yTitle <-"Cumulative Goals"
-
- 
-
-    if (input$compTime_wk4=="Apps") {
-     
-      xTitle <-"PL Apps"
-      plot <- df %>%
-        plot_ly() %>%
-         group_by(PLAYERID) %>%
-  add_lines(~gameOrder,~cumGoals, color=~name)
-
-    } else if (input$compTime_wk4=="Age") {
-     
-      xTitle <-"Age"
-      plot <- df %>%
-        plot_ly() %>%
-        group_by(PLAYERID) %>%
-  add_lines(~age,~cumGoals, color=~name)
-    } else if (input$compTime_wk4=="Date") {
-      
-      xTitle <-""
-      plot <- df %>%
-        group_by(PLAYERID) %>%
-        plot_ly() %>%
-
-  add_lines(~gameDate,~cumGoals, color=~name)
-    }
- 
+  group_by(name, PLAYERID) %>%
+  mutate(
+  gameOrder = row_number(),
+  points = Assists + Gls,
+  cumGoals = cumsum(Gls),
+  cumAssists = cumsum(Assists),
+  cumPoints = cumsum(points)
+  )
+  
+  
+  
+  yTitle <- "Cumulative Goals"
+  
+  
+  
+  if (input$compTime_wk4 == "Apps") {
+  xTitle <- "PL Apps"
+  plot <- df %>%
+  plot_ly() %>%
+  group_by(PLAYERID) %>%
+  add_lines( ~ gameOrder,  ~ cumGoals, color =  ~ name)
+  
+  } else if (input$compTime_wk4 == "Age") {
+  xTitle <- "Age"
+  plot <- df %>%
+  plot_ly() %>%
+  group_by(PLAYERID) %>%
+  add_lines( ~ age,  ~ cumGoals, color =  ~ name)
+  } else if (input$compTime_wk4 == "Date") {
+  xTitle <- ""
+  plot <- df %>%
+  group_by(PLAYERID) %>%
+  plot_ly() %>%
+  
+  add_lines( ~ gameDate,  ~ cumGoals, color =  ~ name)
+  }
+  
   plot %>%
-    layout(
-       height = 250,
-            autosize = F,
-       xaxis=list(title=xTitle),
-       yaxis = list(title=""),
-       title="Cumulative Goals"
-    ) %>%
-
-  config(displayModeBar = F,showLink = F)
-
-    })
-
-plotlyOutput("playerComps")
-
+  layout(
+  height = 250,
+  autosize = F,
+  xaxis = list(title = xTitle),
+  yaxis = list(title = ""),
+  title = "Cumulative Goals"
+  ) %>%
+  
+  config(displayModeBar = F, showLink = F)
+  
+  })
+  
+  plotlyOutput("playerComps")
+  
 
 ```
 
@@ -905,38 +1066,69 @@ R5
 
 # base data.frame
 oppGames <- teamGames %>%
-  select(MATCHID,GA=GOALS,OppTeam=TEAMNAME) %>%
-  inner_join(teamGames)
+select(MATCHID, GA = GOALS, OppTeam = TEAMNAME) %>%
+inner_join(teamGames)
 
-allMatches <-oppGames[oppGames$TEAMNAME!=oppGames$OppTeam,]
+allMatches <- oppGames[oppGames$TEAMNAME != oppGames$OppTeam, ]
 
 allMatches <- allMatches %>%
-  select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID)
+select(
+season,
+team = TEAMNAME,
+GF = GOALS,
+GA,
+gameDate,
+tmGameOrder,
+tmYrGameOrder,
+venue,
+MATCHID
+)
 allMatches$points <- 3
-allMatches[allMatches$GF==allMatches$GA,]$points <- 1
-allMatches[allMatches$GF<allMatches$GA,]$points <- 0
+allMatches[allMatches$GF == allMatches$GA, ]$points <- 1
+allMatches[allMatches$GF < allMatches$GA, ]$points <- 0
 
 ```
 
 ``` {r conceding_wk5}
 
-sliderInput("GA_wk5","Minimum Goals Against",min=1,max=9,value=3)
-sliderInput("seq_wk5","Minimum Sequence Length",min=1,max=40,value=2)
-
-output$GAtable_wk5 <- DT::renderDataTable({
-allMatches %>% 
-    mutate(cat=ifelse(GA>=input$GA_wk5,1,0)) %>% 
-    arrange(desc(gameDate)) %>% 
-    group_by(team) %>% 
-    do(subSeq(.$cat)) %>% 
-    filter(value==1&slength>=input$seq_wk5) %>% #66
-    group_by(team) %>% 
-    tally() %>% 
-    arrange(desc(n)) %>% 
-   #filter(n>2) %>% 
-    rename(count=n) %>% 
- DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = FALSE,info=FALSE))
-})
+sliderInput(
+  "GA_wk5",
+  "Minimum Goals Against",
+  min = 1,
+  max = 9,
+  value = 3
+  )
+  sliderInput(
+  "seq_wk5",
+  "Minimum Sequence Length",
+  min = 1,
+  max = 40,
+  value = 2
+  )
+  
+  output$GAtable_wk5 <- DT::renderDataTable({
+  allMatches %>%
+  mutate(cat = ifelse(GA >= input$GA_wk5, 1, 0)) %>%
+  arrange(desc(gameDate)) %>%
+  group_by(team) %>%
+  do(subSeq(.$cat)) %>%
+  filter(value == 1 & slength >= input$seq_wk5) %>% #66
+  group_by(team) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  #filter(n>2) %>%
+  rename(count = n) %>%
+  DT::datatable(
+  width = 200,
+  class = 'compact stripe hover row-border order-column',
+  rownames = FALSE,
+  options = list(
+  paging = TRUE,
+  searching = FALSE,
+  info = FALSE
+  )
+  )
+  })
 
 DT::dataTableOutput("GAtable_wk5")
 ```
@@ -950,44 +1142,54 @@ DT::dataTableOutput("GAtable_wk5")
 
 
 
-  data_wk5 <- reactive({
-maxAll <-allMatches %>%
-  mutate(cat=ifelse(GA>0,1,0)) %>%
-  arrange(desc(gameDate)) %>%
-  group_by(team) %>%
-  do(subSeq(.$cat)) %>%
-  group_by(team) %>%
-  filter(value==1) %>%
-  arrange(desc(slength)) %>%
-  slice(1) %>%
-  select(team,max=slength)
+
+data_wk5 <- reactive({
+maxAll <- allMatches %>%
+mutate(cat = ifelse(GA > 0, 1, 0)) %>%
+arrange(desc(gameDate)) %>%
+group_by(team) %>%
+do(subSeq(.$cat)) %>%
+group_by(team) %>%
+filter(value == 1) %>%
+arrange(desc(slength)) %>%
+slice(1) %>%
+select(team, max = slength)
 
 
 table_wk5 <- allMatches %>%
-  mutate(cat=ifelse(GA>0,1,0)) %>%
-  arrange(desc(gameDate)) %>%
-  group_by(team) %>%
-  do(subSeq(.$cat)) %>%
-  group_by(team) %>%
-  slice(1) %>%
+mutate(cat = ifelse(GA > 0, 1, 0)) %>%
+arrange(desc(gameDate)) %>%
+group_by(team) %>%
+do(subSeq(.$cat)) %>%
+group_by(team) %>%
+slice(1) %>%
 #  filter(team %in% currentTeams) %>%
-  inner_join(maxAll) %>%
-  mutate(run=(ifelse(value==1,slength,0))) %>%
-  arrange(desc(run)) %>%
-  select(team,latest=run,max)
+inner_join(maxAll) %>%
+mutate(run = (ifelse(value == 1, slength, 0))) %>%
+arrange(desc(run)) %>%
+select(team, latest = run, max)
 
- info=list(table_wk5=table_wk5)
- return(info)
+info = list(table_wk5 = table_wk5)
+return(info)
 })
 
-output$concedeTable_wk5 <- DT::renderDataTable({  
+output$concedeTable_wk5 <- DT::renderDataTable({
 data_wk5()$table_wk5 %>%
- DT::datatable(width=250,
-               selection='single',class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = FALSE,info=FALSE))
+DT::datatable(
+width = 250,
+selection = 'single',
+class = 'compact stripe hover row-border order-column',
+rownames = FALSE,
+options = list(
+paging = TRUE,
+searching = FALSE,
+info = FALSE
+)
+)
 
 
 })
- DT::dataTableOutput("concedeTable_wk5")
+DT::dataTableOutput("concedeTable_wk5")
 ```
 
 ### Conceding Sequences By Club
@@ -996,34 +1198,100 @@ data_wk5()$table_wk5 %>%
 ``` {r}
 
 output$concedeChart_wk5 <- renderPlotly({
-
   print("enter concedeChart_wk5 ")
   
-if(is.null(input$concedeTable_wk5_rows_selected)) {
-     teamname <- "Stoke C"
-   } else {print("enter select")
+  if (is.null(input$concedeTable_wk5_rows_selected)) {
+  teamname <- "Stoke C"
+  } else {
+  print("enter select")
   s = as.integer(input$concedeTable_wk5_rows_selected)
-
-   teamname <-  data_wk5()$table_wk5[s,]$team
   
-   }
-print(teamname)
+  teamname <-  data_wk5()$table_wk5[s, ]$team
+  
+  }
 
-df <-allMatches %>%
-  mutate(cat=ifelse(GA>0,1,0)) %>%
+  
+  df <- allMatches %>%
+  mutate(cat = ifelse(GA > 0, 1, 0)) %>%
   arrange(desc(gameDate)) %>%
   group_by(team) %>%
   do(subSeq(.$cat)) %>%
-  filter(team==teamname&value==1) %>%
+  filter(team == teamname & value == 1) %>%
   group_by(slength) %>%
   tally()
+  
+  df %>%   plot_ly() %>%
+  add_bars(
+  data = df,
+  x = ~ slength,
+  y = ~ n,
+  opacity = 0.5
+  ) %>%
+  add_bars(
+  data = tail(df, 1),
+  x = ~ slength,
+  y = ~ n,
+  color = "red"
+  )
+  
+  
+  })
+  
+  
+  plotlyOutput("concedeChart_wk5")
 
-df %>%   plot_ly() %>%
-  add_bars(data=df,x= ~slength, y= ~n, opacity=0.5) %>%
-  add_bars(data=tail(df,1),x= ~slength, y= ~n,color="red")
+```
 
 
-})
+### Conceding Sequences By Club
 
-plotlyOutput("concedeChart_wk5")
+
+``` {r}
+
+headers <- goals %>%
+  filter(METHOD == "Head") #4967
+  
+  apps <- playerGame %>%
+  filter(mins > 0 & PLAYERID != "OWNGOAL") %>%
+  select(name, PLAYERID, PLAYER_MATCH, gameDate) %>%
+  arrange(gameDate) %>%
+  group_by(PLAYERID) %>%
+  mutate(gameOrder = row_number()) %>%
+  right_join(headers) %>%
+  group_by(PLAYERID) %>%
+  arrange(gameOrder) %>%
+  mutate(headgame = row_number())
+  
+  ## top 10 all time
+  
+  tops <- apps %>%
+  group_by(PLAYERID) %>%
+  tally() %>%
+  arrange(desc(n)) %>% # sheare 46 total took 113 crouch
+  filter(!is.na(PLAYERID)) %>%
+  head(10) %>%
+  .$PLAYERID
+  
+  # add Antonio
+  tops <- c(tops, "ANTONIM")
+  
+  apps %>%
+  filter(headgame == 11 & PLAYERID %in% tops) %>%
+  plot_ly() %>%
+  add_markers(x =  ~ gameOrder, y =  ~ name) %>%
+  
+  layout(
+  yaxis = list(
+  title = "",
+  categoryarray = ~ name,
+  categoryorder = "array"
+  ),
+  xaxis = list(title = "", rangemode = "tozero"),
+  title = "PL appearance in which 11th headed goals scored",
+  margin = list(l = 120)
+  ) %>%
+  
+  config(displayModeBar = F, showLink = F)
+  
+
 ```
