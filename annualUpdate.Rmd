@@ -122,7 +122,7 @@ esdTeams <- sort(as.character(unique(england$home)))
 
 ```
 
-Round 1
+R1
 =====================================  
 
 Row 
@@ -660,10 +660,10 @@ plotOutput("managerPlayersAge")
 R4
 =====================================  
 
-Row 
+Column 
 -----------------------------------------------------------------------
 
-### Expensive Lineups
+### Expensive Lineups Input
 
 
 ``` {r lineups_wk4}
@@ -743,7 +743,7 @@ hth <-  hth %>%
      filter(team==input$team1_wk4&OppTeam==theOpp) %>% 
   arrange(desc(gameDate)) %>% 
   mutate(score=paste0(GF,"-",GA)) %>% 
-  select(date=gameDate,score) 
+  select(date=gameDate,score,MATCHID) 
   
   print(nrow(hth))
   
@@ -752,145 +752,178 @@ hth <-  hth %>%
   
  }) 
   
-  output$matches_wk4 <- DT::renderDataTable({
-    
-    print(data_wk4()$hth)
-    
-table <-  data_wk4()$hth %>% 
- DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,
-               selection='single',
-               width=200,
-               options= list(paging = TRUE, searching = FALSE,info=FALSE))
-print("got here")
-table
-
-})
-
-DT::dataTableOutput("matches_wk4")
-
-
-
-# output$lineupFees <- renderPlotly({
-# playerGame %>% 
-#   filter(MATCHID==9600) %>% 
-#   arrange(FEE) %>% 
-#   mutate(shape=ifelse(START>0,1,0)) %>% 
-#   plot_ly() %>% 
-#     add_markers(x=~FEE/1000,y=~ name, color= ~TEAMNAME, colors= pal, symbol = ~ shape,
-#                 hoverinfo="text",
-#                 text=~paste(name,"<br>",FEE/1000,"mill.<br>",joined)) %>% 
-#   layout(margin=list(l=120),
-#          hovermode = "closest",
-#          title="Estimated transfer fees of players Man Utd v Man City",
-#          xaxis=list(title="Million Pounds"),
-#          yaxis=list(title="",categoryarray = ~name, categoryorder = "array")) %>% 
-# 
-#   config(displayModeBar = F,showLink = F)
-# 
-# })
-
-#plotlyOutput("lineupFees")
 ```
 
-Row 
------------------------------------------------------------------------
-
-### Conceding Goals at Home
-
-``` {r goals_wk4}
+### Expensive Lineups Table - click row for players cost
 
 
-numericInput("goalsAg_wk4", "Min Goals Conceded", value=4, min = 1, max = 9, step = NA,
-  width = 100)
+``` {r}
+ 
+  output$lineup_wk4 <- DT::renderDataTable({
+    
 
-output$concedeGoals_wk4 <- renderPlotly({
-test <- standings %>% 
-   ungroup() %>% 
-   filter(venue=="H") %>% 
-   select(team,GA) %>% 
-   mutate(big=ifelse(GA>=input$goalsAg_wk4,1,0)) %>% 
-   group_by(team) %>% 
-   summarize(tot=n(),bad=sum(big),pc=round(100*bad/tot,1)) %>% 
-   arrange(desc(pc)) 
+    data_wk4()$hth %>% 
+DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,
+              selection='single',
+              width=200,
+              options= list(paging = TRUE, searching = FALSE,info=FALSE,
+                             columnDefs= list(list(visible=FALSE,targets=list(2)))))
+})
 
-title=paste0("Total and % Games conceding ",input$goalsAg_wk4,"+ goals at Home")
+DT::dataTableOutput("lineup_wk4")
 
-test %>% 
-  plot_ly() %>% 
-  add_markers(x=~tot,y=~pc,hoverinfo="text",
-              text=~paste0(team,"<br>Tot:",bad,"<br>",pc,"%")) %>% 
-  layout(hovermode="closest",
-         height = 250,
-            autosize = F,
-         title=title,
-         xaxis=list(title="Games played"),
-         yaxis=list(title="Per Cent")) %>% 
+```
+
+
+### Expensive Lineups Chart 
+
+``` {r}
+
+
+output$lineupFees <- renderPlotly({
   
+  
+   
+  
+   if(is.null(input$lineup_wk4_rows_selected)) {
+     matchID <- 9600
+   } else {
+     print("enter select")
+  s = as.integer(input$lineup_wk4_rows_selected)
+     print(s)
+   matchID <-  data_wk4()$hth[s,]$MATCHID
+   print(matchID)
+   }
+  
+playerGame %>%
+  filter(MATCHID==matchID) %>%  #was 9600
+  arrange(FEE) %>%
+  mutate(shape=ifelse(START>0,1,0)) %>%
+  plot_ly() %>%
+    add_markers(x=~FEE/1000,y=~ name, color= ~TEAMNAME, colors= pal, symbol = ~ shape,
+                hoverinfo="text",
+                text=~paste(name,"<br>",FEE/1000,"mill.<br>",joined)) %>%
+  layout(margin=list(l=120),
+         hovermode = "closest",
+         title="Estimated transfer fees of players Man Utd v Man City",
+         xaxis=list(title="Million Pounds"),
+         yaxis=list(title="",categoryarray = ~name, categoryorder = "array")) %>%
+
   config(displayModeBar = F,showLink = F)
+
 })
 
-plotlyOutput("concedeGoals_wk4")
-
+plotlyOutput("lineupFees")
 ```
 
-### Cumulative Goal Comparison
+<!-- Column  -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### Conceding Goals at Home -->
+
+<!-- ``` {r goals_wk4} -->
 
 
-``` {r cumGls_wk4}
+<!-- numericInput("goalsAg_wk4", "Min Goals Conceded", value=4, min = 1, max = 9, step = NA, -->
+<!--   width = 100) -->
 
-selectInput("playerComps_wk4", label="Select player(s)", choices= playerChoice, selected = c("ROONEYX","KANEH","FOWLERR","OWENM","LUKAKUR","RONALDC"), multiple = TRUE,
-  selectize = TRUE, width = NULL, size = NULL)
+<!-- output$concedeGoals_wk4 <- renderPlotly({ -->
+<!-- test <- standings %>%  -->
+<!--    ungroup() %>%  -->
+<!--    filter(venue=="H") %>%  -->
+<!--    select(team,GA) %>%  -->
+<!--    mutate(big=ifelse(GA>=input$goalsAg_wk4,1,0)) %>%  -->
+<!--    group_by(team) %>%  -->
+<!--    summarize(tot=n(),bad=sum(big),pc=round(100*bad/tot,1)) %>%  -->
+<!--    arrange(desc(pc))  -->
 
-radioButtons(inputId="compTime_wk4", label=NULL, choices=c("Age","Apps","Date"), selected = NULL, inline = TRUE,
-  width = 200)
+<!-- title=paste0("Total and % Games conceding ",input$goalsAg_wk4,"+ goals at Home") -->
 
-output$playerComps <- renderPlotly({
-  
-df <-playerGame %>%
-  filter((START+subOn>0)&PLAYERID %in% input$playerComps_wk4) %>%
-  select(name,PLAYERID,Gls,Assists,age,gameDate) %>%
-  arrange(gameDate) %>%
-  group_by(name,PLAYERID) %>%
-  mutate(gameOrder=row_number(),points=Assists+Gls,
-         cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points))
+<!-- test %>%  -->
+<!--   plot_ly() %>%  -->
+<!--   add_markers(x=~tot,y=~pc,hoverinfo="text", -->
+<!--               text=~paste0(team,"<br>Tot:",bad,"<br>",pc,"%")) %>%  -->
+<!--   layout(hovermode="closest", -->
+<!--          height = 250, -->
+<!--             autosize = F, -->
+<!--          title=title, -->
+<!--          xaxis=list(title="Games played"), -->
+<!--          yaxis=list(title="Per Cent")) %>%  -->
 
-print(glimpse(df))
+<!--   config(displayModeBar = F,showLink = F) -->
+<!-- }) -->
 
- yTitle <-"Cumulative Goals"
- 
- print(input$compTime_wk4)
- 
-    if (input$compTime_wk4=="Apps") {
-      print("apps")
-      xTitle <-"PL Apps"
-      plot <- df %>%
-        plot_ly() %>%
-         group_by(PLAYERID) %>% 
-  add_lines(~gameOrder,~cumGoals, color=~name)
-      write_csv(df,"problem.csv")
-    } else if (input$compTime_wk4=="Age") {
-      print("age")
-      xTitle <-"Age"
-      plot <- df %>%
-        plot_ly() %>%
-        group_by(PLAYERID) %>% 
-  add_lines(~gameOrder,~cumGoals, color=~name)
-    } else if (input$compTime_wk4=="Date") {
-      print("date")
-      xTitle <-""
-      plot <- df %>%
-        group_by(PLAYERID) %>% 
-        plot_ly() %>%
-         
-  add_lines(~gameOrder,~cumGoals, color=~name)
-    }
- print("xx")
-  plot
+<!-- plotlyOutput("concedeGoals_wk4") -->
 
-    })
+<!-- ``` -->
 
-plotlyOutput("playerComps")
+<!-- ### Cumulative Goal Comparison -->
 
 
-```
+<!-- ``` {r cumGls_wk4} -->
+
+<!-- selectInput("playerComps_wk4", label="Select player(s)", choices= playerChoice, selected = c("ROONEYX","KANEH","FOWLERR","OWENM","LUKAKUR","RONALDC"), multiple = TRUE, -->
+<!--   selectize = TRUE, width = 600, size = NULL) -->
+
+<!-- radioButtons(inputId="compTime_wk4", label=NULL, choices=c("Age","Apps","Date"), selected = NULL, inline = TRUE, -->
+<!--   width = 200) -->
+
+<!-- output$playerComps <- renderPlotly({ -->
+
+<!-- df <-playerGame %>% -->
+<!--   filter((START+subOn>0)&PLAYERID %in% input$playerComps_wk4) %>% -->
+<!--   select(name,PLAYERID,Gls,Assists,age,gameDate) %>% -->
+<!--   arrange(gameDate) %>% -->
+<!--   group_by(name,PLAYERID) %>% -->
+<!--   mutate(gameOrder=row_number(),points=Assists+Gls, -->
+<!--          cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points)) -->
+
+<!-- print(glimpse(df)) -->
+
+<!--  yTitle <-"Cumulative Goals" -->
+
+<!--  print(input$compTime_wk4) -->
+
+<!--     if (input$compTime_wk4=="Apps") { -->
+<!--       print("apps") -->
+<!--       xTitle <-"PL Apps" -->
+<!--       plot <- df %>% -->
+<!--         plot_ly() %>% -->
+<!--          group_by(PLAYERID) %>%  -->
+<!--   add_lines(~gameOrder,~cumGoals, color=~name) -->
+
+<!--     } else if (input$compTime_wk4=="Age") { -->
+<!--       print("age") -->
+<!--       xTitle <-"Age" -->
+<!--       plot <- df %>% -->
+<!--         plot_ly() %>% -->
+<!--         group_by(PLAYERID) %>%  -->
+<!--   add_lines(~age,~cumGoals, color=~name) -->
+<!--     } else if (input$compTime_wk4=="Date") { -->
+<!--       print("date") -->
+<!--       xTitle <-"" -->
+<!--       plot <- df %>% -->
+<!--         group_by(PLAYERID) %>%  -->
+<!--         plot_ly() %>% -->
+
+<!--   add_lines(~gameDate,~cumGoals, color=~name) -->
+<!--     } -->
+<!--  print("xx") -->
+<!--   plot %>%  -->
+<!--     layout( -->
+<!--        height = 250, -->
+<!--             autosize = F, -->
+<!--        xaxis=list(title=xTitle), -->
+<!--        yaxis = list(title=""), -->
+<!--        title="Cumulative Goals" -->
+<!--     ) %>%  -->
+
+<!--   config(displayModeBar = F,showLink = F) -->
+
+<!--     }) -->
+
+<!-- plotlyOutput("playerComps") -->
+
+
+<!-- ``` -->
 
