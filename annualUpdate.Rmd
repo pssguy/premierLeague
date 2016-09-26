@@ -99,7 +99,7 @@ mutate(place = ifelse(is.na(city), COUNTRY, paste0(city, " ", COUNTRY)))
 
 seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
 seasonChoice_2 <- c("All Seasons", seasonChoice)
-seasonChoice_3 <- c("All Seasons", seasonChoice[-1])
+seasonChoice_3 <- c("All Seasons", seasonChoice[-1]) # for early part of seasons
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
 teamsChoice_2 <- c("All Teams", teamsChoice)
@@ -115,6 +115,10 @@ names(playerChoice) <- pgMini$name
 
 ## all english tiers
 esdTeams <- sort(as.character(unique(england$home)))
+
+## latest info date
+
+maxDate <- max(standings$gameDate)
 
 ```
 
@@ -197,7 +201,7 @@ paging = TRUE,
 searching = TRUE,
 info = FALSE
 ),
-width = 300
+width = 300 # no impact
 )
 })
 
@@ -545,7 +549,7 @@ Row
 selectInput(
   "season_wk3",
   label = NULL,
-  choices = seasonChoice_3,
+  choices = seasonChoice_2,
   selected = "All Seasons",
   multiple = TRUE
   )
@@ -553,7 +557,7 @@ selectInput(
   output$lateGoals_wk3 <- renderDimple({
   req(input$season_wk3)
   
-  print(input$season_wk3)
+ 
   
   if (input$season_wk3 != "All Seasons") {
   lastFor <- goals %>%
@@ -1089,6 +1093,7 @@ allMatches[allMatches$GF < allMatches$GA, ]$points <- 0
 
 ```
 
+
 ``` {r conceding_wk5}
 
 sliderInput(
@@ -1202,14 +1207,15 @@ output$concedeChart_wk5 <- renderPlotly({
   
   if (is.null(input$concedeTable_wk5_rows_selected)) {
   teamname <- "Stoke C"
+  #latest <- data_wk5()$table_wk5[data_wk5()$table_wk$team=="Stoke C", ]$latest
   } else {
   print("enter select")
   s = as.integer(input$concedeTable_wk5_rows_selected)
   
   teamname <-  data_wk5()$table_wk5[s, ]$team
-  
+ # latest <- data_wk5()$table_wk5[s, ]$latest
   }
-
+#print(latest)
   
   df <- allMatches %>%
   mutate(cat = ifelse(GA > 0, 1, 0)) %>%
@@ -1232,6 +1238,12 @@ output$concedeChart_wk5 <- renderPlotly({
   x = ~ slength,
   y = ~ n,
   color = "red"
+  ) %>% 
+    
+    layout(barmode="overlay",
+  yaxis = list(title = "Count"),
+  xaxis = list(title = "Appearances", rangemode = "tozero"),
+  title = "Consecutive Games without Clean Sheet"
   )
   
   
@@ -1243,10 +1255,18 @@ output$concedeChart_wk5 <- renderPlotly({
 ```
 
 
-### Conceding Sequences By Club
+### Games to score number of headed goals
 
 
 ``` {r}
+
+sliderInput(
+  "headers_wk5",
+  "Minimum Headers",
+  min = 3,
+  max = 46,
+  value = 11
+  )
 
 headers <- goals %>%
   filter(METHOD == "Head") #4967
@@ -1275,8 +1295,9 @@ headers <- goals %>%
   # add Antonio
   tops <- c(tops, "ANTONIM")
   
+  output$headerChart_wk5 <- renderPlotly({
   apps %>%
-  filter(headgame == 11 & PLAYERID %in% tops) %>%
+  filter(headgame == input$headers_wk5 & PLAYERID %in% tops) %>%
   plot_ly() %>%
   add_markers(x =  ~ gameOrder, y =  ~ name) %>%
   
@@ -1286,12 +1307,67 @@ headers <- goals %>%
   categoryarray = ~ name,
   categoryorder = "array"
   ),
-  xaxis = list(title = "", rangemode = "tozero"),
+  xaxis = list(title = "Appearances", rangemode = "tozero"),
   title = "PL appearance in which 11th headed goals scored",
   margin = list(l = 120)
   ) %>%
   
   config(displayModeBar = F, showLink = F)
+  })
   
+  plotlyOutput("headerChart_wk5")
+
+```
+
+R6
+===================================== 
+
+### Share of Team's Goals
+
+``` {r pcgoals_wk6}
+
+### Total team Goals over Period
+
+dateInput("date_1_wk6",label="Start Date", value="2015-01-17", min="1992-08-15", max=maxDate,startview = "year")
+dateInput("date_2_wk6",label="End Date", value=maxDate, min="1992-08-15", max=maxDate, startview = "year")
+
+output$pcShare_wk6 <- DT::renderDataTable({
+tm <- playerGame %>%
+  ungroup() %>%
+ # filter( Gls > 0 & gameDate >= as.Date("2015-01-17") ) %>%
+  filter( Gls > 0 & gameDate >= as.Date(input$date_1_wk6) & gameDate <= as.Date(input$date_2_wk6) ) %>%
+  group_by(TEAMNAME) %>%
+  summarize(tmGls = sum(Gls))
+  
+  ## Individual players share
+  
+  playerGame %>%
+  filter(Gls > 0 & gameDate >= as.Date(input$date_1_wk6) & gameDate <= as.Date(input$date_2_wk6)) %>%
+  group_by(name, PLAYERID, TEAMNAME) %>%
+  summarize(totGls = sum(Gls)) %>%
+  left_join(tm) %>%
+  mutate(pc = round(100 * totGls / tmGls, 1)) %>%
+  arrange(desc(pc)) %>%
+  ungroup() %>%
+  select(
+  name,
+  team = TEAMNAME,
+  goals = totGls,
+  team = tmGls,
+  pc
+  ) %>%
+  DT::datatable(
+  width = 400,
+  class = 'compact stripe hover row-border order-column',
+  rownames = FALSE,
+  options = list(
+  paging = TRUE,
+  searching = TRUE,
+  info = FALSE
+  )
+  )
+})
+
+DT::dataTableOutput("pcShare_wk6")
 
 ```
