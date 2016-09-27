@@ -1,9 +1,9 @@
 ---
 title: "Premier League 2016/17 Annual (constant updates!)"
 output: 
-  flexdashboard::flex_dashboard:
-    orientation: rows
-    vertical_layout: fill
+  flexdashboard::flex_dashboard
+   # orientation: rows
+    #vertical_layout: fill
 runtime: shiny    
 ---
 
@@ -45,6 +45,7 @@ library(beeswarm) # just for test
 library(feather)
 library(doBy) # look to replac with appropriate function
 library(engsoccerdata)
+library(sparkline)
 library(dplyr)
 ```
 
@@ -125,7 +126,7 @@ maxDate <- max(standings$gameDate)
 R1
 =====================================  
 
-Row 
+Column
 -----------------------------------------------------------------------
 
 ### Successive years Scoring at least 1 goal
@@ -208,7 +209,8 @@ width = 300 # no impact
 
 ```
 
-
+Column
+-----------------------------------------------------------------------
 
 ### Final Standings of Team at Selected Position after Chosen Round
 
@@ -230,6 +232,9 @@ sliderInput(
   )
   
   renderPlotly({
+    
+    theTitle <- paste0("Final standing of Teams at position ",input$rank_wk1, " after Round ",input$round_wk1," of PL")
+    
   standings %>%
   filter(tmYrGameOrder == input$round_wk1 &
   position == input$rank_wk1 & season < "2016/17") %>%
@@ -245,7 +250,8 @@ sliderInput(
   text =  ~ paste0(season, "<br>", team, "<br>Pos: ", final)
   ) %>%
   layout(
-  title = "Final positions of Teams Leading after Round 1 of PL",
+    height=450, autosize = F,
+  title = theTitle,
   margin = list(b = 60),
   yaxis = list(
   title = "",
@@ -253,16 +259,17 @@ sliderInput(
   title = "Final Position"
   ),
   xaxis = list(title = "")
-  )
+  ) %>%
+ config(displayModeBar = F, showLink = F)
   })
   
 ```
 
-R2
+R2 {data-orientation=rows}
 =====================================  
 
-Row 
------------------------------------------------------------------------
+Row {data-height=600}
+-------------------------------------
 
 ### Standings By Time Period
 
@@ -305,7 +312,7 @@ dateInput(
   ungroup() %>%
   arrange(desc(Pts), desc(GD), desc(GF), team) %>%
   select(Team = team, Pl, GD, Pts) %>%
-  DT::datatable(options = list(searching = FALSE, info = FALSE))
+  DT::datatable(options = list(searching = FALSE, info = FALSE,scrollY=300))
   
   })
   
@@ -313,6 +320,8 @@ dateInput(
   DT::dataTableOutput("st_dateNow")
   
 ```
+
+
 
 ### Subsequent Games
 
@@ -346,7 +355,7 @@ output$st_dateLater <- DT::renderDataTable({
   ungroup() %>%
   arrange(desc(Pts), desc(GD), desc(GF), team) %>%
   select(Team = team, Pl, GD, Pts) %>%
-  DT::datatable(options = list(searching = FALSE, info = FALSE))
+  DT::datatable(options = list(searching = FALSE, info = FALSE,scrollY=300))
   
   })
   
@@ -393,7 +402,7 @@ output$st_dateSeason <- DT::renderDataTable({
   options = list(
   class = 'compact stripe hover row-border order-column',
   searching = FALSE,
-  info = FALSE
+  info = FALSE,scrollY=300
   )
   )
   
@@ -407,8 +416,8 @@ output$st_dateSeason <- DT::renderDataTable({
 
 ```
 
-Row 
------------------------------------------------------------------------
+Row {data-height=400}
+-------------------------------------
 
 ### Player Goals and Assists per Game
 
@@ -469,7 +478,7 @@ selectInput("player_wk2",
             layout(
             hovermode = "closest",
             barmode = "stack",
-            height = 250,
+            height = 200,
             autosize = F,
             
             xaxis = list(title = xTitle),
@@ -540,7 +549,7 @@ selectInput(
 R3
 =====================================  
 
-Row 
+Column
 -----------------------------------------------------------------------
 
 ### Last Minute Goals
@@ -676,6 +685,9 @@ selectInput(
 
 ```
 
+Column
+-----------------------------------------------------------------------
+
 ### Youngest Scorer by Manager
 
 ``` {r manager_wk3}
@@ -761,13 +773,14 @@ plotOutput("managerPlayersAge")
 ```
 
 
-R4
-=====================================  
+R4 {data-orientation=columns}
+=====================================     
+   
+Column {data-width=200}
+-------------------------------------
 
-Column 
------------------------------------------------------------------------
 
-### Expensive Lineups Input {data-width=100}
+### Expensive Lineups Input {data-height=100}
 
 
 ``` {r lineups_wk4}
@@ -792,7 +805,7 @@ selectInput(
 label = "Team",
 selected = "Man. Utd.",
 choices = teamsChoice,
-width = 120
+width = 150
 )
 
 output$opp_wk4 <- renderUI({
@@ -807,7 +820,7 @@ selectInput(
 label = "Opponents",
 selected = "Man. City",
 choices = oppTeam,
-width = 120
+width = 150
 )
 })
 
@@ -838,7 +851,7 @@ return(info)
  
 ```
 
-### Expensive Lineups Table - click row for players cost {data-width=100}
+### Expensive Lineups Table - click row for players cost {data-height=200}
 
 
 ``` {r}
@@ -850,7 +863,7 @@ class = 'compact stripe hover row-border order-column',
 rownames = FALSE,
 selection = 'single',
 width = 200,
-options = list(
+options = list(scrollY=300,
 paging = TRUE,
 searching = FALSE,
 info = FALSE,
@@ -865,8 +878,10 @@ DT::dataTableOutput("lineup_wk4")
 
 ```
 
+Column {data-width=400}
+-------------------------------------
 
-### Expensive Lineups Chart  {data-width=400}
+### Expensive Lineups Chart  {data-height=400}
 
 ``` {r}
 
@@ -916,8 +931,8 @@ config(displayModeBar = F, showLink = F)
 plotlyOutput("lineupFees")
 ```
 
-Column
------------------------------------------------------------------------
+Column {data-width=400}
+-------------------------------------
 
 ### Conceding Goals at Home - Hover for details
 
@@ -1063,6 +1078,9 @@ selectInput(
 
 R5
 ===================================== 
+
+Column
+-----------------------------------------------------------------------
 
 ### Goal Against Sequences
 
@@ -1254,6 +1272,8 @@ output$concedeChart_wk5 <- renderPlotly({
 
 ```
 
+Column
+-----------------------------------------------------------------------
 
 ### Games to score number of headed goals
 
@@ -1322,6 +1342,9 @@ headers <- goals %>%
 R6
 ===================================== 
 
+Column
+-----------------------------------------------------------------------
+
 ### Share of Team's Goals
 
 ``` {r pcgoals_wk6}
@@ -1363,11 +1386,117 @@ tm <- playerGame %>%
   options = list(
   paging = TRUE,
   searching = TRUE,
-  info = FALSE
+  info = TRUE
   )
   )
 })
 
 DT::dataTableOutput("pcShare_wk6")
+
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Head to head Sparklines. Bar Length indicates goal difference
+
+``` {r sparklines_wk6}
+
+selectInput(
+"team1_wk6",
+label = "Team",
+selected = "Chelsea",
+choices = teamsChoice,
+width = 150
+)
+
+output$opp_wk6 <- renderUI({
+oppTeam_wk6 <- hth %>%
+filter(team == input$team1_wk6) %>%
+.$OppTeam %>%
+unique() %>%
+sort()
+
+selectInput(
+"opp_wk6",
+label = "Opponents",
+selected = "Arsenal",
+choices = oppTeam_wk6,
+width = 150
+)
+})
+
+uiOutput("opp_wk6")
+
+
+#selectInput("choice", "choose", c("a","b"))
+output$plot <- renderSparkline({
+  
+  print(input$team1_wk6)
+  if (is.null(input$opp_wk6)) {
+ oppTeam_wk6 <- "Arsenal"
+ } else {
+ oppTeam_wk6 <- input$opp_wk6
+ }
+  print(oppTeam_wk6)
+  
+  data <-hth %>% 
+  filter(team==input$team1_wk6 & OppTeam==oppTeam_wk6) %>% 
+  arrange(gameDate) %>% 
+  mutate(GD=ifelse((GF==GA),0.1,GF-GA)) 
+  
+  print(glimpse(data))
+  
+  data %>%
+        .$GD %>%
+        sparkline(type="bar")
+  
+})
+
+sparklineOutput("plot")
+
+
+
+#sparklineOutput("sparkline_wk6")
+  # switched width height here no help
+
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Games played before reaching specified losses
+
+``` {r losses_wk6}
+
+selectInput("tmLosses_wk6",label="Choose Team",teamsChoice,selected="West Ham")
+sliderInput("cumLosses_wk6",label="Losses",min=1,max=20,value=5)
+
+
+
+output$losses_wk6 <- renderPlotly({
+  
+  theTitle <- paste0(input$tmLosses_wk6," - games played when loss ",input$cumLosses_wk6," was suffered")
+  
+standings %>% 
+    ungroup() %>% 
+    arrange(gameDate) %>% 
+    select(res,season,team,tmYrGameOrder) %>% 
+    mutate(loss=ifelse(res=="Loss",1,0)) %>% 
+    group_by(season,team) %>% 
+      mutate(cumLoss=cumsum(loss)) %>% 
+      filter(team==input$tmLosses_wk6&cumLoss==input$cumLosses_wk6) %>% 
+      group_by(season) %>% 
+      slice(1) %>% 
+      plot_ly() %>% 
+    add_markers(x=~tmYrGameOrder,y=~season) %>% 
+    layout(title=theTitle,height=550, autosize = F,
+           xaxis=list(title="Games Played", rangemode = "tozero"),
+           yaxis=list(title="")) %>%
+            config(displayModeBar = F, showLink = F)
+})
+
+plotlyOutput("losses_wk6")
+
 
 ```
