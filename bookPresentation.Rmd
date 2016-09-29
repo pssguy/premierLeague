@@ -1,0 +1,61 @@
+---
+title: "When is a book not a book?"
+output: revealjs::revealjs_presentation
+---
+
+## My Stats Professor {data-transition="slide-in fade-out" data-transition-speed="slow"}
+
+
+![](talkImages/spearman.jpg)
+
+## My Stats Professor {data-transition="fade-in slide-out" data-transition-speed="slow"} 
+
+
+![](talkImages/spearmanPhd.jpg)
+
+
+## Appearances
+
+![](talkImages/soccerbase.png)  
+![](talkImages/matchData.png)
+
+## Goals
+
+
+![](talkImages/goalShot.jpg)
+![](talkImages/goalsAssists.png)
+
+## Markets
+
+- Specialist magazines
+- Newspaper trivia
+- Fantasy Games
+- Trading cards
+
+
+## Advanced Analytics
+
+![](talkImages/obama.jpg)
+
+
+## Internet phase
+
+- Static - pure text
+- Interactive tables - Cold Fusion -links
+- Flash charts Adobe Flex- some interaction
+- R & Shiny - greater variety packages and output
+
+
+
+## Slide with R Code and Output
+
+```{r}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r, echo=FALSE}
+plot(cars)
+```
+

@@ -1076,11 +1076,11 @@ selectInput(
 
 ```
 
-R5
-===================================== 
-
-Column
------------------------------------------------------------------------
+R5 {data-orientation=columns}
+=====================================     
+   
+Column {data-width=200}
+-------------------------------------
 
 ### Goal Against Sequences
 
@@ -1155,6 +1155,9 @@ sliderInput(
 
 DT::dataTableOutput("GAtable_wk5")
 ```
+
+Column {data-width=200}
+-------------------------------------
 
 ### Conceding Sequences - click for histogram
 
@@ -1272,8 +1275,8 @@ output$concedeChart_wk5 <- renderPlotly({
 
 ```
 
-Column
------------------------------------------------------------------------
+Column {data-width=200}
+-------------------------------------
 
 ### Games to score number of headed goals
 
@@ -1321,7 +1324,7 @@ headers <- goals %>%
   plot_ly() %>%
   add_markers(x =  ~ gameOrder, y =  ~ name) %>%
   
-  layout(
+  layout(height=450, autosize = F,width=500,
   yaxis = list(
   title = "",
   categoryarray = ~ name,
@@ -1497,6 +1500,30 @@ standings %>%
 })
 
 plotlyOutput("losses_wk6")
+
+
+```
+
+Example
+===================================== 
+
+``` {r example}
+
+standings %>% 
+  ungroup() %>% 
+  arrange(gameDate) %>% 
+  select(res,season,team,tmYrGameOrder) %>% 
+  mutate(loss=ifelse(res=="Loss",1,0)) %>% 
+  group_by(season,team) %>% 
+  mutate(cumLoss=cumsum(loss)) %>% 
+  filter(team=="West Ham U"&cumLoss==5) %>% 
+  group_by(season) %>% 
+  slice(1) %>% 
+  plot_ly %>% 
+  add_markers(x=~tmYrGameOrder,y=~season) %>% 
+  layout(title="West Ham - games played when fifth loss suffered",
+         xaxis=list(title="Games Played", rangemode = "tozero"),
+         yaxis=list(title=""))
 
 
 ```
