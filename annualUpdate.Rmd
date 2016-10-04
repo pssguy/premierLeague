@@ -1504,6 +1504,110 @@ plotlyOutput("losses_wk6")
 
 ```
 
+R7
+===================================== 
+
+### Clashes by Standing
+
+
+``` {r hth_wk7}
+
+## set up basid df prior to any position selection
+
+df_a <- standings %>%
+  select(final_Pos,position,team,tmYrGameOrder,venue,MATCHID,res,season,gameDate,GF,GA) %>%
+  arrange(tmYrGameOrder) %>%
+  group_by(team,season)  %>%
+  mutate(priorPos=lag(position)) %>%
+  filter(!is.na(priorPos)) #18366
+
+
+basedf_wk7 <- df_a %>%
+  inner_join(df_a,by=c("MATCHID"="MATCHID")) %>%
+  ungroup() %>%
+  filter(team.x!=team.y)
+
+sliderInput(
+"posA_wk7",
+"Select Team 1 position",
+min = 1,
+max = 22,
+value = 1
+)
+
+sliderInput(
+"posB_wk7",
+"Select Team 2 position",
+min = 1,
+max = 22,
+value = 2
+)
+
+
+output$hth_wk7 <- DT::renderDataTable({
+  
+topTwo <-
+  basedf_wk7 %>% 
+  filter(priorPos.x==input$posA_wk7&priorPos.y==input$posB_wk7) 
+  
+  
+  
+  topTwo %>% 
+    arrange(desc(gameDate.x)) %>% 
+    select(season=season.x,round=tmYrGameOrder.x,team_1=team.x,venue=venue.x,GF=GF.x,GA=GA.x,team_2=team.y)%>%
+    DT::datatable(width=400,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = FALSE,info=FALSE)) %>%
+  
+  config(displayModeBar = F, showLink = F)
+
+})
+
+DT::dataTableOutput("hth_wk7")
+
+```
+
+### Referee Bookings
+
+
+``` {r refs_wk7}
+
+
+
+cardsByGame <-playerGame %>% 
+   group_by(MATCHID) %>% 
+   select(MATCHID,CARD) %>% 
+  mutate(CARD=ifelse(is.na(CARD),"  ",CARD)) %>% 
+   mutate(red=ifelse(CARD=="P"|CARD=="R",1,0),yellow=ifelse(CARD=="Y",1,0)) %>% 
+    summarize(reds=sum(red,na.rm=0),yellows=sum(yellow,na.rm=0),tot=reds+yellows) 
+
+
+selectInput(
+  "season_wk7",
+  label = NULL,
+  choices = seasonChoice,
+  selected = "2016/17",
+  multiple = FALSE
+  )
+
+output$refCards <- renderPlotly({
+teamGames %>% 
+  filter(season==input$season_wk7) %>% 
+  left_join(cardsByGame) %>% 
+  group_by(REFEREE) %>% 
+  plot_ly() %>% 
+  add_boxplot(y= ~tot, x= ~REFEREE) %>% 
+  layout(
+    title= "Cards issued by Game by Referee",
+    xaxis=list(title=""),
+    yaxis=list(title="Count"),
+    margin=list(r=70,b=100)
+  )
+})
+
+plotlyOutput("refCards")
+
+```
+
+
 Example
 ===================================== 
 
