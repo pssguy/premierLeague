@@ -1079,7 +1079,7 @@ selectInput(
 R5 {data-orientation=columns}
 =====================================     
    
-Column {data-width=200}
+  Column {data-width=200}
 -------------------------------------
 
 ### Goal Against Sequences
@@ -1507,7 +1507,10 @@ plotlyOutput("losses_wk6")
 R7
 ===================================== 
 
-### Clashes by Standing
+Column {data-width=250}
+-----------------------------------------------------------------------
+
+### Clashes by Standing 
 
 
 ``` {r hth_wk7}
@@ -1565,6 +1568,10 @@ DT::dataTableOutput("hth_wk7")
 
 ```
 
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+
 ### Referee Bookings
 
 
@@ -1594,40 +1601,63 @@ teamGames %>%
   left_join(cardsByGame) %>% 
   group_by(REFEREE) %>% 
   plot_ly() %>% 
-  add_boxplot(y= ~tot, x= ~REFEREE) %>% 
-  layout(
+  add_boxplot(y= ~REFEREE, x= ~tot) %>% 
+  layout( height=700, autosize = F,
     title= "Cards issued by Game by Referee",
-    xaxis=list(title=""),
-    yaxis=list(title="Count"),
-    margin=list(r=70,b=100)
-  )
+    yaxis=list(title=""),
+    xaxis=list(title="Count"),
+    margin=list(l=100)
+  )  %>%
+  
+  config(displayModeBar = F, showLink = F)
 })
 
 plotlyOutput("refCards")
 
 ```
 
+Column {data-width=450}
+-----------------------------------------------------------------------
 
-Example
-===================================== 
+### Goals By Team 
+
+
+``` {r tmgoals_wk7}
+
+selectInput("tmgls_wk7",label="Choose Team",teamsChoice,selected="Man. Utd.")
+
+output$gls_wk7 <- DT::renderDataTable({
+Goals_team_for %>% 
+    filter(team==input$tmgls_wk7) %>% 
+    arrange(desc(season)) %>%
+    select(-team) %>% 
+    DT::datatable(class='compact stripe hover row-border',rownames=FALSE,options= list(paging = TRUE, searching = FALSE, info=FALSE)) 
+})
+
+DT::dataTableOutput("gls_wk7")
+
+```
+
+<!-- Example -->
+<!-- =====================================  -->
 
 ``` {r example}
-
-standings %>% 
-  ungroup() %>% 
-  arrange(gameDate) %>% 
-  select(res,season,team,tmYrGameOrder) %>% 
-  mutate(loss=ifelse(res=="Loss",1,0)) %>% 
-  group_by(season,team) %>% 
-  mutate(cumLoss=cumsum(loss)) %>% 
-  filter(team=="West Ham U"&cumLoss==5) %>% 
-  group_by(season) %>% 
-  slice(1) %>% 
-  plot_ly %>% 
-  add_markers(x=~tmYrGameOrder,y=~season) %>% 
-  layout(title="West Ham - games played when fifth loss suffered",
-         xaxis=list(title="Games Played", rangemode = "tozero"),
-         yaxis=list(title=""))
-
+# 
+# standings %>% 
+#   ungroup() %>% 
+#   arrange(gameDate) %>% 
+#   select(res,season,team,tmYrGameOrder) %>% 
+#   mutate(loss=ifelse(res=="Loss",1,0)) %>% 
+#   group_by(season,team) %>% 
+#   mutate(cumLoss=cumsum(loss)) %>% 
+#   filter(team=="West Ham U"&cumLoss==5) %>% 
+#   group_by(season) %>% 
+#   slice(1) %>% 
+#   plot_ly %>% 
+#   add_markers(x=~tmYrGameOrder,y=~season) %>% 
+#   layout(title="West Ham - games played when fifth loss suffered",
+#          xaxis=list(title="Games Played", rangemode = "tozero"),
+#          yaxis=list(title=""))
+# 
 
 ```
