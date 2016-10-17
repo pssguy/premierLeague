@@ -1638,6 +1638,56 @@ DT::dataTableOutput("gls_wk7")
 
 ```
 
+R8
+===================================== 
+
+``` {r glsbyGame_wk8}
+
+sliderInput("glsbyGame_wk8",label="Minimum Goals For",min=1,max=9,value=6)
+
+output$GF_wk8 <- renderPlotly({
+  
+  theTitle <- paste0("Teams scoring ",input$glsbyGame_wk8," or more Goals in a Premier League game")
+  
+standings %>% 
+   filter(GF>=input$glsbyGame_wk8) %>% 
+   arrange(tmGameOrder) %>% 
+   group_by(team) %>% 
+   select(tmGameOrder,team,gameDate,OppTeam,GF,GA)  %>% 
+   
+   mutate(order=row_number()) %>% 
+   group_by(team) %>% 
+   plot_ly() %>% 
+   add_markers(~gameDate,~order,color=~team) %>% 
+   add_lines(~gameDate,~order,color=~team, showlegend=FALSE,
+             line = list(shape = "vhv"),
+             hoverinfo = "text",
+             text =  ~ paste("Game ",tmGameOrder,
+                             "<br>",
+                             gameDate,
+                             "<br>",
+                             team,
+                             
+                             "<br>v ",
+                             OppTeam,
+                             "<br>",
+                             GF,
+                             "-",
+                             GA
+             )
+   )  %>%
+   layout(
+     hovermode = "closest",
+     title="Teams scoring 6 or more Goals in a Premier League game",
+     xaxis=list(title=theTitle),
+     yaxis=list(title="Count")
+   )
+})
+
+plotlyOutput("GF_wk8")
+
+```
+
 <!-- Example -->
 <!-- =====================================  -->
 
