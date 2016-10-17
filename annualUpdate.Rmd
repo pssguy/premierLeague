@@ -1641,6 +1641,8 @@ DT::dataTableOutput("gls_wk7")
 R8
 ===================================== 
 
+### High Scoring  
+
 ``` {r glsbyGame_wk8}
 
 sliderInput("glsbyGame_wk8",label="Minimum Goals For",min=1,max=9,value=6)
@@ -1678,15 +1680,55 @@ standings %>%
    )  %>%
    layout(
      hovermode = "closest",
-     title="Teams scoring 6 or more Goals in a Premier League game",
-     xaxis=list(title=theTitle),
-     yaxis=list(title="Count")
+     title=theTitle,
+     xaxis=list(title=""),
+     yaxis=list(title="Count",rangemode="tozero")
    )
 })
 
 plotlyOutput("GF_wk8")
 
 ```
+
+
+### Number of unique Matchups - Table
+
+``` {r matchupstable_wk8}
+
+df_wk8 <- standings %>% 
+  select(team,OppTeam) %>% 
+   mutate(combo=ifelse(team<OppTeam,paste0(team,' v ',OppTeam),paste0(OppTeam,' v ',team))) %>% 
+  select(combo) %>% 
+  group_by(combo) %>% 
+  tally() %>% 
+  mutate(count=n/2) %>% 
+  select(matchup=combo,count) %>% 
+  arrange(count) 
+
+df_wk8 %>%
+                         DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=TRUE))
+
+```
+
+### Number of unique Matchups - Histogram
+
+``` {r matchupschart_wk8}
+
+## looks good
+standings %>% 
+  select(team,OppTeam) %>% 
+   mutate(combo=ifelse(team<OppTeam,paste0(team,' v ',OppTeam),paste0(OppTeam,' v ',team))) %>% 
+  select(combo) %>% 
+  group_by(combo) %>% 
+  tally() %>% 
+  mutate(count=n/2) %>% 
+  select(matchup=combo,count) %>% 
+  arrange(count)  %>% 
+plot_ly() %>% 
+  add_histogram(~count,nbinsx=50)
+
+```
+
 
 <!-- Example -->
 <!-- =====================================  -->
