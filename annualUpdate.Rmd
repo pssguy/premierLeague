@@ -7,7 +7,7 @@ output:
 runtime: shiny    
 ---
 
-```{r libraries, include=FALSE}
+```{r libraries, include=FALSE, cache=TRUE}
 library(flexdashboard)
 library(shiny)
 library(shinydashboard)
@@ -49,7 +49,7 @@ library(sparkline)
 library(dplyr)
 ```
 
-``` {r tables}
+``` {r tables, cache=TRUE}
 positions <- read_csv("positions.csv")
 playerGame <- readRDS("playerGame.rds")
 playerClub <- readRDS("playerClub.rds")
@@ -1641,6 +1641,9 @@ DT::dataTableOutput("gls_wk7")
 R8
 ===================================== 
 
+Column {data-width=600}
+-----------------------------------------------------------------------
+
 ### High Scoring  
 
 ``` {r glsbyGame_wk8}
@@ -1678,7 +1681,7 @@ standings %>%
                              GA
              )
    )  %>%
-   layout(
+   layout(height= 600, autosize=FALSE, width=1000, ## height restriction otherwise no x axis
      hovermode = "closest",
      title=theTitle,
      xaxis=list(title=""),
@@ -1690,6 +1693,11 @@ plotlyOutput("GF_wk8")
 
 ```
 
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+Row {data-height=300}
+-----------------------------------------------------------------------
 
 ### Number of unique Matchups - Table
 
@@ -1709,6 +1717,9 @@ df_wk8 %>%
                          DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=TRUE))
 
 ```
+
+Row {data-height=200}
+-----------------------------------------------------------------------
 
 ### Number of unique Matchups - Histogram
 
