@@ -18,7 +18,11 @@ dashboardPage(
       id = "sbMenu",
       
       menuItem("Front Page",tabName = "frontPage"),
-      menuItem("Managers",tabName = "managers"),
+      menuItem(
+        "Managers", tabName = "managers",icon = icon("table"),
+        menuSubItem("Av points per Game", tabName = "m_ppg"),
+        menuSubItem("Player Scoring Age",tabName = "m_players",icon = icon("star"))
+      ),
       
       menuItem(
         "Teams", tabName = "teams",icon = icon("table"),
@@ -63,13 +67,13 @@ dashboardPage(
         "Specials", tabName = "specials", 
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
       #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
-      menuSubItem("Cards Per Club",tabName = "sp_cardsClub", 
-                  icon = icon("star")),
+        menuSubItem("Cards Per Club",tabName = "sp_cardsClub"),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
-        menuSubItem("League position - Alternates",tabName = "sp_finishingPos", 
-                    icon = icon("star")),
+        menuSubItem("League position - Alternates",tabName = "sp_finishingPos"),
+       # menuSubItem("Manager by Player",tabName = "sp_managerplayer", 
+       #            icon = icon("star")),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
         menuSubItem("Player % Goals by Category",tabName = "sp_pcPlayerGoals"),
         menuSubItem("Player by Team av PPG",tabName = "sp_playerByTeamPPG"),
@@ -83,6 +87,7 @@ dashboardPage(
         
         
       ),
+      bookmarkButton(),
       tags$hr(),
       menuItem(
         text = "",href = "https://mytinyshinys.shinyapps.io/dashboard",badgeLabel = "All Dashboards and Trelliscopes (14)"
@@ -185,15 +190,25 @@ dashboardPage(
                   #     plotlyOutput("playerByCountryPPG_hl")
                   # )
                   
+                  # box(
+                  #   width=12,collapsible = T,collapsed = F,
+                  #   solidHeader = TRUE,status = 'warning',title="Latest App - Finishing position alternate years given chosen year's data",
+                  #   footer = "Only 38 game seasons shown. Hover points for detail",
+                  #   inputPanel(
+                  #     selectInput("team_fp_front",NULL,teamsChoice,selected="Leicester C")
+                  #   ),
+                  #   uiOutput("teamYear_fp_front"),
+                  #   plotlyOutput("sp_finishingPos_front")
+                  # )
                   box(
                     width=12,collapsible = T,collapsed = F,
-                    solidHeader = TRUE,status = 'warning',title="Latest App - Finishing position alternate years given chosen year's data",
-                    footer = "Only 38 game seasons shown. Hover points for detail",
+                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Age when first scoring for Manager",
+                    
                     inputPanel(
-                      selectInput("team_fp_front",NULL,teamsChoice,selected="Leicester C")
+                      selectInput("manager_fp", label=NULL,selected="Jose Mourinho", choices=managerChoice)
                     ),
-                    uiOutput("teamYear_fp_front"),
-                    plotlyOutput("sp_finishingPos_front")
+                   
+                    plotOutput("managerPlayersAge_front")
                   )
                 )
                   
@@ -201,12 +216,17 @@ dashboardPage(
               )),
       
       #managers
-      tabItem("managers",
+      tabItem("m_ppg",
               box(title="Manager's Average points per game - Hover bar for more information",
                   status = "success",
               ggvisOutput("managerPPGbyTeam"),
               textOutput("liverpool")
-              )
+              )),
+      tabItem("m_players",
+                      box(
+                          status = "success",
+                          plotOutput("managerPlayersAge")
+                      )
       ),
               
       
@@ -675,7 +695,7 @@ dashboardPage(
           column(
             width = 4,
             box(
-              width = 12,title = "In Action None currently available",solidHeader = TRUE,status = 'success',
+              width = 12,title = "In Action. Not currently available",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE#,
               #htmlOutput("playerPic", height = 250)
             )
@@ -693,7 +713,8 @@ dashboardPage(
             box(
               width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-              tauchartsOutput("playerTransfers_tau", height = "250px")
+             # tauchartsOutput("playerTransfers_tau", height = "250px")
+             plotlyOutput("playerTransfers_plotly" , height = "250px")
             )
           )
           

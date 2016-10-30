@@ -30,8 +30,8 @@ careerData <- reactive({
     mutate(apps=St+On,Gls=StGls+subGls,Pens=startPens+subPens,Points=Gls+Assists,janAge=as.integer(str_sub(season,1,4)),byear=as.integer(str_sub(born,1,4)),age=janAge-byear) %>%
     select(Season=season,Age=age,Team = TEAMNAME,Apps=apps,St,On,Off,Bench,Mins=mins,Gls,Assists,Points,Pens,Y,R,OG,MP) %>% 
     ungroup() %>% 
-    arrange(desc(Season)) %>% 
-    select(-(c(name,LASTNAME,PLAYERID,born,left)))
+    arrange(desc(Season)) #%>% 
+   # select(-(c(name,LASTNAME,PLAYERID,born,left)))
   
   ##print(glimpse(dfTeamYear))
   
@@ -154,7 +154,7 @@ output$pointsByYearChart <- renderPlotly({
     filter(PLAYERID==input$playerA) %>% 
     group_by(season,PLAYERID,name) %>% 
     select(Gls,Assists,mins) %>% 
-    summarize(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
+    summarise(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
     filter(Points!=0) %>% 
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup() 

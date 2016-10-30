@@ -12,10 +12,12 @@ output$sp_playerByCountryPPG    <- renderPlotly({
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup()
   
-  
-  plot_ly(test, x = Points, y = Ppm, mode = "markers", hoverinfo = "text",
-          marker=list(size=Mins/10, sizemode="area"),
-          text = paste(name,
+  test %>% 
+    plot_ly() %>% 
+    
+  add_markers(x = ~Points, y = ~Ppm,  hoverinfo = "text",
+          marker=list(size=~Mins/10, sizemode="area"),
+          text = ~paste(name,
                        "<br>Goals: ",Goals,
                        "<br>Assists: ",Assists,
                        "<br>Points: ",Points,
@@ -49,10 +51,11 @@ output$playerByCountryPPG_hl    <- renderPlotly({
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>%
     ungroup()
 
-
-  plot_ly(test, x = Points, y = Ppm, mode = "markers", hoverinfo = "text",
-          marker=list(size=Mins/10, sizemode="area"),
-          text = paste(name,
+  test %>% 
+    plot_ly() %>% 
+  add_markers(x = ~Points, y = ~Ppm,  hoverinfo = "text",
+          marker=list(size=~Mins/10, sizemode="area"),
+          text = ~paste(name,
                        "<br>Goals: ",Goals,
                        "<br>Assists: ",Assists,
                        "<br>Points: ",Points,

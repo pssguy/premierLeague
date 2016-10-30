@@ -40,9 +40,11 @@ shinyServer(function(input, output, session) {
       
       
       # manager ones
-    } else if (input$sbMenu=="managers") {
+    } else if (input$sbMenu=="m_ppg") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
                  sliderInput("managerGames", label="Min games in Stint", min=1,max=100,value=5))
+    } else if (input$sbMenu=="m_players") {
+      inputPanel(selectInput("manager", label=NULL,selected="Jose Mourinho", choices=managerChoice))
       # specials 
     } else if (input$sbMenu=="sp_playerByTeamPPG") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
@@ -136,6 +138,27 @@ shinyServer(function(input, output, session) {
       
   })
   
+  # finishing position - need to exclude 42 game seasons
+  output$teamYear_fp <- renderUI({
+    
+    yrs <- sort(unique(tmYrs[tmYrs$team==input$team_fp,]$season),decreasing = T)
+    noGoYears <- c("1992/93","1993/94","1994/95","2016/17") # cannot have incomplete years
+    yrs <-  setdiff(yrs,noGoYears)
+    
+    inputPanel(selectInput("teamYear_fp",label=NULL,yrs, selected=yrs[1]))
+    
+  })
+  
+  output$teamYear_fp_front <- renderUI({
+    
+    yrs <- sort(unique(tmYrs[tmYrs$team==input$team_fp_front,]$season),decreasing = T)
+    noGoYears <- c("1992/93","1993/94","1994/95","2016/17")  #cannot have incomplete years
+    yrs <-  setdiff(yrs,noGoYears)
+    
+    inputPanel(selectInput("teamYear_fp_front",label=NULL,yrs, selected=yrs[1]))
+    
+  })
+  
   output$c <- renderUI({
     if (input$sbMenu=="st_round") {
       inputPanel(selectInput("seasonA",label=NULL,seasonChoice))
@@ -159,7 +182,7 @@ shinyServer(function(input, output, session) {
                  numericInput("gamesC","Games Played",min=1,max=42,step=1,value=currentRound)
       )
     }  else if (input$sbMenu=="st_date") {
-      inputPanel(dateInput("dateA","Enter Date",value="2015-01-01", startview="year", min="1992-08-15", max=Sys.Date())
+      inputPanel(dateInput("dateA","Enter Date (pending updates)",value=Sys.Date(), startview="year", min="1992-08-15", max=Sys.Date())
       )
     }
   })
@@ -648,6 +671,8 @@ shinyServer(function(input, output, session) {
   source("code/specials/playerByTeamPPG.R", local=TRUE)
   source("code/specials/playerByCountryPPG.R", local=TRUE)
   source("code/specials/cardsPerClub.R", local=TRUE)
+  source("code/specials/finishingPos.R", local=TRUE)
+  source("code/managerPlayersAge.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 
@@ -676,6 +701,13 @@ shinyServer(function(input, output, session) {
     updateTabItems(session, inputId="sbMenu", selected="pl_glance")
   })
   
+  ### need to get this working
+  # observeEvent(input$teamYear_rows_selected,{
+  #   s = as.integer(input$teamYear_rows_selected)
+  #   values$playerID <- teamData()$teamYear$PLAYERID[s]
+  #   updateTabItems(session, inputId="sbMenu", selected="pl_glance")
+  # })
+  
   ## looking to go from heatmap table to showing scorers - may be better elsewhere
   
   observeEvent(input$heatTable_rows_selected,{
@@ -686,6 +718,23 @@ shinyServer(function(input, output, session) {
     print(values$MATCHID)
     #updateTabItems(session, inputId="sbMenu", selected="pl_glance")
   })
+  
+  
+  ## add a fixed notification
+  
+  id <- NULL
+  
+  observe({
+    
+    
+    id <<- showNotification(
+      "Tweet Handle @pssguy",
+      duration = NULL, 
+      closeButton = TRUE,
+      type = "message"
+    )
+  })
+  
   
   ## wan to re-address
 #   observeEvent(input$teamYear_rows_selected,{

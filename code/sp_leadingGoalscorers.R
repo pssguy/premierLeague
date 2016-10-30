@@ -3,6 +3,7 @@
 output$leadingGoalscorers_tau <- renderTaucharts({
   
   print(input$teamE)
+  #req(input$twenty)
   
   if(input$teamE=="All Teams") {
     test <-playerGame %>% 

@@ -6,7 +6,7 @@
 
 ## results - amy have to copy and run in console
 hth %>% 
-  filter(season=="2016/17"&gameDate>="2016-09-27"&gameDate<="2016-10-03") %>% ## may need to put in day later?
+  filter(season=="2016/17"&gameDate>="2016-10-18"&gameDate<="2016-10-25") %>% ## may need to put in day later?
   filter(venue=="H") %>% 
   arrange(team) %>% 
   select(Home=team,GF,GA,Away=OppTeam) %>% 
@@ -17,7 +17,7 @@ hth %>%
 
 # table
 hth %>% 
-  filter(season=="2016/17"&gameDate<="2016-10-03") %>% 
+  filter(season=="2016/17"&gameDate<="2016-10-25") %>% 
   group_by(team) %>% 
   mutate(W = ifelse(res=="Win",1,0),L = ifelse(res=="Loss",1,0),D = ifelse(res=="Draw",1,0)) %>%
   summarise(P=n(),Pts=sum(points),W=sum(W),D=sum(D),L=sum(L),GD=sum(GF)-sum(GA),GF=sum(GF)) %>% 
@@ -2347,7 +2347,7 @@ x <- temp %>%
 
 topTwo <-
   x %>% 
-  filter((priorPos.x==1&priorPos.y==2)|(priorPos.x==1&priorPos.y==2)) #51
+  filter((priorPos.x==1&priorPos.y==2)|(priorPos.x==2&priorPos.y==1)) #51 did have dupes before
   
   table(topTwo$res.x)
   
@@ -2355,3 +2355,477 @@ topTwo <-
     arrange(desc(gameDate.x)) %>% 
     select(season=season.x,round=tmYrGameOrder.x,top=team.x,venue=venue.x,GF=GF.x,GA=GA.x,second=team.y)%>%
     DT::datatable(width=400,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+  
+  
+  
+  
+  
+# goals for by type -------------------------------------------------------
+
+#in code
+  output$teamGoalsFor <- DT::renderDataTable({
+    print("gtf")
+    df <- Goals_team_for[Goals_team_for$team==input$team_3,]
+    df <- df[,c(-2)]
+    df <-  df %>%
+      arrange(desc(season))
+    
+    #DT::datatable(df,rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE), container = GF_format)
+    
+    DT::datatable(df,class='compact stripe hover row-border',rownames=FALSE,options= list(paging = FALSE, searching = FALSE, info=FALSE))
+    
+  })
+  
+  
+  Goals_team_for %>% 
+    filter(team=="Man. Utd.") %>% 
+    arrange(desc(season)) %>%
+    select(-team) %>% 
+    DT::datatable(class='compact stripe hover row-border',rownames=FALSE,options= list(paging = TRUE, searching = FALSE, info=FALSE))
+  
+  
+  
+  
+  
+# TEAMS TO HAVE SCORED 6 --------------------------------------------------
+
+sort(names(standings))
+  
+ temp <- standings %>% 
+    filter(GF>5) %>% 
+    group_by(team) %>% 
+    select(tmGameOrder)  %>% 
+    summarize(count=n(), first=min(tmGameOrder)) %>% 
+    arrange(desc(count))  # bournemouth 24th
+ 
+ unique(standings$team) #47
+ 
+ totGames <- standings %>% 
+   group_by(team) %>% 
+   tally() %>% 
+   left_join(temp) %>% 
+   mutate(count=ifelse(is.na(count),0,count))
+ 
+ ## good for chart
+ standings %>% 
+   filter(GF>5) %>% 
+   arrange(tmGameOrder) %>% 
+   group_by(team) %>% 
+   select(tmGameOrder,team,gameDate,OppTeam,GF,GA)  %>% 
+   
+   mutate(order=row_number()) %>% 
+   group_by(team) %>% 
+   plot_ly() %>% 
+   add_markers(~tmGameOrder,~order,color=~team) %>% 
+   add_lines(~tmGameOrder,~order,color=~team,
+             line = list(shape = "vhv"),
+             hoverinfo = "text",
+             text =  ~ paste("Game ",tmGameOrder,
+                             "<br>",
+                             gameDate,
+                             "<br>",
+                             team,
+                             
+               "<br>v ",
+               OppTeam,
+               "<br>",
+               GF,
+               "-",
+               GA
+             )
+   )  %>%
+   layout(
+     hovermode = "closest")
+  # by gamedate looks better    ?? but why no margin        
+ standings %>% 
+   filter(GF>5) %>% 
+   arrange(tmGameOrder) %>% 
+   group_by(team) %>% 
+   select(tmGameOrder,team,gameDate,OppTeam,GF,GA)  %>% 
+   
+   mutate(order=row_number()) %>% 
+   group_by(team) %>% 
+   plot_ly() %>% 
+   add_markers(~gameDate,~order,color=~team) %>% 
+   add_lines(~gameDate,~order,color=~team, showlegend=FALSE,
+             line = list(shape = "vhv"),
+             hoverinfo = "text",
+             text =  ~ paste("Game ",tmGameOrder,
+                             "<br>",
+                             gameDate,
+                             "<br>",
+                             team,
+                             
+                             "<br>v ",
+                             OppTeam,
+                             "<br>",
+                             GF,
+                             "-",
+                             GA
+             )
+   )  %>%
+   layout(height= 600, autosize=FALSE,width='50%',
+     hovermode = "closest",
+     title="Teams scoring 6 or more Goals in a Premier League game",
+     xaxis=list(title=""),
+     yaxis=list(title="Count")
+   )
+ 
+ 
+test <- standings %>% 
+   filter(GF>5) %>% 
+   arrange(desc(gameDate))
+
+#26 teams have score 6 goals or more in PL since MAn Utd did it
+
+## bournemouth goals
+
+# Hull 17 goals conceded  in 4 game 9check not similar before) ------------
+
+
+# SUN not one any first 8 two years in row (how many got relegated) ----------------------------------------
+ #3 Bor hul 819th diff match up
+
+sort(names(standings))
+
+standings %>% 
+  select(team,OppTeam) %>% 
+  unique()  #1638
+
+
+# example table
+temp <- standings %>% 
+  select(team,OppTeam) %>% 
+   mutate(combo=ifelse(team<OppTeam,paste0(team,' v ',OppTeam),paste0(OppTeam,' v ',team))) %>% 
+  select(combo) %>% 
+  group_by(combo) %>% 
+  tally() %>% 
+  mutate(count=n/2) %>% 
+  select(matchup=combo,count) %>% 
+  arrange(count) 
+
+temp %>%
+                         DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=TRUE))
+
+## looks good
+temp %>% 
+plot_ly() %>% 
+  add_histogram(~count,nbinsx=50)
+
+## liverpool now played all ever presents rather than everton 49 times
+
+sort(names(standings))
+
+## poss do +/- points with result as rug
+
+
+sort(names(hth))
+
+
+
+
+
+
+# southampton conceding time ----------------------------------------------
+
+
+# burnley time taken to score away goal + 4wins in 40 in total ------------
+
+
+# austin scoring rate -----------------------------------------------------
+
+
+# number of saints players since they came up -----------------------------
+
+sort(names(playerGame))
+
+
+temp <- playerGame %>% 
+  filter(season>"2011/12"&mins>0) %>% 
+  group_by(TEAMNAME,PLAYERID) %>% 
+  tally() %>% 
+  ungroup() %>% 
+  #filter(n>7) %>% ## makes quite diff - worth looking at
+  group_by(TEAMNAME) %>% 
+  summarize(count=n()) %>% 
+  arrange(desc(count))
+
+# 1   Sunderland    84
+# 2    Liverpool    70
+# 3   West Ham U    69
+# 4    West Brom    66
+# 5      Chelsea    65
+# 6  Aston Villa    62
+# 7    Man. Utd.    61
+# 8    Crystal P    59
+# 9  Newcastle U    59
+# 10 Southampton    59
+## sunderland have used 84 players
+
+
+playerGame %>% 
+  filter(season>"2011/12"&mins>0) %>% 
+  group_by(TEAMNAME,PLAYERID) %>% 
+  tally() %>% 
+  ungroup() %>% 
+  group_by(TEAMNAME) %>% 
+  filter(n)
+  summarize(count=n()) %>% 
+  arrange(desc(count))
+  
+  
+  
+  
+  
+# junior stanislas 10 asists and goals same game littlwe tricky--------------------------
+
+temp <- playerGame %>% 
+    arrange(gameDate) %>% 
+    group_by(PLAYERID) %>% 
+    filter(mins>0) %>% 
+    select(PLAYERID,Gls,Assists) %>% 
+    mutate(gameOrder=row_number(),cumGls=cumsum(Gls),cumAss=cumsum(Assists)) %>% 
+    filter(cumGls==10)
+  
+  
+  
+  
+  
+# RODWELL never wiiner as starter -----------------------------------------
+
+
+  
+  
+  
+  
+# goals by round - number of noc=score draws ------------------------------
+
+  ## prob as with above is that tmYrGameOrder is not absolutley consistent
+  
+  17
+  Sunderland
+  Arsenal
+  0
+  0
+  2016-04-24
+  566
+  34
+  H
+  9527
+  1
+  39
+  57
+  31
+  -18
+  38
+  17
+  Draw
+  <table cellpadding='4' style='line-height:1'><tr> <th>Arsenal (H)</th></tr> <tr align='center'><td>2016-04-24</td></tr> <tr align='center'><td>0-0</td></tr> <tr align='center'><td>Pos: 17</td></tr> </table>
+    1
+  1600
+  2015/16
+  2
+  Arsenal
+  Sunderland
+  0
+  0
+  2016-04-24
+  921
+  35
+  A
+  
+  
+  
+  sort(names(standings))
+  
+temp <-  standings %>% 
+    arrange(season,tmYrGameOrder) %>% 
+    group_by(season,tmYrGameOrder) %>%
+    #mutate(gameOrder=paste0(season,tmYrGameOrder)) %>% 
+   # group_by(gameOrder) %>% 
+  mutate(noscore=ifelse((GF==0&GA==0),1,0))
+
+--
+
+
+temp <-  temp %>% 
+  filter(noscore==1)
+
+%>% 
+    summarize(totgls=sum(GF),ns=sum(noscore)) %>% 
+  ungroup() %>% 
+      mutate(gameOrder=row_number())
+
+temp %>% 
+  filter(season>"2014/15") %>% 
+    plot_ly() %>% 
+      add_bars(x=~gameOrder,y=~totgls)
+  
+  #13 gls before Subnday games - lowest 20 this far
+
+# 16 in game 12 last year 
+## x2 only 12 goals
+
+## nil-nil draws
+  
+
+# stones conceding --------------------------------------------------------
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(PLAYERID=="STONESJ"&START>0) %>% 
+  arrange(desc(gameDate)) %>% 
+  inner_join(standings) %>% 
+  select(GA,team,gameDate)
+  
+  
+  
+# mandanda letting goal in ------------------------------------------------
+
+
+
+# coutinho goals outside area particularly from open play-------------------------------------------
+
+outsideOpen <- goals %>% 
+  filter(PLACE=="Long_Range"&PLAY=="Open") %>%  #2534
+  left_join(playerGame)
+
+outsideOpen %>% 
+  filter(PLAYERID=="COUTINP") %>% 
+  arrange(gameDate) %>% 
+  select(gameDate,plGameOrderApp) #13th 2013-05-19 tot 11
+
+# total 
+
+outsideOpen %>% 
+  group_by(PLAYERID) %>% 
+  tally() %>% 
+  arrange(desc(n))  #LAMPARD 23
+
+outsideOpen %>% 
+  filter(gameDate>="2013-05-19") %>% 
+  group_by(PLAYERID,LASTNAME) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+    ungroup %>% 
+  select(player=LASTNAME,goals=n) %>% 
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+
+
+
+# southampton goals against -----------------------------------------------
+
+
+
+# goals conceded in first minute ------------------------------------------
+
+#man u vs games played in
+
+sort(names(goals))
+# [1] "GOALS"             "METHOD"            "PLACE"             "PLAY"              "PLAYER_MATCH"     
+# [6] "PLAYER_MATCH_GOAL" "TEAMMATCHID"       "TIME" 
+
+a <- goals %>% 
+  filter(TIME==1) %>% 
+  select(TEAMMATCHID) #120 out of 24938
+
+sort(names(teamGames))
+
+b <- a %>% 
+  inner_join(teamGames) %>% 
+  select(TEAMMATCHID,MATCHID)
+
+c <- b %>% 
+  inner_join(teamGames, by="MATCHID") %>% 
+  filter(TEAMMATCHID.x!=TEAMMATCHID.y)
+
+
+d <-c %>% 
+  group_by(TEAMNAME) %>% 
+  tally()
+
+totGames <- teamGames %>% 
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  rename(count=n) %>% 
+  left_join(d) %>% 
+  mutate(n=ifelse(is.na(n),0,n)) %>% 
+  plot_ly() %>% 
+  add_markers(~ count, ~jitter(n),
+              hoverinfo = "text",
+              text =  ~ paste0(TEAMNAME, "<br>Games: ", count, "<br>Count: ", n)
+  ) %>%
+  layout(
+    hovermode = "closest",
+  #  height = 250,
+  #  autosize = F,
+    title = "Times conceding in First Minute",
+    xaxis = list(title = "Games played"),
+    yaxis = list(title = "Count")
+  ) %>%
+  
+  config(displayModeBar = F, showLink = F)
+
+#120*100/24938
+  
+
+# Burnley record at Man U -------------------------------------------------
+
+library(engsoccerdata)
+library(tibble)
+library(tidyverse)
+
+df <- tbl_df(england)
+
+sort(unique(df$home)) # "Manchester United" "Burnley"
+
+library(doBy)
+
+
+## this works Burnley 39 games since shutout 84 obs (will exclude those who scored on last visir
+#- can obv extend to any other categories eg since win)
+manHome <- df %>% 
+  filter(home=="Manchester United") %>% 
+  arrange(desc(Season)) %>% 
+  group_by(visitor) %>% 
+  mutate(shutout=ifelse(hgoal==0,1,0)) %>% 
+ # filter(visitor=="Burnley") %>% 
+  do(subSeq(.$shutout)) %>%
+  ungroup() %>% 
+  group_by(visitor) %>% 
+  slice(1) 
+
+#3 will need to look at updating - need to get engsoccerdata right
+
+## 12011 takes a while (maybe need to do in update )
+temp <- df %>% 
+ # filter(home=="Manchester United") %>% 
+  arrange(desc(Season)) %>% 
+  group_by(home,visitor) %>% 
+  mutate(shutout=ifelse(hgoal==0,1,0)) %>% 
+  # filter(visitor=="Burnley") %>% 
+  do(subSeq(.$shutout)) %>%
+  ungroup() %>% 
+  group_by(home,visitor) %>% 
+  slice(1) 
+
+
+## check looks good
+temp %>% 
+  filter(home=="Manchester United")
+
+temp %>% 
+  arrange(desc(slength)) %>% 
+  group_by(home) %>% 
+  slice(1) %>% 
+  arrange(desc(slength))
+
+#1         Blackburn Rovers   Birmingham City     1    57      57       29     0
+
+test <- df %>% 
+  filter(home=="Blackburn Rovers"&visitor=="Birmingham City")
+

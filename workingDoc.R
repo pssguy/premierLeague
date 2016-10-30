@@ -7967,3 +7967,11 @@ shinyApp(
     })
   }
 )
+
+
+plot(mtcars)
+
+
+# get more out of managers ------------------------------------------------
+
+sort(names(managers))

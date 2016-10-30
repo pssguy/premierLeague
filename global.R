@@ -4,11 +4,11 @@ library(shinydashboard)
 library(httr)
 library(rvest)
 library(XML)
-library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
-library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
+#library(doBy) # uses MASS which has a eselect conflict with dplyr - need for sequences
+#library(dplyr) # this masks select from MASS, filter from stats and intersect etc from base
 library(timelineR) # conflict with ggvis on add_axis so added to ggvis currently
 library(ggvis)
-
+library(ggthemes)
 library(RSQLite)
 library(lubridate)
 library(stringr)
@@ -17,6 +17,7 @@ library(tidyr)
 library(shinyBS)
 library(scales)
 library(ggplot2)
+library(ggrepel)
 library(leaflet)
 library(rCharts)
 library(shinythemes)
@@ -32,13 +33,16 @@ library(plotly)
 #library(crosstalk) no longer needed as can now use event_data() in plotly
 library(explodingboxplotR)
 library(beeswarm) # just for test
-
 #library(addins)
+library(feather)
 
+library(dplyr)
 
+enableBookmarking(store = "url")
 
 positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds") # reducing columns would help - though might be offset by calcs needed later
+#playerGame <- read_feather("playerGame.feather")
 playerClub <- readRDS("playerClub.rds")
 summary <- readRDS("summary.rds")
 leaders <- readRDS("leaders.rds")
@@ -53,9 +57,12 @@ Method<- readRDS("Method.rds")
 teamGames <- readRDS("teamGames.rds")
 managers <- readRDS("managers.rds")
 milestones<- read_csv("milestones.csv")
-playerGeos <- read_csv("playerGeos.csv")
+#playerGeos <- read_csv("playerGeos.csv") backup
+playerGeos <- readRDS("playerGeos.rds")
 goalSeqs <- readRDS("goalSeqs.rds")
 goalSeqsClub <- readRDS("goalSeqsClub.rds")
+allPlayers <- readRDS("allPlayers.rds")
+hth <- readRDS("hth.rds")
 
 
 teamCodes <- teamGames %>% 
@@ -79,12 +86,20 @@ pgMini <- playerGame %>%  ## so wil only show those that have made an appearance
   filter(PLAYERID!="OWNGOAL") %>% 
   mutate(place=ifelse(is.na(city),COUNTRY,paste0(city," ",COUNTRY)))
 
+write_csv(pgMini,"pgMini.csv")
+
     
 playerChoice <- pgMini$PLAYERID
 names(playerChoice) <- pgMini$name
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
 teamsChoice_2 <- c("All Teams",teamsChoice)
+
+managers <- managers %>% 
+  mutate(name=paste0(FirstName," ",Lastname))
+
+managerChoice <- sort(unique(managers$name))
+
 
 seasonChoice <- sort(unique(playerGame$season), decreasing = TRUE)
 seasonChoice_2 <- c("All Seasons",seasonChoice)
@@ -115,17 +130,18 @@ tmYrs <-standings %>%
   select(season,team) %>%
   unique(.)
 
-hth<-data.frame(standings %>%
-                  select(team,OppTeam:gameDate,venue,points,res))
-hth$tmYrGameOrder <- NULL
-## set up order for sequences (got to be prob after changing standings added team back in)
-hth <-data.frame(hth %>%
-                   group_by(team,OppTeam) %>%
-                   arrange(gameDate) %>%
-                   mutate(gameOrder=row_number()))
-
-
-
+# hth<-data.frame(standings %>%
+#                   select(team,OppTeam:gameDate,venue,points,res,MATCHID,season))
+# hth$tmYrGameOrder <- NULL
+# print("a")
+# ## set up order for sequences (got to be prob after changing standings added team back in)
+# hth <-data.frame(hth %>%
+#                    group_by(team,OppTeam) %>%
+#                    arrange(gameDate) %>%
+#                    dplyr::mutate(gameOrder=row_number(gameDate)))
+# 
+# 
+# print("a2")
 ## Table Formats
 
 
@@ -193,16 +209,16 @@ PL_format = htmltools::withTags(table(
 
 
 ### calc truegames played - plgameorder inc bench
-
+print("b")
 trueGames <- playerGame %>% 
   filter((START+subOn)>0) %>% 
   group_by(PLAYERID) %>% 
-  mutate(trueGameOrder=row_number())
+  dplyr::mutate(trueGameOrder=row_number())
 
-# used in sp_birthplace
-allPlayers <- playerGame %>% 
-  select(name,PLAYERID,COUNTRY) %>% 
-  unique()
+# used in sp_birthplace  NB issue here aas this reduces allPlayers (which carries across )
+# allPlayers <- playerGame %>% 
+#   select(name,PLAYERID,COUNTRY) %>% 
+#   unique()
 
 ## removed as  not sure needed and took ages to load
 # standard map data for world
@@ -210,10 +226,41 @@ allPlayers <- playerGame %>%
 #                    layer = "ne_50m_admin_0_countries", 
 #                    encoding = "UTF-8",verbose=FALSE)
 
-
+print("c")
 ## used in year on year change
 yrs <- unique(standings$season)
 teams <- unique(standings$team)
 allSeasonTeams <- data.frame(season=rep(yrs, length(teams)),team=rep(teams, length(yrs)))
+
+
+### function extracted from doBy package which takes too long to load
+subSeq <- function (x, item = NULL) {
+  rrr <- rle(x)
+  len <- rrr$lengths
+  val <- rrr$values
+  
+  first <- last <- rep.int(NA, length(val))
+  first[1] <- 1
+  last [1] <- len[1]
+  if (length(val)>1){
+    for (kk in 2:length(val)){
+      first[kk] <- last[kk-1]+1
+      last [kk] <- last[kk-1]+len[kk]
+    }
+  }
+  midp <- floor(first + len/2)
+  
+  ans <- cbind(first=first, last=last, slength=len, midpoint=midp)
+  
+  if (!is.null(item)) {
+    iii <- val==item
+    ans <- as.data.frame.matrix(ans[iii,,drop=FALSE], stringsAsFactors=FALSE)
+    ans$value <- val[iii]
+  } else {
+    ans <- as.data.frame.matrix(ans, stringsAsFactors=FALSE)
+    ans$value <- val
+  }
+  ans
+}
 
 print("end global")

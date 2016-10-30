@@ -15,7 +15,7 @@ teamData <- eventReactive(input$teamA,{
     ungroup()
   
   summary <- test %>% 
-    summarize(years=n(),bestPos=min(position),wortsPos=max(position),maxPoints=max(cumPts),minPoints=min(cumPts))
+    summarise(years=n(),bestPos=min(position),wortsPos=max(position),maxPoints=max(cumPts),minPoints=min(cumPts))
   
   
   mostGames <- playerGame %>% 
@@ -30,7 +30,7 @@ teamData <- eventReactive(input$teamA,{
   mostGoals <- playerGame %>% 
     filter(TEAMNAME==input$teamA&name!=" Own Goal") %>% 
     group_by(PLAYERID,name) %>% 
-    summarize(sumGoals=sum(Gls)) %>% 
+    summarise(sumGoals=sum(Gls)) %>% 
     ungroup() %>% 
     filter(sumGoals>0) %>% 
     arrange(desc(sumGoals))
@@ -39,7 +39,7 @@ teamData <- eventReactive(input$teamA,{
     filter(TEAMNAME==input$teamA) %>% 
     
     group_by(PLAYERID,name) %>% 
-    summarize(sumAssists=sum(Assists)) %>% 
+    summarise(sumAssists=sum(Assists)) %>% 
      ungroup() %>% 
     filter(sumAssists>0) %>% 
     arrange(desc(sumAssists))
@@ -139,30 +139,35 @@ output$glanceTest <- renderText({
 
 
 output$seasonsHist <- renderPlot({
-  if(is.null(teamData())) return
-  
-df <-  teamData()$test 
 
+  if(is.null(teamData())) return
+  print("b")
+df <-  teamData()$test 
+print("a")
 # condition for showing bolder color ie current season
-cond <- df$season =="2015/16"
+cond <- df$season =="2016/17"
 #set pretty scales - function does not work
 ## set p
+print("b")
 maxSeason <-df %>% 
   group_by(final_Pos) %>% 
   tally()
 
 theMax <- max(maxSeason$n)
 
-seq(0,8)
+#seq(0,8)
 
-
-ggplot(df, aes(x=final_Pos)) +
+write_csv(df,"problem.csv")
+p <- ggplot(df, aes(x=final_Pos)) +
   geom_histogram(data=subset(df,cond==FALSE), binwidth=0.5, fill="blue", alpha=0.2) +
   geom_histogram(data=subset(df,cond==TRUE), binwidth=0.5, fill="blue") +
   scale_x_continuous(breaks=df$final_Pos+0.25, labels=df$final_Pos) +
  # scale_y_continuous(breaks=pretty_breaks()) +
   scale_y_discrete(breaks= seq(0,theMax)) +
   theme_bw() +
-  xlab("Position (2015/6 in bold)") +
+  xlab("Position (2016/7 in bold)") +
   ylab("Seasons")
-}, height=300)
+print("d")
+p
+
+})

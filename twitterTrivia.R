@@ -3330,3 +3330,87 @@ gls %>%
   plot_ly() %>% 
   add_markers(x = ~season,y = ~goals) %>% 
   add_bars(cs,x = ~season,y = ~n)
+
+
+# sherwood at tot ---------------------------------------------------------
+
+managers[is.na(managers$Left),"Left"] <- as.Date(Sys.Date(), origin= '1970-01-01')
+
+managerGame <-managers %>% 
+  mutate(name=paste(FirstName,Lastname)) %>% 
+  group_by(ManagerID,ManagerTeam) %>% 
+  inner_join(standings,by=c("TEAMNAME"="team")) %>% 
+  select(Lastname,FirstName,name,ManagerID,ManagerTeam,Joined,Left,TEAMNAME,gameDate,res,GF,GA,position) %>% 
+  filter(gameDate>=as.Date(Joined)&gameDate<=as.Date(Left)) %>% 
+  mutate(win=ifelse(res=="Win",1,0)) %>% 
+  ungroup()
+
+
+
+ppgManagerTeamStint <- managerGame %>% 
+  group_by(TEAMNAME,ManagerID,ManagerTeam,name) %>% 
+  dplyr::summarize(sumWins=sum(win),games=n(),pc=round(sumWins/games,2)) %>% 
+  ungroup()
+
+
+
+
+allManagerStints <- 
+  managerGame %>% 
+  select(name,ManagerTeam,Joined,Left) %>% 
+  unique()
+
+
+
+## artificial start date for those hired before PL existed
+allManagerStints[allManagerStints$Joined<="1992-08-15","Joined"] <- "1992-08-15"
+
+
+winpc <- ppgManagerTeamStint  %>% 
+  
+  select(TEAMNAME,name,ManagerTeam,games,pc) %>% 
+  inner_join(allManagerStints) %>% 
+  filter(TEAMNAME=="Tottenham H") 
+
+## if win %
+managerGame <-managers %>% 
+  mutate(name=paste(FirstName,Lastname)) %>% 
+  group_by(ManagerID,ManagerTeam) %>% 
+  inner_join(standings,by=c("TEAMNAME"="team")) %>% 
+  select(Lastname,FirstName,name,ManagerID,ManagerTeam,Joined,Left,TEAMNAME,gameDate,res,GF,GA,position) %>% 
+  filter(gameDate>=as.Date(Joined)&gameDate<=as.Date(Left)) %>% 
+  mutate(points=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+  ungroup()
+
+
+
+ppgManagerTeamStint <- managerGame %>% 
+  group_by(TEAMNAME,ManagerID,ManagerTeam,name) %>% 
+  dplyr::summarize(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
+  ungroup()
+
+
+
+
+allManagerStints <- 
+  managerGame %>% 
+  select(name,ManagerTeam,Joined,Left) %>% 
+  unique()
+
+
+# most assists - helping out ben ------------------------------------------
+
+playerGame %>% 
+  group_by(PLAYERID) %>% 
+  summarize(totAss=sum(Assists)) %>% 
+  arrange(desc(totAss))
+
+# chelsea goals per min ---------------------------------------------------
+
+playerGame %>% 
+  filter(TEAMNAME=="Chelsea"&mins>0) %>% 
+  group_by(PLAYERID) %>% 
+  summarize(tMins=sum(mins,na.rm=T), tGoals=sum(Gls,na.rm=T)) %>% 
+  filter(tGoals>0) %>% 
+  mutate(rate=tMins/tGoals) %>% 
+  arrange(rate)

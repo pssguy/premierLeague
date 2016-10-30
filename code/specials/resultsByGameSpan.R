@@ -37,7 +37,9 @@ output$resByGameSpan <- DT::renderDataTable({
   }
   teamChoice <- unique(allteams$team)
   num <- input$spanA-1
+ 
   
+  ## this is very intensive look to improve 
  if (input$result=="Win") {
   for (j in 1:length(teamChoice)) {
     cp <- allteams %>% 

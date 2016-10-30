@@ -149,13 +149,15 @@ output$teamSeqCurrent <- DT::renderDataTable({
     arrange(tmGameOrder) %>% 
     select(res,tmGameOrder)
   
- ## think there is a problem here as last filter only results in one tem wheras should be a value for every team as is current
-  Wx <- scores %>% 
-    mutate(cat=ifelse(res=="Win",1,0)) %>% 
-    do(subSeq(.$cat)) %>% 
-    group_by(team) %>% 
-    mutate(maxFirst=max(first)) %>% 
+ ## think there is a problem here as last filter only results in one tem wheras should be a value for every team as is current - think dplyr not loading last?? 
+  Wx <- scores %>%
+    mutate(cat=ifelse(res=="Win",1,0)) %>%
+    do(subSeq(.$cat)) %>%
+    group_by(team) %>%
+    mutate(maxFirst=max(first)) %>%
     filter(first==maxFirst)
+  
+ 
   
   
   Win <- 
@@ -182,7 +184,7 @@ output$teamSeqCurrent <- DT::renderDataTable({
     mutate(cat=ifelse(res=="Loss",1,0)) %>% 
     do(subSeq(.$cat)) %>% 
     group_by(team) %>% 
-    mutate(maxFirst=max(first)) %>% 
+    mutate(maxFirst=max(first)) %>% ## issue is that this isnt done by team but overall max team eg arsenal
     filter(first==maxFirst)
   
   Loss <- 
@@ -253,10 +255,11 @@ output$teamLeadersCurrent <- DT::renderDataTable({
 
   
   ty <- data.frame(playerGame %>%
+                     ungroup() %>% 
                      filter(gameDate<=maxDate&season==currentYear) %>%
                      group_by(PLAYERID,name,TEAMNAME) %>%
-                     summarise(goals=sum(Gls),assists=sum(Assists))) %>% 
-                     mutate(points=goals+assists)
+                     summarise(goals=sum(Gls),assists=sum(Assists)) %>% 
+                     mutate(points=goals+assists))
   
   print(glimpse(ty))
   

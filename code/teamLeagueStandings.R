@@ -18,7 +18,10 @@ observe({
     filter(team==theTeam&season==theSeason)
 
 
-  graph <- cbind(graph, id = seq_len(nrow(graph)))
+#  graph <- cbind(graph, id = seq_len(nrow(graph))) tis causes problems when 1 row
+  
+  graph <- graph %>% 
+    mutate(id=row_number())
 
   # just need to add a tt and res for fill
   all_values <- function(x) {

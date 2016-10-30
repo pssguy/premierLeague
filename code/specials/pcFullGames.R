@@ -28,16 +28,18 @@ output$pcFullGames <- renderPlotly({
  
   df <- fullGamesdata()$df
  
-  
-  plot_ly(df, x = count, y = fullPC, mode = "markers", hoverinfo = "text",color=POSITION,key=PLAYERID,
-          text = paste(name,
+  df %>% 
+    plot_ly() %>% 
+ add_markers(x = ~count, y = ~fullPC, hoverinfo = "text",color=~POSITION,key=~PLAYERID,
+          text = ~paste(name,
                        "<br>Appearances:",count,
                        "<br>Full games:",fullPC,"%")) %>%
     layout(hovermode = "closest",
            xaxis=list(title="Games Played"),
            yaxis=list(title="% Complete Games"
            )
-    )
+    ) %>% 
+    config(displayModeBar = F,showLink = F)
 }) 
 
 
@@ -74,14 +76,16 @@ output$pcFullGames <- renderPlotly({
   theTitle <- unique(dets$name)
   
   ## plotly
-  
-  plot_ly(dets, x = plGameOrder, y = mins,
-          mode='markers',
+  dets %>% 
+    
+  plot_ly() %>% 
+  add_markers(x = ~plGameOrder, y = ~mins,
+          
           marker = list(sizeref = 20),
-          color=Team,
+          color=~Team,
           #size=points, leave out until sorted in plotly
           hoverinfo = "text",
-          text = paste(Team," v ",Opponents,
+          text = ~paste(Team," v ",Opponents,
                        "<br>",gameDate,
                        "<br>On: ",on,
                        "<br>Off: ",off,
@@ -92,6 +96,7 @@ output$pcFullGames <- renderPlotly({
       hovermode = "closest",
            xaxis=list(title="Game Order"),
            yaxis=list(title="Minutes Played")
-    )
+    ) %>% 
+    config(displayModeBar = F,showLink = F)
   
 })

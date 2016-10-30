@@ -12,7 +12,7 @@ output$st_round <- DT::renderDataTable({
                       select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,GA=cumGA,Final=final_Pos)) %>% 
     ungroup() %>% 
     arrange(Pos) %>% 
-    select(-season) %>% 
+   # select(-season) %>% 
     DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
                   options= list(paging = FALSE, searching = FALSE,info=FALSE))
                                                   

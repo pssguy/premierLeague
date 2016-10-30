@@ -6,6 +6,7 @@ output$playerMilestones <- DT::renderDataTable({
 #   print("enter playerMilestones")
 #   print(glimpse(milestones))
 milestones %>% 
+    filter(category!="Apps") %>% ## temp measure
   DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
                 colnames=c('','Category','Count'),
                 options= list(paging = FALSE, searching = FALSE,info=FALSE))

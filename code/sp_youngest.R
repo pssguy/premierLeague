@@ -5,14 +5,18 @@ observe({
   
   req(input$teamD)
   
-  ## easiest to put here
+  ## easiest to put here 190ms so not an issue
   apps <- summary %>% 
-    #filter((St+On)>0) %>% 
+    ungroup() %>%  #safer
     group_by(PLAYERID) %>% 
-    summarize(Apps=(sum(St)+sum(On)))
+    summarise(Apps=(sum(St)+sum(On))) ## summarize looks like different end product
+  
+  
+ 
   
   df <-  playerGame %>% 
-    filter((START+subOn)>0&TEAMNAME==input$teamD) %>% 
+    #filter((START+subOn)>0&TEAMNAME==input$teamD) %>% 
+    filter((START+subOn)>0&TEAMNAME=="Arsenal") %>% 
     group_by(gameDate) %>% 
     mutate(youngest=min(age)) %>% 
     filter(age==youngest) %>% 

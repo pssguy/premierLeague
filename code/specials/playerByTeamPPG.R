@@ -50,14 +50,17 @@ output$playerByTeamPPG <- renderPlotly({
   theTitle <- paste0("Average Points per Game in Games Started ",tm," - ",yr)
 
   ## plot_ly
-
-  plot_ly(playerRes , x=stPoints, y=name, name="Starter", mode="markers",
-          hoverinfo="text", marker=list(size=starts,sizemin=2),
-          text=paste("Av Pts:",round(stPoints,2),"<br> Starts:",starts)) %>%
-    add_trace(x=nonPoints,y=name, name="Non-Starter", mode="markers",
-              hoverinfo="text", marker=list(size=nonStarts,sizemin=2),
-              text=paste("Av Pts:",round(nonPoints,2),"<br> Non-Starts:",nonStarts))   %>%
-    add_trace(x = c(tmppg$avPoints, tmppg$avPoints), y= c(minY, maxY), mode = "lines", line = list(color = "green",width=1, dash = "10px"), showlegend = FALSE) %>%
+  playerRes %>% 
+    arrange(name) %>% 
+    plot_ly() %>% 
+    
+  add_markers(x=~stPoints, y=~name, name="Starter", 
+          hoverinfo="text", marker=list(size=~starts,sizemin=2),
+          text=~paste("Av Pts:",round(stPoints,2),"<br> Starts:",starts)) %>%
+    add_markers(x=~nonPoints,y=~name, name="Non-Starter", 
+              hoverinfo="text", marker=list(size=~nonStarts,sizemin=2),
+              text=~paste("Av Pts:",round(nonPoints,2),"<br> Non-Starts:",nonStarts))   %>%
+    add_lines(x = c(tmppg$avPoints, tmppg$avPoints), y= c(minY, maxY), line = list(color = "green",width=1, dash = "10px"), showlegend = FALSE) %>%
     layout(hovermode = "closest", autosize= F, width=600, height= 700,
            margin=list(l=120),
            xaxis=list(title="Av points per Game"),

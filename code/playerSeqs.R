@@ -108,8 +108,8 @@ output$gameNoGoal <- renderPlot({
   ggplot(gameGoal, aes(x=slength,y=n)) +
     geom_bar(data=subset(gameGoal,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
     geom_bar(data=subset(gameGoal,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    scale_x_discrete(breaks = pretty_breaks()) +
-    scale_y_discrete(breaks = pretty_breaks()) +
+    # scale_x_discrete(breaks = pretty_breaks()) +
+    # scale_y_discrete(breaks = pretty_breaks()) +
      theme_bw() +
     xlab("Sequence") +
     ylab("Count") +
@@ -149,8 +149,8 @@ output$gameGoal <- renderPlot({
   ggplot(gameGoal, aes(x=slength,y=n)) +
     geom_bar(data=subset(gameGoal,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
     geom_bar(data=subset(gameGoal,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    scale_x_discrete(breaks = pretty_breaks()) +
-    scale_y_discrete(breaks = pretty_breaks()) +
+    # scale_x_discrete(breaks = pretty_breaks()) +
+    # scale_y_discrete(breaks = pretty_breaks()) +
     theme_bw() +
     xlab("Sequence") +
     ylab("Count") +
@@ -183,8 +183,8 @@ output$gameNoGoalStarter <- renderPlot({
   ggplot(gameGoal, aes(x=slength,y=n)) +
     geom_bar(data=subset(gameGoal,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
     geom_bar(data=subset(gameGoal,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    scale_x_discrete(breaks = pretty_breaks()) +
-    scale_y_discrete(breaks = pretty_breaks()) +
+    # scale_x_discrete(breaks = pretty_breaks()) +
+    # scale_y_discrete(breaks = pretty_breaks()) +
     theme_bw() +
     xlab("Sequence") +
     ylab("Count") +
@@ -216,8 +216,8 @@ output$gameGoalStarter <- renderPlot({
   ggplot(gameGoal, aes(x=slength,y=n)) +
     geom_bar(data=subset(gameGoal,cond==FALSE),stat="identity", width=0.7,  fill="blue", alpha=0.2)+
     geom_bar(data=subset(gameGoal,cond==TRUE),stat="identity", width=0.7, fill="blue") +
-    scale_x_discrete(breaks = pretty_breaks()) +
-    scale_y_discrete(breaks = pretty_breaks()) +
+    # scale_x_discrete(breaks = pretty_breaks()) +
+    # scale_y_discrete(breaks = pretty_breaks()) +
     theme_bw() +
     xlab("Sequence") +
     ylab("Count") +

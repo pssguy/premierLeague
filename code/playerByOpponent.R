@@ -56,11 +56,11 @@ pboData <- reactive({
   
   goals <- player %>% 
     group_by(Opponents) %>% 
-    summarize(goals=sum(Gls)) 
+    summarise(goals=sum(Gls)) 
   
   assists <- player %>% 
     group_by(Opponents) %>% 
-    summarize(assists=sum(Assists)) 
+    summarise(assists=sum(Assists)) 
   
  
   
