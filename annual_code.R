@@ -6,7 +6,7 @@
 
 ## results - amy have to copy and run in console
 hth %>% 
-  filter(season=="2016/17"&gameDate>="2016-10-18"&gameDate<="2016-10-25") %>% ## may need to put in day later?
+  filter(season=="2016/17"&gameDate>="2016-10-25"&gameDate<="2016-11-01") %>% ## may need to put in day later?
   filter(venue=="H") %>% 
   arrange(team) %>% 
   select(Home=team,GF,GA,Away=OppTeam) %>% 
@@ -17,7 +17,7 @@ hth %>%
 
 # table
 hth %>% 
-  filter(season=="2016/17"&gameDate<="2016-10-25") %>% 
+  filter(season=="2016/17"&gameDate<="2016-11-01") %>% 
   group_by(team) %>% 
   mutate(W = ifelse(res=="Win",1,0),L = ifelse(res=="Loss",1,0),D = ifelse(res=="Draw",1,0)) %>%
   summarise(P=n(),Pts=sum(points),W=sum(W),D=sum(D),L=sum(L),GD=sum(GF)-sum(GA),GF=sum(GF)) %>% 
@@ -173,6 +173,17 @@ library(plotly)
 df %>% 
   plot_ly(x=date,y=round(avPts,2),mode="markers",
           marker=list(color=pointColor),name=result)
+
+## update plotly does purt colors in but looks wrong
+df %>% 
+  plot_ly(x=~date,y=~round(avPts,2),mode="markers",
+          marker=list(color=~pointColor),name=result)
+
+## look at line
+
+df %>% 
+  plot_ly(x=~date, y=~avPts, color=~pointColor)
+
 #marker=list(color=result))
 library(listviewer)
 
@@ -2822,10 +2833,326 @@ temp %>%
   arrange(desc(slength)) %>% 
   group_by(home) %>% 
   slice(1) %>% 
-  arrange(desc(slength))
+  arrange(desc(slength)) %>% 
+  select(home,away=visitor,games=slength)%>%
+                         DT::datatable(width=470,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
 
 #1         Blackburn Rovers   Birmingham City     1    57      57       29     0
 
 test <- df %>% 
   filter(home=="Blackburn Rovers"&visitor=="Birmingham City")
 
+
+
+
+# lukaku scoring all 7 games v west ham + 2 in cups -----------------------
+
+
+# wilshere yet to record goal/assist ( need to do a minute thing)
+
+## general scoring an assist by player (eg sterling)
+
+sort(names(playerGame))
+
+## make sure to use summarise not summarize
+sterling <-playerGame %>% 
+  filter(mins>0) %>% 
+  group_by(PLAYERID,name,Opponents) %>% 
+  summarise(sumMins=sum(mins),sumAssists=sum(Assists),sumGoals=sum(Gls),points=sumAssists+sumGoals) %>% 
+  filter(PLAYERID=="STERLIR")
+  # could also look at position when playing
+
+
+# tot h fewest goals against after n games ----------------------------------
+
+
+## sunderland start
+
+sort(names(standings))
+
+sunderland <-standings %>% 
+  filter(team=="Sunderland"&tmYrGameOrder<11&season!="2016/17") %>% 
+  ungroup()
+
+sunderland2016 <-standings %>% 
+  filter(team=="Sunderland"&tmYrGameOrder<11&season=="2016/17") %>% 
+  ungroup()
+
+others <-standings %>% 
+  filter(team!="Sunderland"&tmYrGameOrder<11) %>% 
+  ungroup()
+
+sunderland %>% 
+  group_by(season,team) %>% 
+  plot_ly() %>% 
+  add_lines(x= ~tmYrGameOrder, y=~cumPts) %>% 
+  add_lines(data =sunderland2016, x= ~tmYrGameOrder, y=~cumPts, color="red", name="2016/17") %>% 
+  add_lines(data =others, x= ~tmYrGameOrder, y=~cumPts, color="grey")
+
+
+others %>% 
+  group_by(season,team) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~cumPts) %>% 
+  add_lines(color=I("grey")) %>% 
+  add_lines(data =sunderland2016, x= ~tmYrGameOrder, y=~cumPts, color="red", name="2016/17") %>% 
+  add_lines(data =others, x= ~tmYrGameOrder, y=~cumPts)
+
+
+sort(names(others))
+#OK
+others %>% 
+ # filter(season=="2016/17") %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~jitter(cumPts)) %>% 
+  add_lines(color=I("grey"))
+
+
+sunderland %>% 
+  # filter(season=="2016/17") %>% 
+  group_by(season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~jitter(cumPts)) %>% 
+  add_lines(color=I("blue"))
+
+
+others %>% 
+  # filter(season=="2016/17") %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~jitter(cumPts)) %>% 
+  add_lines(color=I("grey")) %>% 
+  add_lines(x=sunderland$tmYrGameOrder,y=sunderland$cumPts,color=I("blue"))
+
+others %>% 
+  # filter(season=="2016/17") %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~jitter(cumPts)) %>% 
+  add_lines(color=I("grey")) %>% 
+  add_lines(x= ~sunderland$tmYrGameOrder,y=~sunderland$cumPts,color=I("blue"))
+
+
+## look at setting color 
+
+df <- standings %>% 
+  filter(tmYrGameOrder<11) %>% 
+  select(season,team,tmYrGameOrder,cumPts) %>% 
+  mutate(lineColor=ifelse(team=="Sunderland","red","blue")) %>% 
+  mutate(lineColor=ifelse(team=="Sunderland"&season=="2016/17","grey",lineColor)) 
+
+sort(names(df))
+
+df %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~cumPts) %>% 
+  add_lines(color= ~lineColor)
+
+
+
+standings %>% 
+  filter(tmYrGameOrder<11) %>% 
+  select(season,team,tmYrGameOrder,cumPts) %>% 
+  mutate(lineColor=ifelse(team=="Sunderland","red","blue")) %>% 
+  mutate(lineColor=ifelse(team=="Sunderland"&season=="2016/17","grey",lineColor)) %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~cumPts) %>% 
+  add_lines(color= ~lineColor) %>%
+  layout(
+    xaxis=list(title="Games Played"),
+    yaxis=list("Points")
+  ) %>% 
+  
+  config(displayModeBar = F,showLink = F)
+
+df <- read_csv("problem.csv")
+df %>%
+  ungroup() %>% 
+  group_by(team, season) %>%
+  plot_ly(x = ~ tmYrGameOrder, y =  ~ cumPts) %>%
+  add_lines(color = ~ lineColor)  %>%
+  layout(showlegend=FALSE,
+    xaxis=list(title="Games Played"),
+    yaxis=list(title="Points") ) %>% 
+  config(displayModeBar = F,showLink = F)
+
+  # group_by(team,season) %>% 
+  # plot_ly(x= ~tmYrGameOrder, y=~cumPts) %>% 
+  # add_lines(color= ~lineColor)
+
+test <-df %>% 
+  filter(tmYrGameOrder==10)
+
+## toy example
+
+library(plotly)
+library(dplyr)
+df <- tibble(team=c("A","A","A","A","B","B","B","B"),
+             season=c(2000,2000,2001,2001,2000,2000,2001,2001),
+             game=c(1,2,1,2,1,2,1,2),
+             points=c(0,3,1,1,1,2,0,1),
+             theColor=c("red","red","red","red","grey","grey","blue","blue"))
+
+df %>%
+#  arrange(desc(theColor)) %>% 
+ group_by(team,season) %>%
+  plot_ly(x=~game,y=~points,color= ~factor(theColor)) %>%  
+       #  colors = c("red", "grey", "blue")) %>% 
+  add_lines() %>% 
+  layout(showlegend=FALSE)
+
+
+# http://stackoverflow.com/questions/35601464/custom-colors-in-plotly updated for v4+
+
+
+df <- data.frame(x = rep(LETTERS[1:5], 3), 
+                 y = rexp(15, rate = 0.5),
+                 z = c(rep("Adam", 5), rep("Arthur", 5), rep("Ford", 5)))  # these will be factors
+#df <- arrange(df, desc(z))
+
+plot_ly(df, 
+        x = ~x, 
+        y = ~y, 
+        color = ~z, 
+        colors = c("grey50", "blue", "red"), 
+        type = "bar") %>% 
+  layout(barmode = "stack")
+
+# 
+# ## this does produce result thogh not ideal
+# cols <- c("red", "blue", "black")
+# 
+# df %>% 
+#   group_by(team,season) %>% 
+#   plot_ly(x=~game,y=~points,color=~theColor, colors=cols) %>% 
+#   add_lines()
+
+cols <- c("red", "blue", "black")
+
+df %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~cumPts,color= ~lineColor,cols <- c("red", "blue", "black")) %>% 
+  add_lines(alpha=0.5) %>% 
+  layout(showlegend=F)
+
+library(RColorBrewer)
+df %>% 
+  group_by(team,season) %>% 
+  plot_ly(x= ~tmYrGameOrder, y=~jitter(cumPts),marker = list(color = brewer.pal(6, "Paired"))) %>% 
+  add_lines()
+marker = list(color = brewer.pal(6, "Paired"))
+
+## no idea where grp comes from
+basePlot <-  ggplot(others, aes(tmYrGameOrder, cumPts, group=season, color=grp))  +
+  geom_line(aes(group=season, color=factor(grp))) +
+  geom_line(data=df_prem, aes(gameOrder, cumG, group=Season, color=factor(grp))) +  
+  geom_line(data=df_2016, aes(gameOrder, cumG, group=Season, color=factor(grp)), lwd=1.1)
+
+#3 has issues of group by more than one category
+basePlot <-  ggplot(others, aes(tmYrGameOrder, cumPts, group=season))  +
+  geom_line(aes(group=season)) +
+  geom_line(data=df_prem, aes(gameOrder, cumG, group=Season, color=factor(grp))) +  
+  geom_line(data=df_2016, aes(gameOrder, cumG, group=Season, color=factor(grp)), lwd=1.1)
+
+
+basePlot +
+  
+  xlab("Games Played") + ylab("Cumulative Goals") +
+  scale_color_manual(values=c("gray80","#F9966B" , "blue")) +
+  scale_x_continuous(breaks=seq(from=1,to=42, by=5)) +
+  labs(title=theTitle) +
+  theme(
+    plot.title = element_text(hjust=0,vjust=1, size=rel(1.7)),
+    panel.background = element_blank(),
+    panel.grid.major.y = element_line(color="gray65"),
+    panel.grid.major.x = element_line(color="gray65"),
+    panel.grid.minor = element_blank(),
+    plot.background  = element_blank(),
+    text = element_text(color="gray20", size=10),
+    axis.text = element_text(size=rel(1.0)),
+    axis.text.x = element_text(color="gray20",size=rel(1.5)),
+    axis.text.y = element_text(color="gray20", size=rel(1.5)),
+    axis.title.x = element_text(size=rel(1.5), vjust=0),
+    axis.title.y = element_text(size=rel(1.5), vjust=1),
+    axis.ticks.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "none"
+  )
+  
+
+
+## united points in last n games
+
+
+
+# liverpool 5 players with 7 points already -------------------------------
+
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(season=="2016/17") %>% 
+  select(TEAMNAME,PLAYERID,name,Gls,Assists) %>% 
+  mutate(points=Gls+Assists) %>% 
+  group_by(TEAMNAME,name) %>% 
+  summarise(totpoints=sum(points)) %>% 
+  ungroup() %>% 
+  filter(totpoints>6) %>% 
+  group_by(TEAMNAME) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>%
+  rename(count=n,team=TEAMNAME) %>% 
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+  # library(Lahman)
+  # if (require("Lahman")) {
+  #   batting_tbl <- tbl_df(Batting)
+  #   tally(group_by(batting_tbl, yearID))
+  #   tally(group_by(batting_tbl, yearID), sort = TRUE)
+  #   
+  #   # Multiple tallys progressively roll up the groups
+  #   plays_by_year <- tally(group_by(batting_tbl, playerID, stint), sort = TRUE)
+  #   tally(plays_by_year, sort = TRUE)
+  #   tally(tally(plays_by_year))
+  #   
+  #   # This looks a little nicer if you use the infix %>% operator
+  #   batting_tbl %>% group_by(playerID) %>% tally(sort = TRUE)
+  #   
+  #   # count is even more succinct - it also does the grouping for you
+  #   batting_tbl %>% count(playerID)
+  #   batting_tbl %>% count(playerID, wt = G)
+  #   batting_tbl %>% count(playerID, wt = G, sort = TRUE)
+  # }
+
+## Liv 4 goals for
+
+
+# Liv 4 goals for ---------------------------------------------------------
+
+
+
+sort(names(standings))
+
+temp <- standings %>% 
+  group_by(team,season) %>% 
+  filter(GF>3) %>% 
+  tally()
+
+temp %>% 
+  arrange(season) %>% 
+  filter(team=="Liverpool") %>% 
+  plot_ly(x= ~season, y=~n) %>% 
+  add_bars(color = I("red"), alpha=0.7) %>% 
+  layout(
+    title="Games with Liverpool scoring 4+ goals",
+    xaxis=list(title=""),
+    yaxis=list(title="Count"),
+    margin=list(b=70)
+  ) %>% 
+  config(displayModeBar = F,showLink = F)
+
+
+# palace goals for against ------------------------------------------------
+
+sort(names(Goals_team_for))
+
+Goals_team_for %>% 
+  filter(season=="2016/17") %>% 
+  arrange(desc(Head))
+  

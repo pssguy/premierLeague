@@ -1986,16 +1986,19 @@ plotlyOutput("goals_wk9")
 R10
 ===================================== 
 
+Column 
+-----------------------------------------------------------------------
+
 ### Games scoring specific goals per game
 
 
-``` {r}
+``` {r gf_wk10}
 
 
 
 selectInput(
   "team_wk10",
-  "Select Teams",
+  "Select Team",
   choices = teamsChoice, 
   selected = "Liverpool",
   multiple = FALSE,
@@ -2024,22 +2027,78 @@ standings %>%
   plot_ly(x= ~season, y=~n) %>% 
   add_bars(color = I("red"), alpha=0.7) %>% 
   layout(
+     height=450, autosize = F,
     title=theTitle,
     xaxis=list(title=""),
     yaxis=list(title="Count"),
     margin=list(b=70)
   ) %>% 
+  # layout(
+  #   xaxis=list(title="Games Played"),
+  #   yaxis=list("Points")
+  # ) %>% 
+  
   config(displayModeBar = F,showLink = F)
+
 })
 
-plotlyOutput("goals_wk10")
+ plotlyOutput("goals_wk10")
+
+```
+
+Column 
+-----------------------------------------------------------------------
+
+### Points accrued to date compared with all Seasons/Teams 
+
+``` {r points_wk10}
+
+selectInput(
+  "teamA_wk10",
+  "Select Team",
+  choices = teamsChoice, 
+  selected = "Sunderland",
+  multiple = FALSE,
+  width = 200
+  )
+
+output$points_wk10 <- renderPlotly({
+  
+  # print("wk10")
+  # print(input$teamA_wk10)
+  
+  df <- standings %>%
+  filter(tmYrGameOrder < 11) %>%
+  select(season, team, tmYrGameOrder, cumPts) %>%
+  mutate(lineColor = ifelse(team == input$teamA_wk10, "red", "blue")) %>%
+  mutate(lineColor = ifelse(team == input$teamA_wk10 &
+  season == "2016/17", "grey", lineColor))
+  
+  # print(glimpse(df))
+  # 
+  # write_csv(df,"problem.csv")  # works fine
+  
+ df %>%
+  ungroup() %>% 
+  group_by(team, season) %>%
+  plot_ly(x = ~ tmYrGameOrder, y =  ~ cumPts) %>%
+  add_lines(color = ~ lineColor)  %>%
+  layout(showlegend=FALSE,
+    xaxis=list(title="Games Played"),
+    yaxis=list(title="Points") ) %>% 
+  config(displayModeBar = F,showLink = F)
+ 
+})
+
+plotlyOutput("points_wk10")
+
 
 ```
 
 
-
 <!-- Example could use in talk-->
 <!-- =====================================  -->
+
 
 ``` {r example}
 # 
