@@ -155,11 +155,11 @@ output$pointsByYearChart <- renderPlotly({
     group_by(season,PLAYERID,name) %>% 
     select(Gls,Assists,mins) %>% 
     summarise(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
-    filter(Points!=0) %>% 
+   # filter(Points!=0) %>% otherwise does not show zero values on year
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup() 
   
-#   write_csv(df,"tauproblem.csv")
+  write_csv(df,"problem.csv")
 #   
 #   df %>% 
 #     tauchart() %>% 
