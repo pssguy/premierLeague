@@ -11,7 +11,7 @@ output$teamLeaflet <- renderLeaflet({
     mutate(Apps=St+On) %>% 
     select(name,PLAYERID,Apps) %>% 
     group_by(name,PLAYERID) %>% 
-    summarize(Apps=sum(Apps)) %>% 
+    summarise(Apps=sum(Apps)) %>% 
     ungroup()
   
   write_csv(theMap,"theMapProblem.csv")

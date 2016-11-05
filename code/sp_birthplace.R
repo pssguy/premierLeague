@@ -7,7 +7,7 @@ temp <-summary %>%
   left_join(allPlayers) %>% 
   select(season,mins,COUNTRY,TEAMNAME) %>% 
   group_by(season,COUNTRY,TEAMNAME) %>% 
-  summarize(totMins=sum(mins)) %>% 
+  summarise(totMins=sum(mins)) %>% 
   group_by(season,TEAMNAME) %>% 
   mutate(allMins=sum(totMins),pc=round(100*totMins/allMins)) 
 
@@ -18,7 +18,7 @@ allTemp <-summary %>%
   left_join(allPlayers) %>% 
   select(season,mins,COUNTRY) %>% 
   group_by(season,COUNTRY) %>% 
-  summarize(totMins=sum(mins)) %>% 
+  summarise(totMins=sum(mins)) %>% 
   group_by(season) %>% 
   mutate(allMins=sum(totMins),pc=round(100*totMins/allMins)) ## allMins not same for all clubs ???
 
@@ -29,7 +29,7 @@ allTempTeam <-summary %>%
   left_join(allPlayers) %>% 
   select(season,mins,COUNTRY,TEAMNAME) %>% 
   group_by(season,COUNTRY,TEAMNAME) %>% 
-  summarize(totMins=sum(mins)) %>% 
+  summarise(totMins=sum(mins)) %>% 
   group_by(season,TEAMNAME) %>% 
   mutate(allMins=sum(totMins),pc=round(100*totMins/allMins))
 

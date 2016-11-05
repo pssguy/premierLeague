@@ -21,7 +21,7 @@ topChanges <- standings %>%
   filter(tmYrGameOrder!=1) %>% 
   mutate(change=ifelse(team==lastteam,0,1)) %>% 
   group_by(season) %>% 
-  dplyr::summarize(changes=sum(change)) %>% 
+  dplyr::summarise(changes=sum(change)) %>% 
   inner_join(diffTeams)
 
 output$st_topChanges <- renderPlotly({

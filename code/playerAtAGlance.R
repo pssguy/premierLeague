@@ -19,15 +19,15 @@ bySeason <- summary %>%
   filter(PLAYERID==input$playerA) %>% 
   ungroup() %>% 
   group_by(season) %>% 
-  summarize(apps=sum(St+On), goals=sum(StGls+subGls),cards=sum(Y+R),assists=sum(Assists))
+  summarise(apps=sum(St+On), goals=sum(StGls+subGls),cards=sum(Y+R),assists=sum(Assists))
 
 
 
 max <-bySeason%>%
-  summarize(maxApps=max(apps),maxCards=max(cards),maxGoals=max(goals), maxAssists=max(assists))
+  summarise(maxApps=max(apps),maxCards=max(cards),maxGoals=max(goals), maxAssists=max(assists))
 
 tot <-bySeason%>%
-  summarize(apps=sum(apps),goals=sum(goals),cards=sum(cards),assists=sum(assists)) 
+  summarise(apps=sum(apps),goals=sum(goals),cards=sum(cards),assists=sum(assists)) 
    
 career <- cbind(max,tot)  %>% 
   mutate(showApps=paste(apps,"-",maxApps),

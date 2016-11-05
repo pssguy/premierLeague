@@ -27,7 +27,7 @@ output$playerByTeamPPG <- renderPlotly({
     select(name,MATCHID) %>%
     left_join(tmRes) %>%
     # group_by(name) %>%
-    summarize(avPoints=mean(ppg),avStarts=n()/11)
+    summarise(avPoints=mean(ppg),avStarts=n()/11)
 
   allPoints <-tmppg$avPoints*tmppg$avStarts  #43
 
@@ -37,7 +37,7 @@ output$playerByTeamPPG <- renderPlotly({
     select(name,MATCHID) %>%
     left_join(tmRes) %>%
     group_by(name) %>%
-    summarize(stPoints=mean(ppg), starts=n(),allPoints, nonStarts=tmppg$avStarts-starts,nonPoints=(allPoints-(stPoints*starts))/(tmppg$avStarts-starts)) %>%
+    summarise(stPoints=mean(ppg), starts=n(),allPoints, nonStarts=tmppg$avStarts-starts,nonPoints=(allPoints-(stPoints*starts))/(tmppg$avStarts-starts)) %>%
     ungroup() %>%
     arrange(stPoints,starts) # arranged like this for graph
 
@@ -98,7 +98,7 @@ output$playerByTeamPPG_hl <- renderPlotly({
     select(name,MATCHID) %>%
     left_join(tmRes) %>%
     # group_by(name) %>%
-    summarize(avPoints=mean(ppg),avStarts=n()/11)
+    summarise(avPoints=mean(ppg),avStarts=n()/11)
   
   allPoints <-tmppg$avPoints*tmppg$avStarts  #43
   
@@ -108,7 +108,7 @@ output$playerByTeamPPG_hl <- renderPlotly({
     select(name,MATCHID) %>%
     left_join(tmRes) %>%
     group_by(name) %>%
-    summarize(stPoints=mean(ppg), starts=n(),allPoints, nonStarts=tmppg$avStarts-starts,nonPoints=(allPoints-(stPoints*starts))/(tmppg$avStarts-starts)) %>%
+    summarise(stPoints=mean(ppg), starts=n(),allPoints, nonStarts=tmppg$avStarts-starts,nonPoints=(allPoints-(stPoints*starts))/(tmppg$avStarts-starts)) %>%
     ungroup() %>%
     arrange(stPoints,starts) # arranged like this for graph
   

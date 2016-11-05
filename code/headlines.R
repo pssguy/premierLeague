@@ -11,7 +11,7 @@
 #    apps <- summary %>% 
 #      #filter((St+On)>0) %>% 
 #      group_by(PLAYERID) %>% 
-#      summarize(Apps=(sum(St)+sum(On)))
+#      summarise(Apps=(sum(St)+sum(On)))
 #   
 #   df <-  playerGame %>% 
 #     filter((START+subOn)>0&TEAMNAME==input$teamC) %>% 

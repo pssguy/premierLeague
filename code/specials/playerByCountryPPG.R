@@ -7,7 +7,7 @@ output$sp_playerByCountryPPG    <- renderPlotly({
     filter(COUNTRY==input$country&season==input$teamYears)  %>% 
     group_by(PLAYERID,name) %>% 
     select(Gls,Assists,mins) %>% 
-    summarize(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
+    summarise(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>% 
     filter(Points!=0) %>% 
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup()
@@ -46,7 +46,7 @@ output$playerByCountryPPG_hl    <- renderPlotly({
     filter(COUNTRY==input$country&season==input$teamYears_ppg)  %>%
     group_by(PLAYERID,name) %>%
     select(Gls,Assists,mins) %>%
-    dplyr::summarize(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>%
+    dplyr::summarise(Goals=sum(Gls),Assists=sum(Assists),Points=Goals+Assists,Mins=sum(mins))%>%
     filter(Points!=0) %>%
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>%
     ungroup()

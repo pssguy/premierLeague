@@ -5,7 +5,7 @@ pcPlayerGoalsData <- reactive({
   minGoals <- Place %>% 
     mutate(goals=(SixYd+PenArea+LongRange)) %>% 
     group_by(PLAYERID,name) %>% 
-    summarize(tot=sum(goals)) %>% 
+    summarise(tot=sum(goals)) %>% 
     filter(tot>=input$pcPlGoals) %>% 
     .$PLAYERID
   
@@ -17,7 +17,7 @@ print(glimpse(Place))
     filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
     mutate(goals=(SixYd+PenArea+LongRange)) %>% 
     group_by(PLAYERID,name) %>% 
-    summarize(tot=sum(goals),lr=sum(LongRange),pc=round(100*lr/tot)) %>% 
+    summarise(tot=sum(goals),lr=sum(LongRange),pc=round(100*lr/tot)) %>% 
     ungroup() %>% 
     arrange(desc(pc))  
   } else if(input$pcPlGoalsCat=="Pen Area") {
@@ -25,7 +25,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(SixYd+PenArea+LongRange)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(PenArea),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(PenArea),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="6yd Box") {
@@ -33,7 +33,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(SixYd+PenArea+LongRange)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(SixYd),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(SixYd),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Open Play") {
@@ -41,7 +41,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Open),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Open),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Corner") {
@@ -49,7 +49,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Corner),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Corner),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Throw In") {
@@ -57,7 +57,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Throw),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Throw),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   }else if(input$pcPlGoalsCat=="Indirect FK") {
@@ -65,7 +65,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(IFK),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(IFK),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   }else if(input$pcPlGoalsCat=="Penalty") {
@@ -73,7 +73,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Pen),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Pen),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   }else if(input$pcPlGoalsCat=="Direct FK") {
@@ -81,7 +81,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Open+Corner+Throw+IFK+DFK+Pen)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(DFK),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(DFK),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Right Foot") {
@@ -89,7 +89,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Right+Left+Head)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Right),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Right),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Left Foot") {
@@ -97,7 +97,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Right+Left+Head)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Left),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Left),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   } else if(input$pcPlGoalsCat=="Header") {
@@ -105,7 +105,7 @@ print(glimpse(Place))
       filter(PLAYERID %in% minGoals&PLAYERID!="OWNGOAL") %>% 
       mutate(goals=(Right+Left+Head)) %>% 
       group_by(PLAYERID,name) %>% 
-      summarize(tot=sum(goals),lr=sum(Head),pc=round(100*lr/tot)) %>% 
+      summarise(tot=sum(goals),lr=sum(Head),pc=round(100*lr/tot)) %>% 
       ungroup() %>% 
       arrange(desc(pc))
   }

@@ -25,7 +25,7 @@ data <- reactive({
       filter(PLAYERID %in% bestRun$PLAYERID) %>% 
       group_by(name,PLAYERID) %>% 
       
-      summarize(totGoals=sum(Gls)) %>% 
+      summarise(totGoals=sum(Gls)) %>% 
       inner_join(bestRun)
     
   } else {
@@ -40,7 +40,7 @@ data <- reactive({
       filter(PLAYERID %in% bestRun$PLAYERID&TEAMNAME==theTeam) %>% 
       group_by(name,PLAYERID) %>% 
       
-      summarize(totGoals=sum(Gls)) %>% 
+      summarise(totGoals=sum(Gls)) %>% 
       inner_join(bestRun)
   }
   
@@ -119,7 +119,7 @@ output$allPlayerGoalSeqs_plotly <- renderPlotly({
 #       filter(PLAYERID %in% bestRun$PLAYERID) %>% 
 #       group_by(name,PLAYERID) %>% 
 #       
-#       summarize(totGoals=sum(Gls)) %>% 
+#       summarise(totGoals=sum(Gls)) %>% 
 #       inner_join(bestRun)
 #     
 #   } else {
@@ -134,7 +134,7 @@ output$allPlayerGoalSeqs_plotly <- renderPlotly({
 #       filter(PLAYERID %in% bestRun$PLAYERID&TEAMNAME==theTeam) %>% 
 #       group_by(name,PLAYERID) %>% 
 #       
-#       summarize(totGoals=sum(Gls)) %>% 
+#       summarise(totGoals=sum(Gls)) %>% 
 #       inner_join(bestRun)
 #   }
 #   
@@ -193,7 +193,7 @@ output$allPlayerGoalSeqs_plotly <- renderPlotly({
 #     filter(PLAYERID %in% bestRun$PLAYERID) %>% 
 #     group_by(name,PLAYERID) %>% 
 #     
-#     summarize(totGoals=sum(Gls)) %>% 
+#     summarise(totGoals=sum(Gls)) %>% 
 #     inner_join(bestRun)
 #   
 #   # need jitter to identify individuals

@@ -15,7 +15,7 @@ managerGame <-managers %>%
 
 ppgManagerTeamStint <- managerGame %>% 
   group_by(TEAMNAME,ManagerID,ManagerTeam,name) %>% 
-  dplyr::summarize(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
+  dplyr::summarise(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
   ungroup()
 
 

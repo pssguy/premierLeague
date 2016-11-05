@@ -8,7 +8,7 @@ output$leadingGoalscorers_tau <- renderTaucharts({
   if(input$teamE=="All Teams") {
     test <-playerGame %>% 
       group_by(TEAMNAME,season,PLAYERID,name) %>% 
-      summarize(goals=sum(Gls),pens=sum(PENS)) %>% 
+      summarise(goals=sum(Gls),pens=sum(PENS)) %>% 
       # mutate(pointSize=0.5) %>% attempt to make points smaller
       filter(goals>=input$goalA) %>% 
       rename(team=TEAMNAME) %>% 
@@ -18,7 +18,7 @@ output$leadingGoalscorers_tau <- renderTaucharts({
   
   test <-playerGame %>% 
     group_by(TEAMNAME,season,PLAYERID,name) %>% 
-    summarize(goals=sum(Gls),pens=sum(PENS)) %>% 
+    summarise(goals=sum(Gls),pens=sum(PENS)) %>% 
    # mutate(pointSize=0.5) %>% attempt to make points smaller
     filter(goals>=input$goalA&TEAMNAME %in% input$teamE) %>% 
     rename(team=TEAMNAME) %>% 
