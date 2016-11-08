@@ -70,6 +70,7 @@ playerGeos <- readRDS("playerGeos.rds")
 goalSeqs <- readRDS("goalSeqs.rds")
 goalSeqsClub <- readRDS("goalSeqsClub.rds")
 allPlayers <- readRDS("allPlayers.rds")
+goalSeqTeam <- readRDS("goalSeqTeam.rds")
 
 
 tmYrs <- standings %>%
@@ -104,6 +105,11 @@ seasonChoice_3 <- c("All Seasons", seasonChoice[-1]) # for early part of seasons
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
 teamsChoice_2 <- c("All Teams", teamsChoice)
+
+teamsChoiceCurrent <- standings %>% 
+  filter(season=="2016/17") 
+
+teamsChoiceCurrent <- sort(unique(teamsChoiceCurrent$team))
 
 managers <- managers %>%
 mutate(name = paste0(FirstName, " ", Lastname))
@@ -2095,6 +2101,99 @@ plotlyOutput("points_wk10")
 
 ```
 
+
+R11
+===================================== 
+
+Column 
+-----------------------------------------------------------------------
+
+### Time Gap between Goals scored
+
+```{r}
+
+selectInput(
+  "team_wk11",
+  "Select Team",
+  choices = teamsChoiceCurrent, 
+  selected = "Chelsea",
+  multiple = FALSE,
+  width = 200
+  )
+
+output$GF_gap <- renderPlotly({
+a <- teamGames %>% 
+  
+  filter(TEAMNAME==input$team_wk11&season=="2016/17") %>% 
+  select(TEAMMATCHID,gameDate) %>% 
+  mutate(totMins=90*(row_number()-1)) %>% # want to start with 0 to make subsequent addition easier
+  left_join(goals) %>% 
+  arrange(gameDate,TIME) %>% 
+  select(totMins,TIME,TEAMMATCHID) 
+
+## duplicate last row
+
+a <- rbind(a,tail(a,1))
+a[nrow(a),]$TIME <- 90
+
+a <-a %>% 
+ filter(!is.na(TIME)) %>% # this gets rid of games with no goals against NB not good for latest result
+  mutate(cumTime=totMins+TIME,lagtime=(lag(cumTime)),leadtime=(lead(cumTime))) %>% 
+  mutate(lagtime=ifelse(is.na(lagtime),0,lagtime),leadtime=ifelse(is.na(leadtime),totMins+90,leadtime)) %>% 
+  mutate(cumdiff=cumTime-lagtime,goalOrder=row_number())
+a %>% 
+  plot_ly(x=~goalOrder, y=~ cumdiff) %>% 
+  add_bars(color= ~ as.factor(TEAMMATCHID)) %>% 
+  layout(showlegend=FALSE,
+         height = 400,
+    autosize = F,
+         title="Time between Goals",
+         xaxis=list(title="Goal order"),
+         yaxis=list(title="Minutes")) %>% 
+    config(displayModeBar = F,showLink = F)
+
+
+})
+plotlyOutput("GF_gap")
+
+```
+
+
+Column 
+-----------------------------------------------------------------------
+
+### Average Age of Starting Lineups by Team by Season
+
+``` {r}
+
+
+selectInput(
+  "team_wk11A",
+  "Select Team",
+  choices = teamsChoice, 
+  selected = "Man. Utd.",
+  multiple = FALSE,
+  width = 200
+  )
+
+output$starterAge <- renderPlotly({
+playerGame %>% 
+  filter(TEAMNAME==input$team_wk11A&START>0) %>% 
+  group_by(TEAMMATCHID,gameDate,season) %>% 
+  summarise(avAge=mean(age,na.rm=TRUE)) %>% 
+  arrange(gameDate) %>% 
+  plot_ly(x=~ season, y= ~as.numeric(avAge)) %>% 
+  add_boxplot() %>% 
+  layout(margin=list(b=80),height = 400,
+    autosize = F
+         xaxis=list(title=""),
+         yaxis=list(title="Av. Age")
+  )
+  
+})
+ plotlyOutput("starterAge")       
+
+```
 
 <!-- Example could use in talk-->
 <!-- =====================================  -->
