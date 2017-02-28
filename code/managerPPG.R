@@ -32,7 +32,55 @@ allManagerStints <-
 allManagerStints[allManagerStints$Joined<="1992-08-15","Joined"] <- "1992-08-15"
 
 
-observe({
+# observe({
+#   
+#   req(input$teamA)
+#   req(input$managerGames)
+#   # if(is.null(input$teamA)) return()
+#   # if(is.null(input$managerGames)) return()
+#   print(paste(input$teamA,"managers"))
+#   
+# teamRecord <- ppgManagerTeamStint  %>% 
+#   
+#   select(TEAMNAME,name,ManagerTeam,games,ppg) %>% 
+#   inner_join(allManagerStints) %>% 
+#   filter(TEAMNAME==input$teamA&games>=input$managerGames) 
+# 
+# #teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
+# 
+# teamRecord <- teamRecord %>% 
+#   mutate(id=row_number())
+# 
+# 
+#   all_values <- function(x) {
+#     if(is.null(x)) return(NULL)
+#     row <- teamRecord[teamRecord$id == x$id,c("games","ppg")]
+#     #paste0(names(row),": ", format(row), collapse = "<br />")
+#     paste0( names(row),": ",format(row), collapse = "<br />") 
+#   }
+# 
+# 
+# 
+# minY <- min(teamRecord$ppg)-0.1
+# maxY <- max(teamRecord$ppg)+0.1
+# 
+# #write_csv(teamRecord,"data/managerPPG.csv",)
+# 
+# #library(ggrepel) # unsuccesful attempt
+# teamRecord %>% 
+#   ggvis(x =~ Joined,y=~ppg+0.01,fill = "687a97",key := ~id) %>% 
+#   layer_rects(x2=~Left,y2=~ppg-0.01) %>% 
+#   layer_text(text:=~name, stroke:="red") %>% 
+#   scale_numeric("y",domain=c(minY,maxY)) %>% 
+#   ggvis::add_axis("x", title=" ") %>% 
+#   ggvis::add_axis("y", title="Av Points per Game") %>% 
+#   add_tooltip(all_values,"hover") %>% 
+#   #hide_legend(c("fill","stroke")) %>%  Warning: Error in hide_legend: unused argument (c("fill", "stroke"))
+#   bind_shiny("managerPPGbyTeam")
+# })
+
+
+output$managerPPGbyTeam <- renderPlotly({
   
   req(input$teamA)
   req(input$managerGames)
@@ -40,42 +88,47 @@ observe({
   # if(is.null(input$managerGames)) return()
   print(paste(input$teamA,"managers"))
   
-teamRecord <- ppgManagerTeamStint  %>% 
+  teamRecord <- ppgManagerTeamStint  %>% 
+    
+    select(TEAMNAME,name,ManagerTeam,games,ppg) %>% 
+    inner_join(allManagerStints) %>% 
+    filter(TEAMNAME==input$teamA&games>=input$managerGames) 
   
-  select(TEAMNAME,name,ManagerTeam,games,ppg) %>% 
-  inner_join(allManagerStints) %>% 
-  filter(TEAMNAME==input$teamA&games>=input$managerGames) 
-
-#teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
-
-teamRecord <- teamRecord %>% 
-  mutate(id=row_number())
-
-
-  all_values <- function(x) {
-    if(is.null(x)) return(NULL)
-    row <- teamRecord[teamRecord$id == x$id,c("games","ppg")]
-    #paste0(names(row),": ", format(row), collapse = "<br />")
-    paste0( names(row),": ",format(row), collapse = "<br />") 
-  }
-
-
-
-minY <- min(teamRecord$ppg)-0.1
-maxY <- max(teamRecord$ppg)+0.1
-
-#library(ggrepel) # unsuccesful attempt
-teamRecord %>% 
-  ggvis(x =~ Joined,y=~ppg+0.01,fill = "687a97",key := ~id) %>% 
-  layer_rects(x2=~Left,y2=~ppg-0.01) %>% 
-  layer_text(text:=~name, stroke:="red") %>% 
-  scale_numeric("y",domain=c(minY,maxY)) %>% 
-  ggvis::add_axis("x", title=" ") %>% 
-  ggvis::add_axis("y", title="Av Points per Game") %>% 
-  add_tooltip(all_values,"hover") %>% 
-  #hide_legend(c("fill","stroke")) %>%  Warning: Error in hide_legend: unused argument (c("fill", "stroke"))
-  bind_shiny("managerPPGbyTeam")
+  #teamRecord  <- cbind(teamRecord, id = seq_len(nrow(teamRecord)))
+  
+  teamRecord <- teamRecord %>% 
+    mutate(id=row_number())
+  
+ 
+  
+  
+  minY <- min(teamRecord$ppg)-0.1
+  maxY <- max(teamRecord$ppg)+0.1
+  
+  plot_ly(teamRecord, color = I("gray80")) %>%
+    add_segments(x = ~Joined, xend = ~Left, y = ~ppg, yend = ~ppg, showlegend = FALSE) %>% 
+    add_markers(x = ~Joined, y = ~ppg,  color = I("green"), showlegend = FALSE,
+                hoverinfo="text",
+                text=~paste0(" ",name,"<br>From:",Joined,"<br>Games:",games,
+                             "<br>ppg:",ppg)) %>%
+    add_markers(x = ~Left, y = ~ppg, color = I("blue"), showlegend = FALSE,
+                hoverinfo="text",
+                text=~paste0(" ",name,"<br>To:",Left,"<br>Games:",games,
+                             "<br>ppg:",ppg)) %>%
+    add_annotations(x = teamRecord$Joined,
+                    y = teamRecord$ppg,
+                    text = teamRecord$name,
+                    xref = "x",
+                    yref = "y",
+                    showarrow = TRUE,
+                    arrowhead = 1,
+                    arrowsize = .3,
+                    ax = 40,
+                    ay = -10)  %>% 
+    layout(xaxis=list(title=""),
+           yaxis=list(title="Points per Game" ))
 })
+
 
 
 output$liverpool <- renderText({

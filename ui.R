@@ -87,7 +87,7 @@ dashboardPage(
         
         
       ),
-      bookmarkButton(),
+      ##bookmarkButton(), this showed on every page but only referred to front page resuts
       tags$hr(),
       menuItem(
         text = "",href = "https://mytinyshinys.shinyapps.io/dashboard",badgeLabel = "All Dashboards and Trelliscopes (14)"
@@ -164,6 +164,7 @@ dashboardPage(
                     collapsible = T,collapsed = T,
                     includeMarkdown("whatsNew.md")
                   )
+                #  bookmarkButton(id = "bm1") # issue with milestone - error gets reported
                 ),
                 column(
                   width = 8,
@@ -173,42 +174,16 @@ dashboardPage(
                     collapsible = T,collapsed = T,
                     DT::dataTableOutput("teamLeadersCurrent")
                   ),
-                  # box(width=12,height= "1000px",collapsible = T,collapsed = F,
-                  # solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
-                  # footer = "Unlike official Statistics, up to two assists are allowed per goal",
-                  # inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
-                  #            selectInput("teamYears_ppg",label=NULL,seasonChoice)
-                  # ),
-                  #  plotlyOutput("playerByCountryPPG_hl")
-                  # )
-                  # box(width=12,height= "1000px",collapsible = T,collapsed = F,
-                  #     solidHeader = TRUE,status = 'warning',title="Latest App - PPG for Player by Country of Birth",
-                  #     footer = "Unlike official Statistics, up to two assists are allowed per goal",
-                  #     inputPanel(selectInput("country", label=NULL,selected="England", countryChoice),
-                  #                selectInput("teamYears_ppg",label=NULL,seasonChoice)
-                  #     ),
-                  #     plotlyOutput("playerByCountryPPG_hl")
-                  # )
-                  
-                  # box(
-                  #   width=12,collapsible = T,collapsed = F,
-                  #   solidHeader = TRUE,status = 'warning',title="Latest App - Finishing position alternate years given chosen year's data",
-                  #   footer = "Only 38 game seasons shown. Hover points for detail",
-                  #   inputPanel(
-                  #     selectInput("team_fp_front",NULL,teamsChoice,selected="Leicester C")
-                  #   ),
-                  #   uiOutput("teamYear_fp_front"),
-                  #   plotlyOutput("sp_finishingPos_front")
-                  # )
+
                   box(
-                    width=12,collapsible = T,collapsed = F,
-                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Age when first scoring for Manager",
+                    width=12,collapsible = T,collapsed = F, height=1000,
+                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Points v Current Top Clubs",
                     
                     inputPanel(
-                      selectInput("manager_fp", label=NULL,selected="Jose Mourinho", choices=managerChoice)
+                      selectInput("player_tc", label=NULL,selected="Sergio Aguero", choices=playerChoice,  selectize = FALSE)
                     ),
-                   
-                    plotOutput("managerPlayersAge_front")
+                    
+                    plotlyOutput("vTopClubs_front", height=600)
                   )
                 )
                   
@@ -217,10 +192,12 @@ dashboardPage(
       
       #managers
       tabItem("m_ppg",
-              box(title="Manager's Average points per game - Hover bar for more information",
+              box(title="Manager's Average points per game - Hover points for more information",
                   status = "success",
-              ggvisOutput("managerPPGbyTeam"),
-              textOutput("liverpool")
+             # ggvisOutput("managerPPGbyTeam"),
+              plotlyOutput("managerPPGbyTeam"),
+              textOutput("liverpool"),
+              bookmarkButton(id = "bm2")
               )),
       tabItem("m_players",
                       box(
@@ -615,7 +592,7 @@ dashboardPage(
           width = 6,
           title = "Standings",solidHeader = TRUE,status = 'success',
           collapsible = TRUE, collapsed = FALSE,
-          DT::dataTableOutput("st_round")
+          DT::dataTableOutput("st_roundTable")
         )
       ),
       tabItem(
