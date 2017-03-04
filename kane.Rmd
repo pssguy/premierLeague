@@ -1,0 +1,112 @@
+---
+title: "How Good is Harry Kane"
+output: html_notebook
+runtime: shiny
+---
+
+Harry Kane trudged off the pitch on 2nd March 2014 as a late substitute. It was his eigth appearance for Spurs and he had yet to score or help create any goals for his team. He was  - at that age players like. Ahead of him in the Spurs pecking order were Adeabyor and Soldado
+However in a busy month, Spurs lost league games against the top 3 Chelsea Arsenal and Liverpool and slipped from 5th and an outside chance of Champons league football to 6th 8 points behind a fourth placed Arsenal and sporting a season goal difference
+of -4.  By then he was  
+Given a start at home against Sunderland he obliged with the go ahead goal against Sunderland and also scored in the following two games. Since that debut goal, his 66 is 3 more than Aguero with no other player at the timwe of writing reaching the half century mark
+It was not all plain sailing though. New boss Pochetino appeared to prefera loans triker Adebayor and the only goal he picked up until November was at the wrong end as a late own goal against Sunderland cost his team the win. Since then, however apart from a couple of dry spells 
+
+Lat time out he scored a hatrick and lais on the other goal against Stoke statistically his best ever game
+
+![](/images/kane.png)
+
+Let's see how he stacks up against some of the best goalscorers in Premier League history
+
+
+```{r}
+
+library(plotly)
+library(tidyverse)
+
+goals <- readRDS("goals.rds")
+assists <- readRDS("assists.rds")
+playerGame <- readRDS("playerGame.rds")
+
+```
+
+
+With 17 league goals already , it would be a surprise if he did not reach the 20 goal mark for a third season in a row
+how rare t=is that
+
+```{r}
+
+
+playerGame %>% 
+  group_by(name,PLAYERID,season) %>% 
+  summarise(totGls=sum(Gls)) %>% 
+  filter(totGls>19&PLAYERID!="OWNGOAL") %>%
+  ungroup() %>% 
+  select(-PLAYERID,player=name,season,Goals=totGls) %>% 
+  arrange(season) %>% 
+  DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = TRUE, searching = TRUE,info=FALSE))
+
+```
+
+NB In 1995/96 the season was reduced permenantly from 42 to 38 games
+In 24 seasons, it has been accomplished 65 times by 38 different players. Only 5 players Aguero, Ferdinand, Henry Shearer and van Nistelrooy have done it on least three occasions with just the latter 3 performing the level in three consecutive years (though Aguero may join them this season)
+
+Alan Shearer recently stated that he has a chance to overhaul hi, - get quote
+
+
+How young was Kane when he scored his first goal. Hover over the chart for player name and zoom in
+
+```{r}
+
+# split off 
+kane <-playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(Gls>0&PLAYERID=="KANEH") %>% 
+  slice(1)
+
+playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(Gls>0&PLAYERID!="OWNGOAL") %>% 
+  group_by(PLAYERID) %>% 
+  slice(1) %>% 
+  plot_ly(x=~gameDate,y=~age) %>% 
+  add_markers(name="All Scorers", opacity=0.5,
+              hoverinfo="text",
+              text=~paste0(name," ",round(age,2),'yrs<br>',
+                           gameDate," ",TEAMNAME)) %>% 
+  add_markers(data=kane, color=I('red'), name="Harry Kane",
+              hoverinfo="text",
+              text=~paste0(name," ",round(age,2),'yrs')) %>% 
+  layout(
+    title="Age scoring first EPL goal. Hover For Player info",
+    xaxis=list(title=""),
+    yaxis=list(title="Age")
+  )  %>% 
+  config(displayModeBar = F,showLink = F) 
+
+
+```
+
+So Kane is relatively young, but nothing special for an out and out striker. Overall around 300 players have scored at a younger age but  Serge Gbnabry was well over two years younger when he scored his first gaol in the same season but the Arsenal forward but did not add to that tally in the Premier League before moving, successfully to the Bundesliga in the summer of 2016
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+temp <-playerGame %>% 
+select(name,PLAYERID,Gls,age,mins,Assists) %>% 
+group_by(PLAYERID) %>% 
+mutate(cumAssists=cumsum(Assists),cumGls=cumsum(Gls),cumMins=cumsum(mins),mpg=round(cumMins/cumGls,1))
+
+topScorersAge <- temp %>% 
+  filter(age<=23.584&cumGls>=66) %>% 
+  select(PLAYERID) %>% 
+  unique() %>% 
+  .$PLAYERID
+
+```
+
