@@ -1,23 +1,31 @@
 ---
-title: "How Good is Harry Kane"
+title: "Just how Good is Harry Kane"
 output: html_notebook
+date: 2017-03-07
 runtime: shiny
 ---
 
-Harry Kane trudged off the pitch on 2nd March 2014 as a late substitute. It was his eigth appearance for Spurs and he had yet to score or help create any goals for his team. He was  - at that age players like. Ahead of him in the Spurs pecking order were Adeabyor and Soldado
-However in a busy month, Spurs lost league games against the top 3 Chelsea Arsenal and Liverpool and slipped from 5th and an outside chance of Champons league football to 6th 8 points behind a fourth placed Arsenal and sporting a season goal difference
-of -4.  By then he was  
-Given a start at home against Sunderland he obliged with the go ahead goal against Sunderland and also scored in the following two games. Since that debut goal, his 66 is 3 more than Aguero with no other player at the timwe of writing reaching the half century mark
-It was not all plain sailing though. New boss Pochetino appeared to prefera loans triker Adebayor and the only goal he picked up until November was at the wrong end as a late own goal against Sunderland cost his team the win. Since then, however apart from a couple of dry spells 
+> Harry Kane could break Premier League goals record'
+> Alan Shearer (260 PL goals)
 
-Lat time out he scored a hatrick and lais on the other goal against Stoke statistically his best ever game
+Harry Kane trudged off the pitch on 2nd March 2014 as a late substitute. It was his eigth appearance for Spurs in the league and he had yet to score or help create any goals for his team. He was turning 21 before the next season started and at his age a career in the Premier League was in the balance. Ahead of him in the Spurs pecking order were internationals, Adeabyor and Soldado   
 
-![](/images/kane.png)
+However, in a busy month, Spurs lost league games against the top three; Chelsea, Arsenal and Liverpool and slipped from 5th - and an outside chance of Champons league football - to 6th, 8 points behind a fourth placed Arsenal and sporting a season goal difference of -4.  
+
+Given a start at home against Sunderland he obliged with the go ahead goal and also scored in the following two games. It was not all plain sailing though. New boss Pochetino appeared to prefera loans triker Adebayor and the only goal he picked up until November was at the wrong end as a late own goal against Sunderland cost his team the win.
+
+Since then however, apart from a couple of dry spells he has been on fire  Since that debut goal, his 68 is 4 more than Aguero with no other player at the time of writing this article reaching the half century mark. The next Englishman on the list is Vardy with 36 and Kane is now a certainty for the National team for the forseeable future
+
+Two games ago he scored a hatrick and laid on the other goal against Stoke statistically his best ever game. Last time out it was a brace and he could genuinely say he should have again got the match ball 
+
+![](images/kane.png)
 
 Let's see how he stacks up against some of the best goalscorers in Premier League history
 
 
 ```{r}
+
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 
 library(plotly)
 library(tidyverse)
@@ -29,8 +37,9 @@ playerGame <- readRDS("playerGame.rds")
 ```
 
 
-With 17 league goals already , it would be a surprise if he did not reach the 20 goal mark for a third season in a row
-how rare t=is that
+With 19 league goals already, reaching  the 20 goal mark for a third season in a row is a given unless he suffers a serious injury
+
+How rare is that accomplishment?
 
 ```{r}
 
@@ -46,13 +55,13 @@ playerGame %>%
 
 ```
 
-NB In 1995/96 the season was reduced permenantly from 42 to 38 games
-In 24 seasons, it has been accomplished 65 times by 38 different players. Only 5 players Aguero, Ferdinand, Henry Shearer and van Nistelrooy have done it on least three occasions with just the latter 3 performing the level in three consecutive years (though Aguero may join them this season)
+**NB In 1995/96 the season was reduced permenantly from 42 to 38 games**    
 
-Alan Shearer recently stated that he has a chance to overhaul hi, - get quote
+In 24 seasons, it has been accomplished 65 times by 38 different players. Only 5 players Aguero, Ferdinand, Henry, Shearer and van Nistelrooy have done it on least three occasions with just the latter three achieving it in three consecutive years (though Aguero may join them this season)
 
+---
 
-How young was Kane when he scored his first goal. Hover over the chart for player name and zoom in
+How young was Kane when he scored his first goal? Hover over the chart for player name and zoom in
 
 ```{r}
 
@@ -85,28 +94,148 @@ playerGame %>%
 
 ```
 
-So Kane is relatively young, but nothing special for an out and out striker. Overall around 300 players have scored at a younger age but  Serge Gbnabry was well over two years younger when he scored his first gaol in the same season but the Arsenal forward but did not add to that tally in the Premier League before moving, successfully to the Bundesliga in the summer of 2016
+So Kane was relatively young, but nothing special for an out-and-out striker. Overall, around 300 players have scored at a younger age. Serge Gnabry, for example, was well over two years younger when he scored his first goal in the same season but the Arsenal forward did not add to that tally in the Premier League before moving to the Bundesliga in the summer of 2016
 
+---
 
-```{r}
-
-
-
-```
-
+Now let's have a look at the players who had scored more goals than him at his current age
 
 ```{r}
 
-temp <-playerGame %>% 
-select(name,PLAYERID,Gls,age,mins,Assists) %>% 
+
+kaneAge <-playerGame %>% 
+  arrange(desc(gameDate)) %>% 
+  filter(Gls>0&PLAYERID=="KANEH") %>% 
+  slice(1) %>% 
+  .$age
+
+kaneAge #Time difference of 23.60313 days - actually age in years
+
+# All players 
+cum_data <-playerGame %>% 
+select(name,PLAYERID,Gls,age,mins,Assists,gameDate) %>% 
 group_by(PLAYERID) %>% 
 mutate(cumAssists=cumsum(Assists),cumGls=cumsum(Gls),cumMins=cumsum(mins),mpg=round(cumMins/cumGls,1))
 
-topScorersAge <- temp %>% 
-  filter(age<=23.584&cumGls>=66) %>% 
-  select(PLAYERID) %>% 
-  unique() %>% 
-  .$PLAYERID
+cum_data %>% 
+  filter(PLAYERID=="KANEH") %>% 
+  arrange(desc(gameDate)) %>% 
+  slice(1) %>% 
+  select(age,cumGls)
+
+# slot in Kane's data as of 5th March 2017 but remove 2 goals to get Ronaldo in the comparison
+topYoungsters <- cum_data %>% 
+  filter(age<=23.60313&cumGls>=66) %>% 
+  select(PLAYERID,name) %>% 
+  unique() 
+
+topYoungsters$name
 
 ```
 
+So we are now down to just four other players, plus Ronaldo who just misses out. Let's chart the goal progression over their career
+
+```{r}
+
+cum_data %>% 
+  filter(PLAYERID %in% topYoungsters$PLAYERID) %>% 
+  plot_ly(x=~age, y=~cumGls,color=~name,
+          hoverinfo="text",
+          text=~paste0(name,"<br>Age:", round(age,1),"<br>Goals:",cumGls)) %>% 
+  add_lines() %>% 
+  layout(title="Career goalscoring of youngest players to 66 goals",
+xaxis=list(title="Age"),
+yaxis=list(title="Goals")) %>% 
+  config(displayModeBar = F,showLink = F)
+
+```
+
+
+By the age at which Kane recorded his first Premier league goal, the Liverpool pair Owen and Fowler were already over the 50 goal mark. Kane has since scored at a faster rate than all of them.  
+
+At 23.6 years, Owen now led the pack with over 100 but persistent injuries meant that he did not reach the 150 mark until he was 33. Fowler had a not dissimilar career path; Ronaldo left for pastures new; and Rooney may struggle to reach the 200 mark unless he moves to a less fashionable team. Lukaku, 10 weeks older, remains his closest rival, currently
+
+---
+
+How about players who scored more rapidly at the start of their premier league career, irrespective of age
+
+```{r}
+
+topScorersMins <- cum_data %>% 
+  filter(cumMins<=8464&cumGls>=68&PLAYERID!="OWNGOAL") %>% 
+  select(PLAYERID,name) %>% 
+  unique()
+
+topScorersMins$name
+## add a couple more for comparison
+henry <-  cum_data %>% 
+  filter(PLAYERID=="HENRYT") %>% 
+  select(PLAYERID,name) %>% 
+  unique()
+
+torres <-  cum_data %>% 
+  filter(PLAYERID=="TORRESF") %>% 
+  select(PLAYERID,name) %>% 
+  unique()
+
+topScorersMins <- rbind(topScorersMins,henry,torres)
+
+cum_data %>% 
+  filter(PLAYERID %in% topScorersMins$PLAYERID) %>% 
+  plot_ly(x=~cumMins,y=~mpg) %>% 
+  add_lines(color=~name,
+            hoverinfo="text",
+            text=~paste0(name,"<br>Age:",round(age,1),
+                         "<br>mpg:", mpg)) %>%
+  layout(
+  yaxis=list(title="Minutes per goal", autorange="reversed")
+) %>% 
+  config(displayModeBar = F,showLink = F)
+
+```
+
+Again, I have had to add a couple of players who just missed the criteria to get a better chart. You will probably need to zoom in for clarity.
+
+Interestingly, other than Henry, the other players all came to the Premier League as established stars (Shearer from Division 1 before the PL was formed). 
+
+Obviously, there is greater variablity in their rate of scoring initially and you may need to zoom in to get a cleare picture but the precipitous drop off in Torres form is clear and Kane's rate may also exceed van Nistelrooy's by the time he clocks 10,000 minutes on the pitch
+
+Aguero currently holds the record as best scoring rate in PL history but, as can be seen, he is at a very similar rate to Shearer at this stage of his career (and older) and may end up much closer to him and Henry if he stays in the UK and gradually declines in performance
+
+---
+
+The other major criteria for measuring a striker's performance is the number of assists he provides. Let's look at all
+players who have scored at least 50 goals
+
+```{r}
+
+fiftyGoals <-cum_data %>% 
+  filter(cumGls>49&PLAYERID!="OWNGOAL") %>% 
+  arrange(desc(gameDate)) %>% 
+  group_by(PLAYERID) %>% 
+  slice(1)
+
+kane <- fiftyGoals %>% 
+  filter(PLAYERID=="KANEH")
+
+fiftyGoals%>% 
+  plot_ly(x=~cumGls,y=~cumAssists) %>% 
+  add_markers(hoverInfo="text", name="All Others",
+              text=~paste0(name,
+                           "<br>Goals: ",cumGls,
+                           "<br>Assists: ",cumAssists)) %>% 
+  add_markers(data=kane,x=~cumGls,y=~cumAssists,color=I("red"), name="Harry Kane",
+              hoverInfo="text",
+              text=~paste0(name,
+                           "<br>Goals: ",cumGls,
+                           "<br>Assists: ",cumAssists)) %>% 
+  layout(
+    title="Goals and Assists of Leading EPL goalscorers",
+    xaxis=list(title="Goals"),
+    yaxis=list(title="Assists")
+  ) %>%  config(displayModeBar = F,showLink = F)
+
+
+```
+
+**N.B. Unlike official data, I allow up to two assists per goal**
