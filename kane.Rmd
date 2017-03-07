@@ -5,16 +5,17 @@ date: 2017-03-07
 runtime: shiny
 ---
 
-> Harry Kane could break Premier League goals record'
+> Harry Kane could break Premier League goals record
+
 > Alan Shearer (260 PL goals)
 
 Harry Kane trudged off the pitch on 2nd March 2014 as a late substitute. It was his eigth appearance for Spurs in the league and he had yet to score or help create any goals for his team. He was turning 21 before the next season started and at his age a career in the Premier League was in the balance. Ahead of him in the Spurs pecking order were internationals, Adeabyor and Soldado   
 
 However, in a busy month, Spurs lost league games against the top three; Chelsea, Arsenal and Liverpool and slipped from 5th - and an outside chance of Champons league football - to 6th, 8 points behind a fourth placed Arsenal and sporting a season goal difference of -4.  
 
-Given a start at home against Sunderland he obliged with the go ahead goal and also scored in the following two games. It was not all plain sailing though. New boss Pochetino appeared to prefera loans triker Adebayor and the only goal he picked up until November was at the wrong end as a late own goal against Sunderland cost his team the win.
+Given a start at home against Sunderland he obliged with the go ahead goal and also scored in the following two games. It was not all plain sailing though. Next seasons's new boss, Mauricio Pochettino, appeared to prefer a lone striker in Adebayor and the only goal Kane picked up until November was at the wrong end as a late own goal against Sunderland cost his team the win.
 
-Since then however, apart from a couple of dry spells he has been on fire  Since that debut goal, his 68 is 4 more than Aguero with no other player at the time of writing this article reaching the half century mark. The next Englishman on the list is Vardy with 36 and Kane is now a certainty for the National team for the forseeable future
+Since then however, apart from a couple of dry spells he has been on fire  Since that debut goal, his 68 is 4 more than Aguero with no other EPL player at the time of writing this article reaching the half century mark. The next Englishman on the list is Vardy with 36 and Kane is now a certainty for the National team for the forseeable future
 
 Two games ago he scored a hatrick and laid on the other goal against Stoke statistically his best ever game. Last time out it was a brace and he could genuinely say he should have again got the match ball 
 
@@ -33,6 +34,7 @@ library(tidyverse)
 goals <- readRDS("goals.rds")
 assists <- readRDS("assists.rds")
 playerGame <- readRDS("playerGame.rds")
+standings <- readRDS("standings.rds")
 
 ```
 
@@ -204,6 +206,30 @@ Aguero currently holds the record as best scoring rate in PL history but, as can
 
 ---
 
+We can also measure the impact Kane scoring has on the team's result
+
+```{r}
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="KANEH"&START==6) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+
+
+as.data.frame(table(outcome)) %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2), Games=(Draw+Loss+Win)) %>%
+  select(Goals_Scored=Gls,Win,Draw,Loss,ppg,Games) %>% 
+ DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+```
+
+Kane has scored in 45 league games as a starter of which Spurs have lost just two. I'd say he was pretty important. Only Ronaldo(56) and Pires(50) have played more games with just two or fewer losses. Interestingly, Darius Vassell scored and started  in 43 games for Aston Villa and Manchester City without ever being on the losing side!
+
+---
+
 The other major criteria for measuring a striker's performance is the number of assists he provides. Let's look at all
 players who have scored at least 50 goals
 
@@ -231,7 +257,7 @@ fiftyGoals%>%
                            "<br>Assists: ",cumAssists)) %>% 
   layout(
     title="Goals and Assists of Leading EPL goalscorers",
-    xaxis=list(title="Goals"),
+    xaxis=list(title="Goals", rangemode="tozero"),
     yaxis=list(title="Assists")
   ) %>%  config(displayModeBar = F,showLink = F)
 
@@ -239,3 +265,9 @@ fiftyGoals%>%
 ```
 
 **N.B. Unlike official data, I allow up to two assists per goal**
+
+The upper left quadrant of the chart is peopled by midfielders such as Giggs and Gerrard with longevity on their side. Players like Shearer, Fowler and Owen scored 2-3x as often as they provided assists whilst, for example, Henry and Rooney are much closer to a one to one ratio. of course the latter, in particular, played with some excellent goal scorers and has only topped United's goal scoring charts in five of his thirteen seasons. His major contemporary, Lukaku has 43 goals to go along with 78 goals whilst Kane has a mere 25 - though the rate per minute has progressively increased by season
+
+As anyone who witnesses his play, as soon as he has sight of goal he puts his laces through the ball and aims for the corner. Whether this will change over time remains to be seen but most of Spurs other goals during his tenure have come from midfielders like Chadli, Eriksen and Alli. His partnership with the younger Alli is clearly crucial if Spurs are to win the Premier League
+
+---
