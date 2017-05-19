@@ -1,7 +1,7 @@
   #updates SQL and creates rds tables that can go directly to global
   
   #NB change milestone date each week and should be first date of round as we are using it for less than
-  milestoneDate <- "2016-11-05"
+  milestoneDate <- "2017-05-16"
   
   library(RODBC)
   
@@ -17,7 +17,7 @@
   
   library(dplyr)
   
-  #setwd("C:/Users/pssguy/Documents/R/premierLeague")
+  # setwd("C:/Users/pssguy/Documents/R/premierLeague")
   
   channel <- odbcConnect("eplR")
   
@@ -101,11 +101,14 @@
      "
   ),stringsAsFactors=F)
   
+  saveRDS(assists,"assists.rds")
+  
   odbcClose(channel)
   
   conn <- dbConnect(SQLite(), dbname = "pss.sqlite3")
   dbGetInfo(conn)
-  dbListTables(conn) #[1] "assists"     "goals"       "match"       "matchTeam"   "playerClub"  "playerMatch" "players"     "teams" 
+  dbListTables(conn)# 1] "assists"     "goals"       "managers"    "match"       "matchTeam"   "playerClub"  "playerMatch"
+#  [8] "players"     "teams"   MANAGERS AND TEAMS ARE NEW
   
   if(dbExistsTable(conn, "managers")){
     dbRemoveTable(conn, "managers")
@@ -199,7 +202,7 @@
   
   ##### ?? is there playerMatch.subOn looks like ON also HOME/AWAY instead of venue
   playerGame <- tbl_df(dbGetQuery(conn, "SELECT  players.FIRSTNAME, players.LASTNAME, players.BIRTHDATE,players.PLACE as city,players.COUNTRY,players.POSITION,     match.DATE,matchTeam.TEAMMATCHID,match.MATCHID,matchTeam.venue,teams.TEAMNAME,
-                                  playerMatch.START, playerMatch.[OFF], playerMatch.subOn, playerMatch.GOALS,  playerClub.PLAYERID, playerClub.FEE,playerClub.PERMANENT, playerClub.LEFT,playerClub.JOINED,
+                                  playerMatch.START, playerMatch.[OFF], playerMatch.subOn, playerMatch.GOALS,  playerClub.PLAYERID, playerClub.FEE,playerClub.PERMANENT, playerClub.LEFT,playerClub.JOINED,playerClub.PLAYER_TEAM,
                                   playerMatch.PENS, playerMatch.CARD, playerMatch.OwnGoal, playerMatch.MissedPenalty,playerMatch.PLAYER_MATCH
                                   
                                   FROM players INNER JOIN
@@ -871,13 +874,14 @@
   ## standings for league tables
   
   oppGames <- teamGames %>%
+    ungroup() %>% # added mid-may 2017
     select(MATCHID,GA=GOALS,OppTeam=TEAMNAME) %>%
     inner_join(teamGames)
   
   allMatches <-oppGames[oppGames$TEAMNAME!=oppGames$OppTeam,]
   
   allMatches <- allMatches %>%
-    select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID)
+    select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID,OppTeam) # addded Oppteam march 2017
   allMatches$points <- 3
   allMatches[allMatches$GF==allMatches$GA,]$points <- 1
   allMatches[allMatches$GF<allMatches$GA,]$points <- 0
@@ -1277,11 +1281,19 @@
     filter(METHOD=="Right") %>%
     summarise(Right=n())
   
-  Method_team_ag <- data.frame(teamSeason %>% 
+  # until mid may 2017
+  # Method_team_ag <- data.frame(teamSeason %>% 
+  #                                select(season,opponent=team) %>%
+  #                                left_join(right_team_ag) %>%
+  #                                left_join(left_team_ag) %>%
+  #                                left_join(head_team_ag))
+  
+  Method_team_ag <- teamSeason %>% 
+                                  ungroup() %>% 
                                  select(season,opponent=team) %>%
                                  left_join(right_team_ag) %>%
                                  left_join(left_team_ag) %>%
-                                 left_join(head_team_ag))
+                                 left_join(head_team_ag)
   #str(Method_team_for)
   
   if (nrow(Method_team_ag[is.na(Method_team_ag$Head),])>0) {
@@ -1311,11 +1323,20 @@
     filter(PLACE=="Long_Range") %>%
     summarise(LongRange=n())
   
-  Place_team_ag <- data.frame(teamSeason %>%
+  ## original caused error mid-may 2017
+  # Place_team_ag <- data.frame(teamSeason %>%
+  #                               select(season,opponent=team) %>%
+  #                               left_join(SixYd_team_ag) %>%
+  #                               left_join(PenArea_team_ag) %>%
+  #                               left_join(LongRange_team_ag))
+  
+  
+  Place_team_ag <- teamSeason %>%
+                                ungroup() %>% 
                                 select(season,opponent=team) %>%
                                 left_join(SixYd_team_ag) %>%
                                 left_join(PenArea_team_ag) %>%
-                                left_join(LongRange_team_ag))
+                                left_join(LongRange_team_ag)
   
   if (nrow(Place_team_ag[is.na(Place_team_ag$PenArea),])>0) {
     Place_team_ag[is.na(Place_team_ag$PenArea),]$PenArea <- 0 
@@ -1357,15 +1378,26 @@
     filter(PLAY=="Penalty") %>%
     summarise(Pen=n())
   
+  # up until mid may 2017
+  # Play_team_ag <- data.frame(teamSeason %>%
+  #                              select(season,opponent=team) %>%
+  #                              left_join(Open_team_ag ) %>%
+  #                              left_join(Corner_team_ag ) %>%
+  #                              left_join(Throw_team_ag ) %>%
+  #                              left_join(IFK_team_ag ) %>%
+  #                              left_join(DFK_team_ag ) %>%
+  #                              left_join(Pen_team_ag ))
   
-  Play_team_ag <- data.frame(teamSeason %>%
+  Play_team_ag <- teamSeason %>%
+                               ungroup() %>% 
                                select(season,opponent=team) %>%
+                               
                                left_join(Open_team_ag ) %>%
                                left_join(Corner_team_ag ) %>%
                                left_join(Throw_team_ag ) %>%
                                left_join(IFK_team_ag ) %>%
                                left_join(DFK_team_ag ) %>%
-                               left_join(Pen_team_ag ))
+                               left_join(Pen_team_ag )
   
   if (nrow(Play_team_ag[is.na(Play_team_ag$Open),])>0) {
     Play_team_ag[is.na(Play_team_ag$Open),]$Open <- 0 
@@ -1573,15 +1605,17 @@
     group_by(PLAYERID,name) %>% 
     tally() 
   
-  newIds <- setdiff(tw$PLAYERID,lw$PLAYERID) # could be zero
+  newIds <- setdiff(tw$PLAYERID,lw$PLAYERID) # could be zero mid may 2017 error has lesniaf
   newName <- setdiff(tw$name,lw$name)
   
   
   
-  newPlayers <- data.frame(PLAYERID=newIds,name=newName,n=0)
-  if (length(newIds) >0) lw <- rbind(lw,newPlayers)
+  newPlayers <- data.frame(PLAYERID=newIds,name=newName,n=0) #this has playerid and neame as factors and n as dbl so rbind screws up mid may 2017
+  newPlayers <- data.frame(PLAYERID=newIds,name=newName,n=0L,stringsAsFactors = FALSE) %>% as.tbl() # dont think this makes diff
   
+ # if (length(newIds) >0) lw <- rbind(lw,newPlayers) changed mid may 2017
   
+  if (length(newIds) >0) lw <- bind_rows(lw,newPlayers) 
   
   dd <- diff_data(tw,lw) #s
   write_diff(dd, "diff.csv")
@@ -1845,6 +1879,7 @@
   saveRDS(goalSeqsClub,"goalSeqsClub.rds")
   saveRDS(hth,"hth.rds")
   saveRDS(goalSeqTeam,"goalSeqTeam.rds")
+  
   
   #Sys.time() # takes 15 secs- seems quicker in browser
   
