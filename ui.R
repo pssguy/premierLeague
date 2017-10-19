@@ -1,3 +1,4 @@
+function(request) {
 dashboardPage(
   title = "BPL",
   skin = "yellow",
@@ -28,7 +29,7 @@ dashboardPage(
         "Teams", tabName = "teams",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "tm_glance"),
         menuSubItem("Player Summary",tabName = "tm_playerSummary"),
-       # menuSubItem("League Position",tabName = "tm_leaguePosition"), NB need to look at code
+        # menuSubItem("League Position",tabName = "tm_leaguePosition"), NB need to look at code
         menuSubItem("Goals",tabName = "tm_goals"),
         menuSubItem("Team Leaders",tabName = "tm_leaders"),
         menuSubItem("Head to Head",tabName = "tm_hth"),
@@ -43,10 +44,11 @@ dashboardPage(
         menuSubItem("At A Glance", tabName = "pl_glance"),
         menuSubItem("By Opposition",tabName = "pl_opponent"),
         menuSubItem("Career Summary", tabName = "pl_career"),
+        menuSubItem("Droughts", tabName = "pl_droughts", icon = icon("star")),
         menuSubItem("Goal Details", tabName = "pl_goals"),
         menuSubItem("Points per Game", tabName = "pl_ppg"),
         menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
-       
+        
       ),
       
       menuItem(
@@ -66,21 +68,21 @@ dashboardPage(
       menuItem(
         "Specials", tabName = "specials", 
         menuSubItem("Best Goal Sequences",tabName = "sp_plGoalSeqs"),
-      #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
+        #  menuSubItem("Birthplace",tabName = "sp_birthplace"),
         menuSubItem("Cards Per Club",tabName = "sp_cardsClub"),
         menuSubItem("Deficits Overcome",tabName = "sp_deficits"),
         menuSubItem("Games Since Goal Tally",tabName = "sp_tmGoalsSince"),
         menuSubItem("Leading GoalScorers",tabName = "sp_goalScorers"),
         menuSubItem("League position - Alternates",tabName = "sp_finishingPos"),
-       # menuSubItem("Manager by Player",tabName = "sp_managerplayer", 
-       #            icon = icon("star")),
+        # menuSubItem("Manager by Player",tabName = "sp_managerplayer", 
+        #            icon = icon("star")),
         menuSubItem("Percent Full Games",tabName = "sp_pcFullGames"),
         menuSubItem("Player % Goals by Category",tabName = "sp_pcPlayerGoals"),
         menuSubItem("Player by Team av PPG",tabName = "sp_playerByTeamPPG"),
         menuSubItem("Played for 2 clubs",tabName = "sp_twoClubs"),
         menuSubItem("Player Comparisons",tabName = "sp_comparisons"),
         menuSubItem("Player PPG by Country of Birth",tabName = "sp_playerByCountryPPG"),
-        menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
+        #menuSubItem("Results By Game Span",tabName = "sp_resSpan"),
         menuSubItem("Scored On",tabName = "sp_scoredOn"),
         # menuSubItem("Year on Year Changes",tabName = "sp_yearOnYear"),
         menuSubItem("Youngest Players",tabName = "sp_youngest")
@@ -88,7 +90,11 @@ dashboardPage(
         
       ),
       ##bookmarkButton(), this showed on every page but only referred to front page resuts
-      tags$hr(),
+      
+      # menuItem(
+      #   text = "",href = "https://www.mytinyshinys.com/categories/eplweekly/",badgeLabel = "Premier League Weekly"
+      # ),
+     
       menuItem(
         text = "",href = "https://mytinyshinys.shinyapps.io/dashboard",badgeLabel = "All Dashboards and Trelliscopes (14)"
       ),
@@ -109,7 +115,12 @@ dashboardPage(
         a(
           href = "https://rpubs.com/pssguy",target = "_blank",img(src = "images/RPubs25px.png")
         )
+      ),
+      tags$hr(),
+      menuItem(
+        text = "",href = "https://www.mytinyshinys.com/categories/eplweekly/",badgeLabel = "Interactive Blog posts after every round",badgeColor = "maroon"
       )
+      
     )
   ),
   
@@ -138,33 +149,33 @@ dashboardPage(
                     width = 12,
                     status = "success",solidHeader = TRUE,title = "Player Milestones",
                     collapsible = T,collapsed = F,
-                    DT::dataTableOutput("playerMilestones")
-                  ),
-                  box(
-                    width = 12,
-                    status = "success",solidHeader = TRUE,title = "Twitter Feed",
-                    collapsible = T,collapsed = T,
-                    tags$body(
-                      includeScript("twitter.js"),
-                      
-                      
-                      a(
-                        "Soccer", class = "twitter-timeline",
-                        width = "320",
-                        href = "https://twitter.com/pssGuy/timelines/524678699061641216",
-                        "data-widget-id" = "524686407298596864",
-                        "data-chrome" = "nofooter transparent noheader"
-                      )
-                    )
-                    
-                  ),
-                  box(
-                    width = 12, class = "information",
-                    status = "success",solidHeader = TRUE,title = "What's New",
-                    collapsible = T,collapsed = T,
-                    includeMarkdown("whatsNew.md")
-                  )
-                #  bookmarkButton(id = "bm1") # issue with milestone - error gets reported
+                   DT::dataTableOutput("playerMilestones")
+                  )#,
+                  # box(
+                  #   width = 12,
+                  #   status = "success",solidHeader = TRUE,title = "Twitter Feed",
+                  #   collapsible = T,collapsed = T,
+                  #   tags$body(
+                  #     includeScript("twitter.js"),
+                  #     
+                  #     
+                  #     a(
+                  #       "Soccer", class = "twitter-timeline",
+                  #       width = "320",
+                  #       href = "https://twitter.com/pssGuy/timelines/524678699061641216",
+                  #       "data-widget-id" = "524686407298596864",
+                  #       "data-chrome" = "nofooter transparent noheader"
+                  #     )
+                  #   )
+                  #   
+                  # ),
+                  # box(
+                  #   width = 12, class = "information",
+                  #   status = "success",solidHeader = TRUE,title = "What's New",
+                  #   collapsible = T,collapsed = T,
+                  #   includeMarkdown("whatsNew.md")
+                  # )
+                  #  bookmarkButton(id = "bm1") # issue with milestone - error gets reported
                 ),
                 column(
                   width = 8,
@@ -174,19 +185,43 @@ dashboardPage(
                     collapsible = T,collapsed = T,
                     DT::dataTableOutput("teamLeadersCurrent")
                   ),
+                  
+                  # box(
+                  #   width=12,collapsible = T,collapsed = F, height=1000,
+                  #   solidHeader = TRUE,status = 'warning',title="Latest App - Players Points v Current Top Clubs",
+                  #   
+                  #   inputPanel(
+                  #     selectInput("player_tc", label=NULL,selected="Sergio Aguero", choices=playerChoice,  selectize = FALSE)
+                  #   ),
+                  #   
+                  #   plotlyOutput("vTopClubs_front", height=600)
+                  # )
 
+                  # box(
+                  #    width=12,collapsible = T,collapsed = F,
+                  #    solidHeader = TRUE,status = 'warning',title="Latest App - Players Goal Droughts",
+                  # 
+                  #    inputPanel(
+                  #    selectInput("playerB", label="Type Name and Select", choices=playerChoice, selected = "RASHFOM") #selected = values$playerID object 'values' not found # here if you change anybody from rashford then that will be held  for other data on player but then cannot change 
+                  #    ),
+                  # 
+                  #    plotlyOutput("goalDrought_pl_front")
+                  #  )
+                  # 
+                  
                   box(
-                    width=12,collapsible = T,collapsed = F, height=1000,
-                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Points v Current Top Clubs",
+                    width=12,collapsible = T,collapsed = F,
+                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Assist Droughts",
                     
                     inputPanel(
-                      selectInput("player_tc", label=NULL,selected="Sergio Aguero", choices=playerChoice,  selectize = FALSE)
+                      selectInput("playerB", label="Type Name and Select", choices=playerChoice, selected = "ERIKSEC") #selected = values$playerID object 'values' not found # here if you change anybody from rashford then that will be held  for other data on player but then cannot change 
                     ),
                     
-                    plotlyOutput("vTopClubs_front", height=600)
+                    plotlyOutput("assistDrought_pl_front")
                   )
-                )
                   
+                )
+                
                 
               )),
       
@@ -194,18 +229,18 @@ dashboardPage(
       tabItem("m_ppg",
               box(title="Manager's Average points per game - Hover points for more information",
                   status = "success",
-             # ggvisOutput("managerPPGbyTeam"),
-              plotlyOutput("managerPPGbyTeam"),
-              textOutput("liverpool"),
-              bookmarkButton(id = "bm2")
+                  # ggvisOutput("managerPPGbyTeam"),
+                  plotlyOutput("managerPPGbyTeam"),
+                  textOutput("liverpool"),
+                  bookmarkButton() # switched to no id at least initially
               )),
       tabItem("m_players",
-                      box(
-                          status = "success",
-                          plotOutput("managerPlayersAge")
-                      )
+              box(width=12,
+                status = "success",
+                plotOutput("managerPlayersAge")
+              )
       ),
-              
+      
       
       ## Player Section
       
@@ -252,7 +287,7 @@ dashboardPage(
           box(
             title = "EPL Finishing Positions",width = 4,height = 375,solidHeader = TRUE,status = 'success',
             
-            plotOutput("seasonsHist")
+            column(width=12,plotOutput("seasonsHist"))
           ),
           box(
             title = "Top LineUp",width = 2,solidHeader = TRUE,status = 'success',
@@ -290,7 +325,7 @@ dashboardPage(
               
               fluidRow(
                 box(
-                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary ",
+                  width = 12,status = "success",solidHeader = TRUE,title = "Player Summary (PPG = Points+Assists per 90 Minutes) ",
                   inputPanel(
                     radioButtons(
                       "withClub","Players",choices = c("All","Current"),inline = TRUE
@@ -382,8 +417,8 @@ dashboardPage(
           # # revamped version of plotly - but seems to work ok without any change?
           # plotlyOutput("x", width = 400, height = 250, inline = T),
           # htmltools::div(style = "display:inline-block", plotlyOutput("x", width = 400, height = 250)),
-
-
+          
+          
           plotlyOutput("heatResults"),
           h4("Click on a cell in the heatmap to display table of results")
           
@@ -400,7 +435,7 @@ dashboardPage(
         box(
           solidHeader = TRUE,status = 'success',
           title="Goal Timeline",
-         # collapsible = T,collapsed = F,
+          # collapsible = T,collapsed = F,
           height=200,
           
           
@@ -562,11 +597,11 @@ dashboardPage(
           title = "Points Range by Games played - Click plot for Season standings",solidHeader = TRUE,status = 'success',
           div(
             style = "display:inline-block; padding-right: 20px;", sliderInput(
-            "st_boxGames","Games Played", min = 1,max = 42, value = currentRound, width='300px')
+              "st_boxGames","Games Played", min = 1,max = 42, value = currentRound, width='300px')
           ),
           div(
             style = "display:inline-block; padding-right: 20px;", sliderInput(
-            "st_boxPositions","Team Positions", min = 1,max = 22, value = c(1,20), width='300px')
+              "st_boxPositions","Team Positions", min = 1,max = 22, value = c(1,20), width='300px')
           ),
           div(
             actionButton("boxButton","get Chart")
@@ -579,12 +614,12 @@ dashboardPage(
           
           plotlyOutput("st_BoxSeason")
         )#,
-#         box(
-#          # width = 6,height = 600,
-#           #collapsed = F,collapsible = T,
-#           #exploding_boxplotOutput("test", width = "100%", height = "400px"),
-#           exploding_boxplotOutput("st_explodingBoxAll")
-#         )
+        #         box(
+        #          # width = 6,height = 600,
+        #           #collapsed = F,collapsible = T,
+        #           #exploding_boxplotOutput("test", width = "100%", height = "400px"),
+        #           exploding_boxplotOutput("st_explodingBoxAll")
+        #         )
       ),
       tabItem(
         "st_round",
@@ -690,8 +725,8 @@ dashboardPage(
             box(
               width = 12,title = "Permanent Transfers (hover for details)",solidHeader = TRUE,status = 'success',
               collapsible = TRUE, collapsed = FALSE,
-             # tauchartsOutput("playerTransfers_tau", height = "250px")
-             plotlyOutput("playerTransfers_plotly" , height = "250px")
+              # tauchartsOutput("playerTransfers_tau", height = "250px")
+              plotlyOutput("playerTransfers_plotly" , height = "250px")
             )
           )
           
@@ -776,6 +811,20 @@ dashboardPage(
         )
       ),
       
+      
+      tabItem(
+        "pl_droughts",
+        box(
+          width = 12,height=400,title = "Goal Droughts",solidHeader = TRUE,status = 'success',
+          plotlyOutput("goalDrought_pl")
+        ),
+        box(
+          width = 12,height=400,title = "Assist Droughts",solidHeader = TRUE,status = 'success',
+          plotlyOutput("assistDrought_pl")
+        )
+      ),
+          
+      
       tabItem(
         "pl_goals",
         box(
@@ -808,17 +857,17 @@ dashboardPage(
           
         ))
       ),
-
-tabItem(
-  "pl_ppg",
-  box(
-    width = 12,title = "Goals and Assists by Game - Hover for details",solidHeader = TRUE,status = 'success',
-    collapsible = TRUE, collapsed = FALSE,
-    plotlyOutput("player_ppg")
-  )
-  ),
-
-
+      
+      tabItem(
+        "pl_ppg",
+        box(
+          width = 12,title = "Goals and Assists by Game - Hover for details",solidHeader = TRUE,status = 'success',
+          collapsible = TRUE, collapsed = FALSE,
+          plotlyOutput("player_ppg")
+        )
+      ),
+      
+      
       tabItem(
         "pl_seqs_goals",
         box(
@@ -898,7 +947,7 @@ tabItem(
           )
     ),
     
-    
+    # needs relook
     tabItem(
       "sp_resSpan",
       box(
@@ -940,8 +989,8 @@ tabItem(
       )
     ),
     
-## taken out as causing error- may want to switch from ggvis
-
+    ## taken out as causing error- may want to switch from ggvis
+    
     tabItem(
       "sp_youngest",
       box(
@@ -950,12 +999,13 @@ tabItem(
         collapsible = T,collapsed = F,
         helpText(
           "Reece Oxford made an impressisve debut as West Ham's youngest ever Premier League Player but his predecessor
-          never played an EPL game again. Click for Team. Hover for Details"
+          never played an EPL game again.  Hover for Details"
         ),
         selectInput(
           "teamD", label = NULL,teamsChoice,selected = "West Ham U" , width = 150
         ),
         ggvisOutput("sp_ageRecord")
+      # plotlyOutput("sp_ageRecord")
         )
     ),
     tabItem(
@@ -969,18 +1019,18 @@ tabItem(
         ggvisOutput("sp_comparisons")
       )
     ),
-tabItem(
-  "sp_playerByCountryPPG",
-  box(
-    width = 12,
-    status = "success",solidHeader = TRUE,title = "PPG for Player by Country of Birth",
-    footer = "Unlike official Statistics, up to two assists are allowed per goal",
-    collapsible = T,collapsed = F,
-    plotlyOutput("sp_playerByCountryPPG")
-    
-   
-  )
-),
+    tabItem(
+      "sp_playerByCountryPPG",
+      box(
+        width = 12,
+        status = "success",solidHeader = TRUE,title = "PPG for Player by Country of Birth",
+        footer = "Unlike official Statistics, up to two assists are allowed per goal",
+        collapsible = T,collapsed = F,
+        plotlyOutput("sp_playerByCountryPPG")
+        
+        
+      )
+    ),
     tabItem("sp_scoredOn",
             fluidRow(
               column(
@@ -1014,7 +1064,7 @@ tabItem(
     
     tabItem(
       "sp_plGoalSeqs",
-     
+      
       box(
         title = "Best Goal Scoring Sequence (hover for player details, zoom and pan)", solidHeader = TRUE,status = 'success',
         footer = "Data is jittered to make players more easily identifiable",
@@ -1122,7 +1172,7 @@ tabItem(
         plotlyOutput("pcFullGames")
       ),
       box(
-        title = "Player Appearances - Hover point for Details", solidHeader = TRUE,status = 'success',
+        title = "Player Appearances - Hover point for Details - 99 indicated unknown time", solidHeader = TRUE,status = 'success',
         width = 6,
         
         plotlyOutput("pcFullGamesDets")
@@ -1151,19 +1201,19 @@ tabItem(
         plotlyOutput("pcPlayerGoals")
       )
     ),
-
-
-tabItem(
-  "sp_playerByTeamPPG",
- # plotlyOutput("playerByTeamPPG")
-  
-   box( width= 6,
-    # title = "Proportion of Player Goals by Category", footer = "Pan and Zoom. Points are jittered for clarity. Hover points for detail",
-     solidHeader = FALSE,status = 'success',
-     footer="Beta Development", height= "800px",
-     plotlyOutput("playerByTeamPPG")
-   )
-),
+    
+    
+    tabItem(
+      "sp_playerByTeamPPG",
+      # plotlyOutput("playerByTeamPPG")
+      
+      box( width= 6,
+           # title = "Proportion of Player Goals by Category", footer = "Pan and Zoom. Points are jittered for clarity. Hover points for detail",
+           solidHeader = FALSE,status = 'success',
+           footer="Beta Development", height= "800px",
+           plotlyOutput("playerByTeamPPG")
+      )
+    ),
     
     tabItem(
       "sp_deficits",
@@ -1175,37 +1225,37 @@ tabItem(
         plotlyOutput("relegationOvercome")
       )
     ),
-
-tabItem(
-  "sp_cardsClub",
-  
-  
-  box(
-    solidHeader = FALSE,status = 'success',
-    footer = "Hover points for detail",
-    inputPanel(
-      selectInput("team_cpc",NULL,teamsChoice,selected="Tottenham H")
-    ),
-    uiOutput("teamYear_cpc"),
-    plotlyOutput("sp_cardsClub")
-  )
-),
     
-tabItem(
-  "sp_finishingPos",
-  
-  
-  box(
-    solidHeader = FALSE,status = 'success',
-    title="Latest App - Finishing position alternate years given chosen year's data",
-    footer = "Only 38 game seasons shown. Hover points for detail",
-    inputPanel(
-      selectInput("team_fp",NULL,teamsChoice,selected="Leicester C")
+    tabItem(
+      "sp_cardsClub",
+      
+      
+      box(
+        solidHeader = FALSE,status = 'success',
+        footer = "Hover points for detail",
+        inputPanel(
+          selectInput("team_cpc",NULL,teamsChoice,selected="Tottenham H")
+        ),
+        uiOutput("teamYear_cpc"),
+        plotlyOutput("sp_cardsClub")
+      )
     ),
-    uiOutput("teamYear_fp"),
-    plotlyOutput("sp_finishingPos")
-  )
-),
+    
+    tabItem(
+      "sp_finishingPos",
+      
+      
+      box(
+        solidHeader = FALSE,status = 'success',
+        title="Finishing position alternate years given chosen year's points tally",
+        footer = "Only 38 game seasons shown. Hover points for detail",
+        inputPanel(
+          selectInput("team_fp",NULL,teamsChoice,selected="Leicester C")
+        ),
+        uiOutput("teamYear_fp"),
+        plotlyOutput("sp_finishingPos")
+      )
+    ),
     
     tabItem("info", includeMarkdown("info.md"))
     
@@ -1218,3 +1268,4 @@ tabItem(
       ) # tabItems
       ) # body
   ) # page
+}

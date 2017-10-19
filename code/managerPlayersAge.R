@@ -28,21 +28,39 @@ for (i in 1:nrow(stints)) {
 }
 
 
+# 
+# young<-df %>% 
+#   filter(mins>0&Gls>0) %>% #2992
+#   select(name,PLAYERID,age,gameDate,TEAMNAME,LASTNAME) %>% 
+#   arrange(gameDate,age) %>% 
+#   group_by(gameDate) %>% 
+#   slice(1) %>% 
+#   ungroup()  %>% 
+#   mutate(age = as.numeric(age),cumminAge=cummin(age)) %>% 
+#   group_by(name,PLAYERID) %>% 
+#   slice(1) %>% 
+#   mutate(label=paste0(LASTNAME," ",round(age,2))) %>% 
+#   rename(Team=TEAMNAME) %>% 
+#   mutate(alpha=ifelse(age==cumminAge,0.8,0.2)) %>% ## not working yet
+#   arrange(gameDate) 
+
 
 young<-df %>% 
   filter(mins>0&Gls>0) %>% #2992
-  select(name,PLAYERID,age,gameDate,TEAMNAME,LASTNAME) %>% 
+  select(name,PLAYERID,age,gameDate,TEAMNAME,LASTNAME,PLAYER_TEAM) %>% 
   arrange(gameDate,age) %>% 
-  group_by(gameDate) %>% 
+  group_by(gameDate,PLAYER_TEAM) %>% 
   slice(1) %>% 
   ungroup()  %>% 
   mutate(age = as.numeric(age),cumminAge=cummin(age)) %>% 
-  group_by(name,PLAYERID) %>% 
+  group_by(name,PLAYERID,PLAYER_TEAM) %>% ### 
   slice(1) %>% 
   mutate(label=paste0(LASTNAME," ",round(age,2))) %>% 
   rename(Team=TEAMNAME) %>% 
   mutate(alpha=ifelse(age==cumminAge,0.8,0.2)) %>% ## not working yet
   arrange(gameDate) 
+
+#write_csv(young,"problem.csv")
 
 info=list(young=young)
 return(info)
@@ -61,19 +79,28 @@ title <- paste0("Players age when first scoring for ",input$manager," in Premier
 print(input$manager)
 print(managerData()$young)
 
-write_csv(managerData()$young,"problem.csv")
+#write_csv(managerData()$young,"problem.csv")
 
 p <- ggplot(managerData()$young, aes(gameDate, round(age,2), label = label))
 
 
+# p + geom_text_repel(aes(colour = factor(Team))) +
+#  theme(axis.title.x = element_blank()) +   # Remove x-axis label
+#   ylab("Age")            + 
+#   ggtitle(title)    +
+#   #theme(legend.title=element_blank()) + 
+#   theme_fivethirtyeight() +  
+#   scale_color_fivethirtyeight() +  # only 3 colors
+#   theme(legend.title=element_blank()) 
+
+
 p + geom_text_repel(aes(colour = factor(Team))) +
- theme(axis.title.x = element_blank()) +   # Remove x-axis label
+  theme(axis.title.x = element_blank()) +   # Remove x-axis label
   ylab("Age")            + 
   ggtitle(title)    +
-  #theme(legend.title=element_blank()) + 
-  theme_fivethirtyeight() +  
-  scale_color_fivethirtyeight() +
-  theme(legend.title=element_blank()) 
+  theme_bw() +  
+  scale_color_discrete() +   # only has 3 colrs by look of it
+  theme(legend.title=element_blank())
 
 })
 

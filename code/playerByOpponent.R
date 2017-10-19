@@ -153,7 +153,7 @@ pboData <- reactive({
           layout(barmode = "stack",
                  xaxis=list(title=""),
                  yaxis=list(title="Goals and Assists"),
-                 margin=list(b=70))
+                 margin=list(b=100))
   
 })
 
@@ -175,7 +175,7 @@ output$plOpponentSummary <- DT::renderDataTable({
     arrange(desc(gameDate)) %>% 
     inner_join(standings,by = c("gameDate" = "gameDate","Opponents"="OppTeam")) %>% 
     mutate(res=paste0(GF,"-",GA)) %>%
-    select(gameDate,TEAMNAME,res,st,on,off,Gls,Assists,CARD) %>% 
+    select(gameDate,TEAMNAME,res,st,on,offA,Gls,Assists,CARD) %>% 
     DT::datatable(class='compact stripe hover row-border',colnames = c('Date', 'Team','Res ', 'St', 'On', 'Off', 'Gls', 'Ass','Card'),rownames=FALSE,options= list(pageLength = 8, searching = FALSE,info=FALSE))
   
 })

@@ -13,20 +13,20 @@ library(RSQLite)
 library(lubridate)
 library(stringr)
 library(markdown)
-library(tidyr)
+#library(tidyr)
 library(shinyBS)
 library(scales)
-library(ggplot2)
+#library(ggplot2)
 library(ggrepel)
 library(leaflet)
 library(rCharts)
 library(shinythemes)
 library(DT)
-library(readr)
+#library(readr)
 library(ggmap)
 library(rgdal)
-library(choroplethr)
-library(choroplethrMaps)
+#library(choroplethr) removed as requirement tigris was causing deployment issue
+#library(choroplethrMaps)
 library(taucharts)
 library(daff)
 library(plotly)
@@ -35,10 +35,17 @@ library(explodingboxplotR)
 library(beeswarm) # just for test
 #library(addins)
 library(feather)
+library(bsplus)
 
-library(dplyr)
+use_bs_tooltip()
+use_bs_popover()
+#library(purrr)
+#library(dplyr)
+library(tidyverse)
 
 enableBookmarking(store = "url")
+
+#enableBookmarking(store = "server")
 
 positions <- read_csv("positions.csv") ##
 playerGame <- readRDS("playerGame.rds") # reducing columns would help - though might be offset by calcs needed later
@@ -63,12 +70,15 @@ goalSeqs <- readRDS("goalSeqs.rds")
 goalSeqsClub <- readRDS("goalSeqsClub.rds")
 allPlayers <- readRDS("allPlayers.rds")
 hth <- readRDS("hth.rds")
+goalSeqTeam <- readRDS("goalSeqTeam.rds")
+assists <- readRDS("assists.rds")
+teamCodes <- readRDS("teamCodes.rds")
 
-
-teamCodes <- teamGames %>% 
-  ungroup() %>% 
-  select(TEAMNAME,TEAMID) %>% 
-  unique()
+# switched to updating sql
+# teamCodes <- teamGames %>% 
+#   ungroup() %>% 
+#   select(TEAMNAME,TEAMID) %>% 
+#   unique()
 
 ## playerid name and lat/lon
 # pgMini <- playerGame %>%  ## so wil only show those that have made an appearance - but that is prob ok
@@ -89,8 +99,14 @@ pgMini <- playerGame %>%  ## so wil only show those that have made an appearance
 write_csv(pgMini,"pgMini.csv")
 
     
+# playerChoice <- pgMini$PLAYERID
+# names(playerChoice) <- pgMini$name  
+
+pgMini <- pgMini %>% 
+  arrange(name)
+
 playerChoice <- pgMini$PLAYERID
-names(playerChoice) <- pgMini$name
+names(playerChoice) <- pgMini$name  
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
 teamsChoice_2 <- c("All Teams",teamsChoice)
@@ -262,5 +278,40 @@ subSeq <- function (x, item = NULL) {
   }
   ans
 }
+
+## switched from manager ppg
+managers[is.na(managers$Left),"Left"] <- as.Date(Sys.Date(), origin= '1970-01-01') #
+
+managerGame <-managers %>% 
+  mutate(name=paste(FirstName,Lastname)) %>% 
+  group_by(ManagerID,ManagerTeam) %>% 
+  inner_join(standings,by=c("TEAMNAME"="team")) %>% 
+  select(Lastname,FirstName,name,ManagerID,ManagerTeam,Joined,Left,TEAMNAME,gameDate,res,GF,GA,position) %>% 
+  filter(gameDate>=as.Date(Joined)&gameDate<=as.Date(Left)) %>% 
+  mutate(points=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+  ungroup()
+
+
+
+ppgManagerTeamStint <- managerGame %>% 
+  group_by(TEAMNAME,ManagerID,ManagerTeam,name) %>% 
+  dplyr::summarise(sumPoints=sum(points),games=n(),ppg=round(sumPoints/games,2)) %>% 
+  ungroup()
+
+
+
+
+allManagerStints <- 
+  managerGame %>% 
+  select(name,ManagerTeam,Joined,Left) %>% 
+  unique()
+
+
+
+## artificial start date for those hired before PL existed
+allManagerStints[allManagerStints$Joined<="1992-08-15","Joined"] <- "1992-08-15"
+
+
+
 
 print("end global")

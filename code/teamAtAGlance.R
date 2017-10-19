@@ -145,7 +145,7 @@ output$seasonsHist <- renderPlot({
 df <-  teamData()$test 
 print("a")
 # condition for showing bolder color ie current season
-cond <- df$season =="2016/17"
+cond <- df$season =="2017/18"
 #set pretty scales - function does not work
 ## set p
 print("b")
@@ -165,7 +165,7 @@ p <- ggplot(df, aes(x=final_Pos)) +
  # scale_y_continuous(breaks=pretty_breaks()) +
   scale_y_discrete(breaks= seq(0,theMax)) +
   theme_bw() +
-  xlab("Position (2016/7 in bold)") +
+  xlab("Position (2017/8 in bold)") +
   ylab("Seasons")
 print("d")
 p

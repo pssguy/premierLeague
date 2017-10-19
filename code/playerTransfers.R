@@ -40,14 +40,17 @@ output$playerTransfers_plotly <- renderPlotly({
     write_csv(transfers,"loan.csv")
     return(NULL) # this works but does not replace previous plot
   }
-  transfers <-transfers %>% 
+  transfers %>% 
     select(name,joined,FEE,TEAMNAME) %>% 
     unique() %>% 
-    mutate(Cost=ifelse(FEE==0,0,FEE/1000000)) %>% 
-    rename(Fee=FEE,Team=TEAMNAME,Date=joined) %>% 
+    mutate(Cost=ifelse(FEE==0,0,FEE/1000)) %>% 
+    rename(Fee=Cost,Team=TEAMNAME,Date=joined) %>% 
     arrange(Date) %>% 
     plot_ly() %>% 
-    add_markers(x=~Date, y=~Fee,color=~as.factor(Team),marker=list(size=10))
+    add_markers(x=~Date, y=~Fee,color=~as.factor(Team),marker=list(size=10))  %>% 
+    layout(yaxis=list(title="Fee Million Pounds"),
+           xaxis=list(title="")
+    ) %>%  config(displayModeBar = F,showLink = F)
   
   
 })

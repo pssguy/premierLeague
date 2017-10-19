@@ -6,8 +6,8 @@ output$relegationOvercome <- renderPlotly({
     standings %>%
     filter(season > "1994/95")
   
-  modern %>%
-    select(team, cumPts, final_Pos, season, tmYrGameOrder, position)
+  # modern %>%
+  #   select(team, cumPts, final_Pos, season, tmYrGameOrder, position)
   
   
   ## look at 17th place which would need to exceed so that number +1
@@ -18,7 +18,7 @@ output$relegationOvercome <- renderPlotly({
   
   stayUp <- modern %>%
     left_join(safeSpot) %>%
-    select(final_Pos, team, tmYrGameOrder, cumPts, position, pts) %>%
+    select(final_Pos, team, tmYrGameOrder, cumPts, position, pts, season) %>%
     mutate(diff = cumPts - pts - 1) %>%
     ## only teams that have survived relegation and been below 18th at some point
     filter(final_Pos < 18 & position > 17)  %>%
@@ -36,7 +36,7 @@ output$relegationOvercome <- renderPlotly({
     slice(1) %>%
     ungroup() %>%
     mutate(deficit = -diff) %>%
-    filter(season < "2016/17")
+    filter(season < "2017/18")
   
   df %>%
     plot_ly() %>%
@@ -61,6 +61,7 @@ output$relegationOvercome <- renderPlotly({
     layout(
       hovermode = "closest",
       title = "Biggest points deficit overcome in 38 game PL season",
+      margin=list(b=80),
       xaxis = list(
         title = "",
         tickfont = list(size = 10),

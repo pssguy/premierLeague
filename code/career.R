@@ -19,7 +19,7 @@ careerData <- reactive({
   
   dfChart <- playerGame %>% 
     filter(PLAYERID==thePlayer) %>% 
-    select(date=gameDate,Opponents,on,off,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID) %>% 
+    select(date=gameDate,Opponents,on,off=offA,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID) %>% 
     mutate(points=Goals+Assists)
   
 #  #print(glimpse(dfChart))
@@ -102,7 +102,8 @@ output$careerChart <- renderPlotly({
   #   ) %>% 
   #   config(displayModeBar = F,showLink = F)
   # 
-  
+
+  write_csv(careerData()$dfChart,"problem.csv")  
   
   careerData()$dfChart %>% 
     plot_ly() %>% 
@@ -159,7 +160,7 @@ output$pointsByYearChart <- renderPlotly({
     mutate(Gpm=90*Goals/Mins,Apm=90*Assists/Mins,Ppm=90*Points/Mins) %>% 
     ungroup() 
   
-  write_csv(df,"problem.csv")
+ #write_csv(df,"problem.csv")
 #   
 #   df %>% 
 #     tauchart() %>% 

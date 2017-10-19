@@ -96,7 +96,7 @@ output$hthTable <- DT::renderDataTable({
  print(str(info()$tbl))
   info()$tbl %>% 
     select(-Pts) %>% 
-    DT::datatable(rownames=TRUE,selection='single',options= list(paging = FALSE, searching = FALSE,info=FALSE))
+    DT::datatable(rownames=TRUE,selection='single',options= list(paging = TRUE, searching = TRUE,info=FALSE))
   
 })
 
@@ -116,7 +116,7 @@ output$hthFixtures <- DT::renderDataTable({
   
   tm1 <-  teamGames %>% 
     filter(TEAMNAME==input$teamA) %>% 
-    select(MATCHID,venue,TEAMNAME,GF=GOALS,gameDate)
+    select(MATCHID,venue,TEAMNAME,GF=GOALS,gameDate,season)
   
   tm2 <-  teamGames %>% 
     filter(TEAMNAME==team) %>% 
@@ -126,7 +126,7 @@ output$hthFixtures <- DT::renderDataTable({
     inner_join(tm2,by=c("MATCHID")) %>% 
     ungroup() %>% 
     arrange(desc(gameDate)) %>% 
-    select(season=season.x,date=gameDate,venue,GF,GA) -> fixtures
+    select(season,date=gameDate,venue,GF,GA) -> fixtures
   
   print(glimpse(fixtures))
   

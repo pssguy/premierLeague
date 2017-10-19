@@ -51,6 +51,7 @@ output$pcFullGames <- renderPlotly({
   output$selection <- renderPrint({
    # s <- cv$get()
     s <- event_data("plotly_click")
+   
     print(s)
     if (length(s) == 0) {
       "Click on a cell in the heatmap to display a scatterplot"
@@ -61,8 +62,10 @@ output$pcFullGames <- renderPlotly({
   })
   
   output$pcFullGamesDets <- renderPlotly({
-   # s <- cv$get()
+   
     s <- event_data("plotly_click")
+    print("printing s key")
+   
     if (length(s)==0) return()
     
     df <- fullGamesdata()$df
@@ -70,7 +73,7 @@ output$pcFullGames <- renderPlotly({
     
   dets <- playerGame %>% 
     filter(PLAYERID==s[["key"]]) %>% 
-    select(gameDate,Opponents,on,off,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID,name) %>% 
+    select(gameDate,Opponents,on,off=offA,Goals=Gls,Assists,Team=TEAMNAME,mins,plGameOrder,PLAYERID,name) %>% 
     mutate(points=Goals+Assists)
   
   theTitle <- unique(dets$name)

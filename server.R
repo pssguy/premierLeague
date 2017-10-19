@@ -1,15 +1,30 @@
 ## try setting reactive values here for keeping player
 ## needs to have an observeevent as well
 values <- reactiveValues()
- values$playerID <- "BENTD" 
- #values$TEAMNAME <- "Arsenal" 
- values$TEAMNAME <- NULL
+# values$playerID <- "BENTD" # no longer takes effect is this shiny ( no looks like putting front page on for player droughts is reason that stays
+ values$TEAMNAME <- "Chelsea" # does take effect
+ values$playerID <- "BENTD"
+# values$TEAMNAME <- NULL
  values$Opponents <- NULL
  values$MATCHID <- NULL
 
  values$teamYears <- NULL
  
+ # https://blog.rstudio.org/2017/04/05/shiny-1-0-1/ other option for reactive values
+ 
 shinyServer(function(input, output, session) {
+  
+  
+  # # Need to exclude the buttons from themselves being bookmarked
+  # setBookmarkExclude(c("bm1","bm2"))
+  # 
+  # # Trigger bookmarking with either button
+  # observeEvent(input$bm1, {
+  #   session$doBookmark()
+  # })
+  # observeEvent(input$bm2, {
+  #   session$doBookmark()
+  # })
   
   ## set up input menu in sidebar
   output$a <- renderUI({
@@ -60,6 +75,9 @@ shinyServer(function(input, output, session) {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_goals") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
+    } else if (input$sbMenu=="pl_droughts") {
+      print(" right menu")
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_ppg") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_glance") {
@@ -82,19 +100,20 @@ shinyServer(function(input, output, session) {
   })
   
  
-  
+  # this no longer changes and defaults toADrian anyways or what appears first? eg front page
   observeEvent(input$playerA,{
-    
+    print("enter observeEvent(input$playerA,{")
     values$playerID <- input$playerA
-  
+    print(values$playerID)
   })
   
+  # this changes with every diff entry as expected 
   observeEvent(input$teamA,{
     print("enter observeEvent(input$teamA,{")
     values$TEAMNAME <- input$teamA
     print(values$TEAMNAME)
     
-  })
+  }) # if add once = TRUE the reverst back to default afeter one change - prob dont want
   
   
   # observeEvent(input$teamYears,{
@@ -142,7 +161,7 @@ shinyServer(function(input, output, session) {
   output$teamYear_fp <- renderUI({
     
     yrs <- sort(unique(tmYrs[tmYrs$team==input$team_fp,]$season),decreasing = T)
-    noGoYears <- c("1992/93","1993/94","1994/95","2016/17") # cannot have incomplete years
+    noGoYears <- c("1992/93","1993/94","1994/95","2017/18") # cannot have incomplete years
     yrs <-  setdiff(yrs,noGoYears)
     
     inputPanel(selectInput("teamYear_fp",label=NULL,yrs, selected=yrs[1]))
@@ -152,13 +171,14 @@ shinyServer(function(input, output, session) {
   output$teamYear_fp_front <- renderUI({
     
     yrs <- sort(unique(tmYrs[tmYrs$team==input$team_fp_front,]$season),decreasing = T)
-    noGoYears <- c("1992/93","1993/94","1994/95","2016/17")  #cannot have incomplete years
+    noGoYears <- c("1992/93","1993/94","1994/95","2017/18")  #cannot have incomplete years
     yrs <-  setdiff(yrs,noGoYears)
     
     inputPanel(selectInput("teamYear_fp_front",label=NULL,yrs, selected=yrs[1]))
     
   })
   
+  # may be redundant - anyway is duplicate causing problem
   output$c <- renderUI({
     if (input$sbMenu=="st_round") {
       inputPanel(selectInput("seasonA",label=NULL,seasonChoice))
@@ -168,6 +188,8 @@ shinyServer(function(input, output, session) {
   ## may be able to simplify games inputs
   output$standings_ui <- renderUI({ 
     if (input$sbMenu=="st_round") {
+      print("enter st_roundUI")
+      print(currentRound)
       if (input$seasonA<"1995/96") {
         inputPanel(numericInput("gamesA","Games Played",min=1,max=42,step=1,value=42))
       } else {
@@ -673,6 +695,8 @@ shinyServer(function(input, output, session) {
   source("code/specials/cardsPerClub.R", local=TRUE)
   source("code/specials/finishingPos.R", local=TRUE)
   source("code/managerPlayersAge.R", local=TRUE)
+  source("code/specials/vTopClubs.R", local=TRUE)
+  source("code/playerDroughts.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

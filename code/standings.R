@@ -1,22 +1,23 @@
-output$st_round <- DT::renderDataTable({
+output$st_roundTable <- DT::renderDataTable({
 
-#   year <- "2014/15"
-#   games <- 38
-  
-  #if(is.null(input$gamesA)) return()
   req(input$gamesA)
   
-  
-  df <-  data.frame(standings %>%
-                      filter(season==input$seasonA&tmYrGameOrder==input$gamesA) %>%
-                      select(Pos=position,Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,GA=cumGA,Final=final_Pos)) %>% 
-    ungroup() %>% 
-    arrange(Pos) %>% 
-   # select(-season) %>% 
-    DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
-                  options= list(paging = FALSE, searching = FALSE,info=FALSE))
-                                                  
 
+  
+temp <- data.frame(standings %>%
+                      filter(season==input$seasonA&tmYrGameOrder==input$gamesA) %>%
+                      select(Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,GA=cumGA,Final=final_Pos)) %>% 
+    ungroup() 
+  #  arrange(Pos) 
+print(glimpse(temp))
+print("that was glimpse(temp)")
+write_csv(temp,"problem.csv") # although has attrs still seems to work ok in problems.R
+tab <-  temp %>% 
+    as.data.frame() %>% # another attempt to get this showing
+    DT::datatable(rownames=TRUE,class='compact stripe hover row-border',
+                  options= list(paging = FALSE, searching = FALSE,info=FALSE))
+                                                 
+tab
 }
 )
 

@@ -18,6 +18,8 @@
     mutate(cat=ifelse(res=="Win",1,0)) %>% 
     do(subSeq(.$cat))
   
+  write_csv(W,"prob_All.csv")
+  
   D <-standings %>% 
     ungroup() %>% 
     filter(team==input$teamA) %>% 
@@ -42,6 +44,8 @@
       mutate(cat=ifelse(res=="Win",1,0)) %>% 
       do(subSeq(.$cat))
     
+    write_csv(W,"prob_H.csv")
+    
     D <-standings %>% 
       ungroup() %>% 
       filter(team==input$teamA&venue=="H") %>% 
@@ -65,6 +69,8 @@
       select(res,tmGameOrder) %>% 
       mutate(cat=ifelse(res=="Win",1,0)) %>% 
       do(subSeq(.$cat))
+    
+    write_csv(W,"prob_A.csv")
     
     D <-standings %>% 
       ungroup() %>% 
@@ -371,215 +377,40 @@ p %>%
     
   })
 
-# output$tm_draws <- renderPlotly({
-#   
-#  # if(is.null(resData)) return()
-#   D <- resData()$D
-#   
-#   
-#   
-#  Draw <- D %>% 
-#     filter(value==1) %>% 
-#     group_by(slength) %>% 
-#     tally()
-#   
-#   
-#   
-#   
-#   if (tail(D,1)$value==1) {
-#     curr <- tail(D,1)$slength 
-#     Draw <-  Draw %>% 
-#       mutate(opacity=ifelse(slength==curr,1,0.3))
-#   } else {
-#     Draw$opacity <- 0.3
-#   }
-#   
-#  write_csv(Draw,"problemA.csv")
-#   
-#   
-#    plot_ly() %>% 
-#    add_bars(data=subset(Draw,opacity!=1.0),x=~slength,y=~n,showlegend=F,
-#             #group= ~slength, # could equally be slength
-#             hoverinfo="text",
-#             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#    add_bars(data=subset(Draw,opacity==1.0),x=~slength,y=~n,showlegend=F,
-#             #group= ~slength, # could equally be slength
-#             hoverinfo="text",
-#             text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#    layout(hovermode = "closest", title= "Draws",
-#           xaxis=list(title="Run"),
-#           yaxis=list(title="Count"
-#           )) %>% 
-#    config(displayModeBar = F,showLink = F)
-#   
-#   
-# })
-# 
-# ### native plotly
-# 
-# output$tm_noDraws <- renderPlotly({
-#  # if(is.null(resData)) return()
-#   D <- resData()$D
-#   
-#   
-#   
-#   Draw <- D %>% 
-#     filter(value==0) %>% 
-#     group_by(slength) %>% 
-#     tally()
-#   
-#   
-#   
-#   
-#   if (tail(D,1)$value==0) {
-#     curr <- tail(D,1)$slength 
-#     Draw <-  Draw %>% 
-#       mutate(opacity=ifelse(slength==curr,1,0.3))
-#   } else {
-#     Draw$opacity <- 0.3
-#   }
-#   
-#   
-#   
-#     plot_ly() %>% 
-#     add_bars(data=subset(Draw,opacity!=1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="text",
-#              text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     add_bars(data=subset(Draw,opacity==1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="text",
-#              text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     layout(hovermode = "closest", title= "No Draws",
-#            xaxis=list(title="Run"),
-#            yaxis=list(title="Count"
-#            )) %>% 
-#     config(displayModeBar = F,showLink = F)
-#   
-# })
-# 
-
-# output$tm_losses <- renderPlotly({
-#   
-#  # if(is.null(resData)) return()
-#   L <- resData()$L
-#   
-#   
-#   
-#   Loss <- L %>% 
-#     filter(value==1) %>% 
-#     group_by(slength) %>% 
-#     tally()
-#   
-#   
-#   
-#   
-#   if (tail(L,1)$value==1) {
-#     curr <- tail(L,1)$slength 
-#     Loss <-  Loss %>% 
-#       mutate(opacity=ifelse(slength==curr,1,0.3))
-#   } else {
-#     Loss$opacity <- 0.3
-#   }
-#   
-#   
-# 
-#     plot_ly() %>% 
-#     add_bars(data=subset(Loss,opacity!=1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="text",
-#              text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     add_bars(data=subset(Loss,opacity==1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="text",
-#              text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     layout(hovermode = "closest", title= "Losses",
-#            xaxis=list(title="Run"),
-#            yaxis=list(title="Count"
-#            )) %>% 
-#     config(displayModeBar = F,showLink = F)
-#   
-#   
-# })
-# 
-# ### native plotly
-# 
-# output$tm_noLosses <- renderPlotly({
-#   
-#  # if(is.null(resData)) return()
-#   L <- resData()$L
-#   
-#   
-#   
-#   Loss <- L %>% 
-#     filter(value==0) %>% 
-#     group_by(slength) %>% 
-#     tally()
-#   
-#   
-#   
-#   
-#   if (tail(L,1)$value==0) {
-#     curr <- tail(L,1)$slength 
-#     Loss <-  Loss %>% 
-#       mutate(opacity=ifelse(slength==curr,1,0.3))
-#   } else {
-#     Loss$opacity <- 0.3
-#   }
-#   
-#   
-#   plot_ly() %>% 
-#     add_bars(data=subset(Loss,opacity!=1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="text",
-#              text=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     add_bars(data=subset(Loss,opacity==1.0),x=~slength,y=~n,showlegend=F,
-#              #group= ~slength, # could equally be slength
-#              hoverinfo="textA",
-#              textA=~paste("Run:",slength,"<br> Count:",n)) %>% 
-#     layout(hovermode = "closest", title= "No Losses",
-#            xaxis=list(title="Run"),
-#            yaxis=list(title="Count"
-#            )) %>% 
-#     config(displayModeBar = F,showLink = F)
-#   
-#   
-#   
-#   
-#   
-# })
-# 
 
 
 output$tmWinSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
- write_csv(resData()$W,"problem.csv")
-  # could put in reactive but not sure worthwhile
+  
   long <- resData()$W %>% 
     filter(value==1) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
- 
+  
   if (input$seqVenue=="Home") {
-tbl <-  standings %>% 
-    ungroup() %>% 
-    filter(team==input$teamA&venue=="H")
- }  else if(input$seqVenue=="Away") {
-     tbl <-  standings %>% 
-       ungroup() %>% 
-       filter(team==input$teamA&venue=="A")  
-} else {
-  tbl <-  standings %>% 
-    ungroup() %>% 
+    tbl <-  standings %>% 
+      ungroup() %>% 
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
     
-    filter(team==input$teamA)
-}
-
- tbl %>% 
-#    mutate(gameOrder=row_number()) %>% 
-#  filter(gameOrder>=long$first&gameOrder<=long$last) %>% 
-   arrange(tmGameOrder) %>% 
-   filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+  }  else if(input$seqVenue=="Away") {
+    tbl <-  standings %>% 
+      ungroup() %>% 
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
+  } else {
+    tbl <-  standings %>% 
+      ungroup() %>% 
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
+  }
+  
+  tbl %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -591,34 +422,37 @@ tbl <-  standings %>%
 })
 
 output$tmNoWinSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
-  
   
   long <- resData()$W %>% 
-    filter(value==0) %>%  
+    filter(value==0) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
   
   if (input$seqVenue=="Home") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="H")
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
+    
   }  else if(input$seqVenue=="Away") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="A")  
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
   } else {
     tbl <-  standings %>% 
       ungroup() %>% 
-      
-      filter(team==input$teamA)
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
   }
   
   tbl %>% 
-    # mutate(gameOrder=row_number()) %>% 
-    # filter(gameOrder>=long$first&gameOrder<=long$last) %>% 
-    arrange(tmGameOrder) %>% 
-    filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -629,34 +463,41 @@ output$tmNoWinSeq <- DT::renderDataTable({
   
 })
 
+
+
+
 output$tmDrawSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
   
-  # could put in reactive but not sure worthwhile
   long <- resData()$D %>% 
     filter(value==1) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
   
-  
   if (input$seqVenue=="Home") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="H")
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
+    
   }  else if(input$seqVenue=="Away") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="A")  
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
   } else {
     tbl <-  standings %>% 
       ungroup() %>% 
-      
-      filter(team==input$teamA)
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
   }
   
   tbl %>% 
-    arrange(tmGameOrder) %>% 
-    filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -664,38 +505,42 @@ output$tmDrawSeq <- DT::renderDataTable({
                   
                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
-  
   
 })
 
+
 output$tmNoDrawSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
-  
   
   long <- resData()$D %>% 
-    filter(value==0) %>%  
+    filter(value==0) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
-  
   
   if (input$seqVenue=="Home") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="H")
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
+    
   }  else if(input$seqVenue=="Away") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="A")  
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
   } else {
     tbl <-  standings %>% 
       ungroup() %>% 
-      
-      filter(team==input$teamA)
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
   }
   
   tbl %>% 
-    arrange(tmGameOrder) %>% 
-    filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -703,39 +548,42 @@ output$tmNoDrawSeq <- DT::renderDataTable({
                   
                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
-  
   
 })
 
 
 output$tmLossSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
   
-  # could put in reactive but not sure worthwhile
   long <- resData()$L %>% 
     filter(value==1) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
   
-  
   if (input$seqVenue=="Home") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="H")
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
+    
   }  else if(input$seqVenue=="Away") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="A")  
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
   } else {
     tbl <-  standings %>% 
       ungroup() %>% 
-      
-      filter(team==input$teamA)
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
   }
   
   tbl %>% 
-    arrange(tmGameOrder) %>% 
-    filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -743,38 +591,42 @@ output$tmLossSeq <- DT::renderDataTable({
                   
                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
-  
   
 })
 
+
 output$tmNoLossSeq <- DT::renderDataTable({
-  #if(is.null(resData())) return()
-  
   
   long <- resData()$L %>% 
-    filter(value==0) %>%  
+    filter(value==0) %>%  # need to restrict to wins first
     filter(slength==max(slength)) %>% 
     tail(1)
-  
   
   if (input$seqVenue=="Home") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="H")
+      filter(team==input$teamA&venue=="H") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number()) 
+    
   }  else if(input$seqVenue=="Away") {
     tbl <-  standings %>% 
       ungroup() %>% 
-      filter(team==input$teamA&venue=="A")  
+      filter(team==input$teamA&venue=="A") %>% 
+      arrange(tmGameOrder) %>% 
+      mutate(theOrder=row_number())  
   } else {
     tbl <-  standings %>% 
       ungroup() %>% 
-      
-      filter(team==input$teamA)
+      arrange(tmGameOrder) %>% 
+      filter(team==input$teamA) %>% 
+      mutate(theOrder=row_number()) 
+    
   }
   
   tbl %>% 
-    arrange(tmGameOrder) %>% 
-    filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+    arrange(theOrder) %>% 
+    filter(theOrder>=long$first&theOrder<=long$last) %>% 
     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
     select(Opponents,Score,Date=gameDate) %>% 
     DT::datatable(class='compact stripe hover row-border',
@@ -783,5 +635,243 @@ output$tmNoLossSeq <- DT::renderDataTable({
                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
   
-  
 })
+
+
+
+
+# output$tmWinSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   write_csv(resData()$W,"problem.csv")
+#   # could put in reactive but not sure worthwhile
+#   long <- resData()$W %>% 
+#     filter(value==1) %>%  # need to restrict to wins first
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     #    mutate(gameOrder=row_number()) %>% 
+#     #  filter(gameOrder>=long$first&gameOrder<=long$last) %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+# })
+# 
+
+# output$tmNoWinSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   
+#   
+#   long <- resData()$W %>% 
+#     filter(value==0) %>%  
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     # mutate(gameOrder=row_number()) %>% 
+#     # filter(gameOrder>=long$first&gameOrder<=long$last) %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+# })
+
+# output$tmDrawSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   
+#   # could put in reactive but not sure worthwhile
+#   long <- resData()$D %>% 
+#     filter(value==1) %>%  # need to restrict to wins first
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+#   
+# })
+
+# output$tmNoDrawSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   
+#   
+#   long <- resData()$D %>% 
+#     filter(value==0) %>%  
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+#   
+# })
+# 
+# 
+# output$tmLossSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   
+#   # could put in reactive but not sure worthwhile
+#   long <- resData()$L %>% 
+#     filter(value==1) %>%  # need to restrict to wins first
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+#   
+# })
+# 
+# output$tmNoLossSeq <- DT::renderDataTable({
+#   #if(is.null(resData())) return()
+#   
+#   
+#   long <- resData()$L %>% 
+#     filter(value==0) %>%  
+#     filter(slength==max(slength)) %>% 
+#     tail(1)
+#   
+#   
+#   if (input$seqVenue=="Home") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="H")
+#   }  else if(input$seqVenue=="Away") {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       filter(team==input$teamA&venue=="A")  
+#   } else {
+#     tbl <-  standings %>% 
+#       ungroup() %>% 
+#       
+#       filter(team==input$teamA)
+#   }
+#   
+#   tbl %>% 
+#     arrange(tmGameOrder) %>% 
+#     filter(tmGameOrder>=long$first&tmGameOrder<=long$last) %>% 
+#     mutate(Score=paste0(GF,"-",GA),Opponents=ifelse(venue=="A",paste0("@ "," ",OppTeam),paste0("v ",OppTeam))) %>% 
+#     select(Opponents,Score,Date=gameDate) %>% 
+#     DT::datatable(class='compact stripe hover row-border',
+#                   rownames=FALSE,
+#                   
+#                   options= list(paging = FALSE, searching = FALSE, info=FALSE,
+#                                 columnDefs = list(list(className = 'dt-center', targets = 1))))
+#   
+#   
+# })

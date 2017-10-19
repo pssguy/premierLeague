@@ -16,22 +16,38 @@ output$player_ppg <- renderPlotly({
    games <- nrow(ppgPlayer)
   
   xTitle <- paste0("Appearance Order - Total ",games)
+  
+ # write_csv(ppgPlayer,"data/ppgPlayer.csv")
 
   ppgPlayer %>% 
     
-  plot_ly() %>% 
-    add_bars(x=~gameOrder, y=~Gls, name="Goals", 
-          hoverinfo="text",
-          text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
-    add_bars(x=~gameOrder,y=~Assists, name="Assists (inc secondary)", 
-              hoverinfo="text",
-              text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder))  %>%
+  plot_ly(x=~gameOrder) %>% 
+    add_bars(y=~Gls, name="Goals", 
+          hoverinfo="text", 
+          text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder,"<br>",mins ," mins")) %>%
+    add_bars(y=~Assists, name="Assists (inc secondary)", 
+              hoverinfo="text", 
+              text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder,"<br>",mins ," mins"))  %>%
     layout(hovermode = "closest", barmode="stack",
            
            xaxis=list(title=xTitle),
            yaxis=list(title="Points"),
            title=" Hover bar for details", titlefont=list(size=16)
     )
+  
+  # plot_ly() %>% 
+  #   add_bars(x=~gameOrder, y=~Gls, name="Goals", 
+  #            hoverinfo="text", showlegend = FALSE,
+  #            text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder,"<br>",mins ," mins")) %>%
+  #   add_bars(x=~gameOrder,y=~Assists, name="Assists (inc secondary)", 
+  #            hoverinfo="text", 
+  #            text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder,"<br>",mins ," mins"))  %>%
+  #   layout(hovermode = "closest", barmode="stack",
+  #          
+  #          xaxis=list(title=xTitle),
+  #          yaxis=list(title="Points"),
+  #          title=" Hover bar for details", titlefont=list(size=16)
+  #   )
   
 })
 
