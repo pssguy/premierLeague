@@ -42,6 +42,8 @@ use_bs_popover()
 #library(purrr)
 #library(dplyr)
 library(tidyverse)
+library(forcats)
+library(glue)
 
 enableBookmarking(store = "url")
 

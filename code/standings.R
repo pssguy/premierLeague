@@ -7,11 +7,12 @@ output$st_roundTable <- DT::renderDataTable({
 temp <- data.frame(standings %>%
                       filter(season==input$seasonA&tmYrGameOrder==input$gamesA) %>%
                       select(Team=team,Pl=tmYrGameOrder,Pts=cumPts,GD=cumGD,GF=cumGF,GA=cumGA,Final=final_Pos)) %>% 
-    ungroup() 
+    ungroup() %>% 
+    arrange(desc(Pts),desc(GD),desc(GF),Team)
   #  arrange(Pos) 
-print(glimpse(temp))
-print("that was glimpse(temp)")
-write_csv(temp,"problem.csv") # although has attrs still seems to work ok in problems.R
+# print(glimpse(temp))
+# print("that was glimpse(temp)")
+# write_csv(temp,"problem.csv") # although has attrs still seems to work ok in problems.R
 tab <-  temp %>% 
     as.data.frame() %>% # another attempt to get this showing
     DT::datatable(rownames=TRUE,class='compact stripe hover row-border',

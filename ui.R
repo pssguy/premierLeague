@@ -21,8 +21,9 @@ dashboardPage(
       menuItem("Front Page",tabName = "frontPage"),
       menuItem(
         "Managers", tabName = "managers",icon = icon("table"),
-        menuSubItem("Av points per Game", tabName = "m_ppg"),
-        menuSubItem("Player Scoring Age",tabName = "m_players",icon = icon("star"))
+        menuSubItem("Manager av ppg by Team", tabName = "t_ppg"),
+        menuSubItem("Player Scoring Age",tabName = "m_players"),
+        menuSubItem("Team av ppg by Manager", tabName = "m_ppg",icon = icon("star"))
       ),
       
       menuItem(
@@ -42,9 +43,10 @@ dashboardPage(
       menuItem(
         "Players", tabName = "players",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "pl_glance"),
+        menuSubItem("Assists by Scorer", tabName = "pl_asstScorer", icon = icon("star")),
         menuSubItem("By Opposition",tabName = "pl_opponent"),
         menuSubItem("Career Summary", tabName = "pl_career"),
-        menuSubItem("Droughts", tabName = "pl_droughts", icon = icon("star")),
+        menuSubItem("Droughts", tabName = "pl_droughts"),
         menuSubItem("Goal Details", tabName = "pl_goals"),
         menuSubItem("Points per Game", tabName = "pl_ppg"),
         menuSubItem("Sequences-Goals",tabName = "pl_seqs_goals")
@@ -119,7 +121,8 @@ dashboardPage(
       tags$hr(),
       menuItem(
         text = "",href = "https://www.mytinyshinys.com/categories/eplweekly/",badgeLabel = "Interactive Blog posts after every round",badgeColor = "maroon"
-      )
+      ),
+      menuItem(bookmarkButton(id = "b_4"))
       
     )
   ),
@@ -209,15 +212,22 @@ dashboardPage(
                   #  )
                   # 
                   
+                  # box(
+                  #   width=12,collapsible = T,collapsed = T,
+                  #   solidHeader = TRUE,status = 'warning',title="Latest App - Players Assist Droughts",
+                  #   
+                  #   inputPanel(
+                  #     selectInput("playerB", label="Type Name and Select", choices=playerChoice, selected = "ERIKSEC") #selected = values$playerID object 'values' not found # here if you change anybody from rashford then that will be held  for other data on player but then cannot change 
+                  #   ),
+                    
+                  #   plotlyOutput("assistDrought_pl_front")
+                  # ),
                   box(
                     width=12,collapsible = T,collapsed = F,
-                    solidHeader = TRUE,status = 'warning',title="Latest App - Players Assist Droughts",
+                    solidHeader = TRUE,status = 'warning',title="Latest Blog Post - Access every week via Eplweekly category on mytinyshinys.com site",
                     
-                    inputPanel(
-                      selectInput("playerB", label="Type Name and Select", choices=playerChoice, selected = "ERIKSEC") #selected = values$playerID object 'values' not found # here if you change anybody from rashford then that will be held  for other data on player but then cannot change 
-                    ),
                     
-                    plotlyOutput("assistDrought_pl_front")
+                    tags$iframe(src="https://www.mytinyshinys.com/2017/11/06/epl2018-wk11/", height=600, width=950, frameborder=0)
                   )
                   
                 )
@@ -227,12 +237,19 @@ dashboardPage(
       
       #managers
       tabItem("m_ppg",
+              box(title="Team's Average points per game - Hover points for more information",
+                  status = "success",
+                 
+                  plotlyOutput("teamPPGbyManager"),
+                  textOutput("liverpool")
+               
+              )),
+      tabItem("t_ppg",
               box(title="Manager's Average points per game - Hover points for more information",
                   status = "success",
-                  # ggvisOutput("managerPPGbyTeam"),
-                  plotlyOutput("managerPPGbyTeam"),
-                  textOutput("liverpool"),
-                  bookmarkButton() # switched to no id at least initially
+                  plotlyOutput("managerPPGbyTeam")
+                  
+                  
               )),
       tabItem("m_players",
               box(width=12,
@@ -773,7 +790,15 @@ dashboardPage(
         
       ),
       
-      
+      tabItem(
+        "pl_asstScorer",
+        box(
+          width = 12,title = "Player Assists by Scorer",solidHeader = TRUE,status = 'success',height=1000,
+          collapsible = FALSE, collapsed = FALSE,
+          plotlyOutput("asstScorer_pl")
+          #,bookmarkButton(id = "b_2")
+        )
+      ),
       
       tabItem(
         "pl_career",
@@ -809,6 +834,8 @@ dashboardPage(
           
           DT::dataTableOutput("careerYear")
         )
+        #,
+        #bookmarkButton(id = "b_3")
       ),
       
       
@@ -1258,6 +1285,7 @@ dashboardPage(
     ),
     
     tabItem("info", includeMarkdown("info.md"))
+   
     
     
     
@@ -1265,7 +1293,8 @@ dashboardPage(
     
     
     
-      ) # tabItems
+      )# tabItems
+    #, bookmarkButton(id = "b_4") does work here and shows up on every page - some states get redone
       ) # body
   ) # page
 }

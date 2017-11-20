@@ -145,7 +145,7 @@ cum_data %>%
           hoverinfo="text",
           text=~paste0(name,"<br>Age:", round(age,1),"<br>Goals:",cumGls)) %>% 
   add_lines() %>% 
-  layout(title="Career goalscoring of youngest players to 66 goals",
+  layout(title="Career goalscoring of youngest players to 68 goals",
 xaxis=list(title="Age"),
 yaxis=list(title="Goals")) %>% 
   config(displayModeBar = F,showLink = F)
@@ -189,8 +189,9 @@ cum_data %>%
             hoverinfo="text",
             text=~paste0(name,"<br>Age:",round(age,1),
                          "<br>mpg:", mpg)) %>%
-  layout(
-  yaxis=list(title="Minutes per goal", autorange="reversed")
+  layout(title="Rate of Goal Scoring over time by Leading Players",
+  yaxis=list(title="Minutes per goal", autorange="reversed"),
+  xaxis=list(title="Thousands of Minutes Played")
 ) %>% 
   config(displayModeBar = F,showLink = F)
 
@@ -211,7 +212,7 @@ We can also measure the impact Kane scoring has on the team's result
 ```{r}
 
 outcome <-playerGame %>% 
-  filter(PLAYERID=="KANEH"&START==6) %>% 
+  filter(PLAYERID=="KANEH"&(START+subOn)>0) %>% 
   left_join(standings) %>% 
   select(Gls,res)
 
@@ -221,12 +222,16 @@ as.data.frame(table(outcome)) %>%
   spread(key=res,value=Freq) %>% 
   mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2), Games=(Draw+Loss+Win)) %>%
   select(Goals_Scored=Gls,Win,Draw,Loss,ppg,Games) %>% 
- DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+ DT::datatable(width=400,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
 
 
 ```
 
-Kane has scored in 45 league games as a starter of which Spurs have lost just two. I'd say he was pretty important. Only Ronaldo(56) and Pires(50) have played more games with just two or fewer losses. Interestingly, Darius Vassell scored and started  in 43 games for Aston Villa and Manchester City without ever being on the losing side!
+Kane has scored in 46 league games of which Spurs have lost just two. I'd say he was pretty important.     
+
+Only Collymore(52) Suarez(47) and Hazard(47) have played more games with just two or fewer losses.     
+
+As some of you may know, Darius Vassell scored in 46 games for Aston Villa and Manchester City without ever being on the losing side, with James Milner recently matching him on that mark
 
 ---
 
@@ -266,7 +271,7 @@ fiftyGoals%>%
 
 **N.B. Unlike official data, I allow up to two assists per goal**
 
-The upper left quadrant of the chart is peopled by midfielders such as Giggs and Gerrard with longevity on their side. Players like Shearer, Fowler and Owen scored 2-3x as often as they provided assists whilst, for example, Henry and Rooney are much closer to a one to one ratio. of course the latter, in particular, played with some excellent goal scorers and has only topped United's goal scoring charts in five of his thirteen seasons. His major contemporary, Lukaku has 43 goals to go along with 78 goals whilst Kane has a mere 25 - though the rate per minute has progressively increased by season
+The upper left quadrant of the chart is peopled by midfielders such as Giggs and Gerrard with longevity on their side. Players like Shearer, Fowler and Owen scored 2-3x as often as they provided assists whilst, for example, Henry and Rooney are much closer to a one to one ratio. of course the latter, in particular, played with some excellent goal scorers and has only topped United's goal scoring charts in five of his thirteen seasons. His major contemporary, Lukaku has 43 assists to go along with 78 goals whilst Kane has a mere 25 - though the rate per minute has progressively increased by season
 
 As anyone who witnesses his play, as soon as he has sight of goal he puts his laces through the ball and aims for the corner. Whether this will change over time remains to be seen but most of Spurs other goals during his tenure have come from midfielders like Chadli, Eriksen and Alli. His partnership with the younger Alli is clearly crucial if Spurs are to win the Premier League
 

@@ -15,16 +15,23 @@ values <- reactiveValues()
 shinyServer(function(input, output, session) {
   
   
-  # # Need to exclude the buttons from themselves being bookmarked
-  # setBookmarkExclude(c("bm1","bm2"))
-  # 
-  # # Trigger bookmarking with either button
-  # observeEvent(input$bm1, {
-  #   session$doBookmark()
-  # })
-  # observeEvent(input$bm2, {
-  #   session$doBookmark()
-  # })
+  # Need to exclude the buttons from themselves being bookmarked -https://shiny.rstudio.com/articles/bookmarking-state.html
+  setBookmarkExclude(c("b_1","b_2","b_3","b_4"))  # just b_4 for sidebar so saves whole site from first state
+
+  # Trigger bookmarking with either button
+  observeEvent(input$b_1, {
+    session$doBookmark()
+  })
+  observeEvent(input$b_2, {
+    session$doBookmark()
+  })
+  observeEvent(input$b_3, {
+    session$doBookmark()
+  })
+  observeEvent(input$b_4, {
+    session$doBookmark()
+  })
+  
   
   ## set up input menu in sidebar
   output$a <- renderUI({
@@ -60,6 +67,8 @@ shinyServer(function(input, output, session) {
                  sliderInput("managerGames", label="Min games in Stint", min=1,max=100,value=5))
     } else if (input$sbMenu=="m_players") {
       inputPanel(selectInput("manager", label=NULL,selected="Jose Mourinho", choices=managerChoice))
+    } else if (input$sbMenu=="t_ppg") {
+      inputPanel(selectInput("manager", label=NULL,selected="Jose Mourinho", choices=managerChoice))
       # specials 
     } else if (input$sbMenu=="sp_playerByTeamPPG") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
@@ -71,6 +80,8 @@ shinyServer(function(input, output, session) {
         )
         
       # player ones
+    } else if (input$sbMenu=="pl_asstScorer") {
+      inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_career") {
       inputPanel(selectInput("playerA", label="Type Name and Select", choices =playerChoice,selected=values$playerID))
     } else if (input$sbMenu=="pl_goals") {
@@ -697,6 +708,7 @@ shinyServer(function(input, output, session) {
   source("code/managerPlayersAge.R", local=TRUE)
   source("code/specials/vTopClubs.R", local=TRUE)
   source("code/playerDroughts.R", local=TRUE)
+  source("code/assistScorerCombo.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 

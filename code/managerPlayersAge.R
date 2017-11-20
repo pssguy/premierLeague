@@ -1,7 +1,7 @@
 ## extendable to youngest/started/scored ...
 ## also use as background for time-series / more in depth manager info
 
-
+## this could probbably be dredone with manager table and purrr
 
 managerData <- reactive({
   
