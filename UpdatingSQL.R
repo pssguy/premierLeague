@@ -2,7 +2,7 @@
   # might want to look at tidyverse alt e.g odbc/dbi
     
     #NB change milestone date each week and should be first date of round as we are using it for less than
-    milestoneDate <- "2017-10-14"
+    milestoneDate <- "2017-11-18"
     
     library(RODBC)
     
@@ -15,6 +15,7 @@
     library(RSQLite.extfuns)
     library(readr)
     library(daff)
+    library(purrr)
     
     library(dplyr)
     
@@ -64,7 +65,7 @@
     ),stringsAsFactors=F)
     
     teams <- sqlQuery(channel,paste(
-      "  SELECT tblTeam_Names.TEAMID,tblTeam_Names.TEAMNAME
+      "  SELECT tblTeam_Names.TEAMID,tblTeam_Names.TEAMNAME,tblTeam_Names.bookmark
     FROM tblTeam_Names
     
        "
@@ -1890,11 +1891,47 @@
         ungroup()
     
       # prev in global but want on blog sites
-      teamCodes <- teamGames %>% 
-        ungroup() %>% 
-        select(TEAMNAME,TEAMID) %>% 
-        unique()
+      # teamCodes <- teamGames %>% 
+      #   ungroup() %>% 
+      #   select(TEAMNAME,TEAMID) %>% 
+      #   unique()
+      # saveRDS(teamCodes,"teamCodes.rds")
+      # saveRDS(teams,"teamCodes.rds")
+      #playerGame
+      teamCodes <-teams %>% 
+        select(TEAMNAME,TEAMID,bookmark) 
       saveRDS(teamCodes,"teamCodes.rds")
+      
+      ## scoelines - takes 10 mins
+      
+      mins <- 1:90
+      myFun <- function(x) {
+        goalsFor <-teamGames %>% 
+          filter(TEAMMATCHID==x) %>% 
+          left_join(goals,by="TEAMMATCHID") %>% 
+          pull(TIME)
+        
+       data.frame(mins=mins,goals=0) %>% 
+          mutate(GF=ifelse(mins %in% goalsFor,1,0),TEAMMATCHID=x)
+      }
+      
+      
+      
+      
+      allGames <- teamGames$TEAMMATCHID
+      
+      all <- map_df(allGames,myFun)
+      
+      all <- as.tbl(all) %>% 
+        left_join(teamGames) %>% 
+        select(c(1,3,4,5)) 
+      
+      joined <- all %>% 
+        inner_join(all,by=c("mins"="mins","MATCHID"="MATCHID")) %>% 
+        filter(TEAMMATCHID.x!=TEAMMATCHID.y) %>% 
+        rename(GF=GF.x,TEAMMATCHID=TEAMMATCHID.x,GA=GF.y,OPPMATCHID=TEAMMATCHID.y) %>% 
+        group_by(TEAMMATCHID) %>% 
+        mutate(diff=cumsum(GF)-cumsum(GA))
       
       
       
@@ -1924,6 +1961,8 @@
     saveRDS(goalSeqsClub,"goalSeqsClub.rds")
     saveRDS(hth,"hth.rds")
     saveRDS(goalSeqTeam,"goalSeqTeam.rds")
+    saveRDS(all,"scores.rds")
+    saveRDS(joined,"scoreLines.rds")
     
     
     #Sys.time() # takes 15 secs- seems quicker in browser
