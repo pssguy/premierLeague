@@ -3853,6 +3853,10 @@ deployApp(account="mytinyshinys")
 library(shinyapps)
 deployApp(appName="premierLeague", account="mytinyshinys")
 
+## book felexdashboard - sends to annualupdate
+library(shinyapps)
+deployDoc("annualUpdate.Rmd", server="shinyapps.io", account="mytinyshinys")
+
 # look at timevis - say for Man U purchases since ferguson left -----------
 
 
@@ -7975,3 +7979,1182 @@ plot(mtcars)
 # get more out of managers ------------------------------------------------
 
 sort(names(managers))
+
+
+# use of plotly-IMAGE -----------------------------------------------------
+library(plotly)
+p <- plot_ly(x = 1:10)
+Png <- plotly_IMAGE(p, out_file = "plotly-test-image.png")
+# Error in process.image(append_class(resp, "image")) : 
+#   Unauthorized (HTTP 401).
+# In addition: Warning messages:
+#   1: You need a plotly username. See help(signup, package = 'plotly') 
+# 2: Couldn't find username 
+# 3: You need an api_key. See help(signup, package = 'plotly') 
+# 4: Couldn't find api_key
+
+set.seed(100)
+d <- diamonds[sample(nrow(diamonds), 1000), ]
+p <- plot_ly(d, x = ~carat, y = ~price, color = ~carat,
+             size = ~carat, text = ~paste("Clarity: ", clarity))
+
+class(p)
+plotly_IMAGE(p)
+
+
+
+# look again ar manager PPG -----------------------------------------------
+
+# apparetly looked at ggrepel - revisit with plotly
+
+teamRecord <- read_csv("data/managerPPG.csv")
+
+all_values <- function(x) {
+  if(is.null(x)) return(NULL)
+  row <- teamRecord[teamRecord$id == x$id,c("games","ppg")]
+  #paste0(names(row),": ", format(row), collapse = "<br />")
+  paste0( names(row),": ",format(row), collapse = "<br />") 
+}
+
+
+minY <- min(teamRecord$ppg)-0.1
+maxY <- max(teamRecord$ppg)+0.1
+
+# current ggvis
+teamRecord %>% 
+  ggvis(x =~ Joined,y=~ppg+0.01,fill = "687a97",key := ~id) %>% 
+  layer_rects(x2=~Left,y2=~ppg-0.01) %>% 
+  layer_text(text:=~name, stroke:="red") %>% 
+  scale_numeric("y",domain=c(minY,maxY)) %>% 
+  ggvis::add_axis("x", title=" ") %>% 
+  ggvis::add_axis("y", title="Av Points per Game") %>% 
+  add_tooltip(all_values,"hover")
+
+## plotly dumbell?
+
+sort(names(teamRecord))
+
+p <- plot_ly(teamRecord, color = I("gray80")) %>%
+  add_segments(x = ~Joined, xend = ~Left, y = ~ppg, yend = ~ppg, showlegend = FALSE) %>% 
+  # add_markers(x = ~Joined, y = ~ppg,  color = I("green"), showlegend = FALSE,
+  #             hoverinfo="text",
+  #             text=~paste0(" ",name,"<br>From:",Joined,"<br>Games:",games,
+  #                          "<br>ppg:",ppg)) %>%
+  add_markers(x = ~Left, y = ~ppg, color = I("blue"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",name,"<br>From:",Left,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>% 
+     add_markers(x = ~Joined,y=~ppg, mode='text',test=~name)
+
+
+plot_ly(teamRecord) %>% 
+  add_markers(x = ~Joined,y=~ppg, mode='text',test=~name)
+
+
+p <- plot_ly(teamRecord, x = ~Joined, y = ~ppg+0.2, type = 'scatter',
+             mode = 'text', text = ~name, textposition = 'middle right',
+             textfont = list(color = '#000000', size = 10)) %>%
+# above works but as soon as adding more the name gets duplicated
+
+
+  add_segments(x = ~Joined, xend = ~Left, y = ~ppg, yend = ~ppg, showlegend = FALSE) %>% 
+  add_markers(x = ~Joined, y = ~ppg,  color = I("green"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",name,"<br>From:",Joined,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>%
+  add_markers(x = ~Left, y = ~ppg, color = I("blue"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",name,"<br>From:",Left,"<br>Games:",games,
+                           "<br>ppg:",ppg)) 
+
+## this looks fine but no added code
+
+# library(plotly)
+# 
+# Primates <- c('Potar monkey', 'Gorilla', 'Human', 'Rhesus monkey', 'Chimp')
+# Bodywt <- c(10.0, 207.0, 62.0, 6.8, 52.2)
+# Brainwt <- c(115, 406, 1320, 179, 440)
+# data <- data.frame(Primates, Bodywt, Brainwt)
+# 
+# p <- plot_ly(data, x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+#              mode = 'text', text = ~Primates, textposition = 'middle right',
+#              textfont = list(color = '#000000', size = 16)) %>%
+#   layout(title = 'Primates Brain and Body Weight',
+#          xaxis = list(title = 'Body Weight (kg)',
+#                       zeroline = TRUE,
+#                       range = c(0, 250)),
+
+# multiple annotations
+
+library(plotly)
+
+data <- mtcars[which(mtcars$am == 1 & mtcars$gear == 4),]
+
+p <- plot_ly(data, x = ~wt, y = ~mpg, type = 'scatter', mode = 'markers',
+             marker = list(size = 10)) %>%
+  add_annotations(x = data$wt,
+                  y = data$mpg,
+                  text = rownames(data),
+                  xref = "x",
+                  yref = "y",
+                  showarrow = TRUE,
+                  arrowhead = 4,
+                  arrowsize = .5,
+                  ax = 20,
+                  ay = -40)
+
+#          yaxis = list(title = 'Brain Weight (g)',
+#                       range = c(0,1400)))
+
+## this is good enough
+p <- plot_ly(teamRecord, color = I("gray80")) %>%
+  add_segments(x = ~Joined, xend = ~Left, y = ~ppg, yend = ~ppg, showlegend = FALSE) %>% 
+  add_markers(x = ~Joined, y = ~ppg,  color = I("green"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",name,"<br>From:",Joined,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>%
+  add_markers(x = ~Left, y = ~ppg, color = I("blue"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",name,"<br>To:",Left,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>%
+  add_annotations(x = teamRecord$Joined,
+                  y = teamRecord$ppg,
+                  text = teamRecord$name,
+                  xref = "x",
+                  yref = "y",
+                   showarrow = TRUE,
+                   arrowhead = 1,
+                 arrowsize = .3,
+                  ax = 40,
+                  ay = -10)  %>% 
+  layout(xaxis=list(title=""),
+         yaxis=list(title="Points per Game" ))
+
+
+
+# player pergame points add team segments as backing ----------------------
+
+# write_csv(ppgPlayer,"data/ppgPlayer.csv")
+
+ppgPlayer <- read_csv("data/ppgPlayer.csv")
+games <- nrow(ppgPlayer)
+
+xTitle <- paste0("Appearance Order - Total ",games)
+
+sort(names(ppgPlayer))
+
+maxPts <- ppgPlayer %>% 
+  mutate(points=Gls+Assists) %>% 
+  arrange(desc(points)) %>% 
+  head(1) %>% 
+  .$points
+
+ppgPlayer %>% 
+  
+  plot_ly() %>% 
+  add_bars(x=~gameOrder, y=~Gls, name="Goals", 
+           hoverinfo="text",
+           text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder)) %>%
+  add_bars(x=~gameOrder,y=~Assists, name="Assists (inc secondary)", 
+           hoverinfo="text",
+           text=~paste(TEAMNAME,"<br>v ",Opponents,"<br>",gameDate, "<br>Game ",gameOrder))  %>%
+  
+  ppgPlayer %>% 
+  plot_ly() %>% 
+  add_segments(x = ~joined, xend = ~left, y = 0, yend = maxPts, showlegend = FALSE)
+
+
+  layout(hovermode = "closest", barmode="stack",
+         
+         xaxis=list(title=xTitle),
+         yaxis=list(title="Points"),
+         title=" Hover bar for details", titlefont=list(size=16)
+         
+         
+         # If you want to draw arbitrary rectangles, use geom_tile() or geom_rect()
+         df <- data.frame(
+           x = rep(c(2, 5, 7, 9, 12), 2),
+           y = rep(c(1, 2), each = 5),
+           z = factor(rep(1:5, each = 2)),
+           w = rep(diff(c(0, 4, 6, 8, 10, 14)), 2)
+         )
+         
+         lastGame <- max(ppgPlayer$gameDate) #class(lastGame) # also as_date which miht work
+         
+         ## need to play around with ppgPlayer %>% 
+          df <- ppgPlayer %>% 
+            select(joined,left,TEAMNAME) %>% 
+            unique() 
+          
+          df[nrow(df),]$left <- lastGame  # looks good but got to relate to gameDate?
+          
+          
+          
+         
+         ggplot(df, aes(x, y)) +
+          geom_point() +
+           geom_tile(aes(fill = z))
+         ggplot(df, aes(x, y)) +
+           geom_tile(aes(fill = z, width = w), colour = "grey50")
+         ggplot(df, aes(xmin = x - w / 2, xmax = x + w / 2, ymin = y, ymax = y + 1)) +
+           geom_rect(aes(fill = z, width = w), colour = "grey50")
+         
+         
+         
+         
+  )
+
+# more manager stuff ------------------------------------------------------
+
+# results
+  
+  managerResults <-managers %>% 
+    mutate(name=paste(FirstName,Lastname)) %>% 
+    group_by(ManagerID,ManagerTeam) %>% 
+    inner_join(standings,by=c("TEAMNAME"="team")) %>% 
+    select(Lastname,FirstName,name,ManagerID,ManagerTeam,Joined,Left,TEAMNAME,gameDate,res,GF,GA,position,OppTeam,season,venue) %>% 
+    filter(gameDate>=as.Date(Joined)&gameDate<=as.Date(Left)) %>% 
+    mutate(points=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+    ungroup() %>% 
+    select(name,ManagerID,ManagerTeam,gameDate,OppTeam,venue,GF,GA,points) # group by season - show results extend by opp/oppmanager/team for etc.
+  
+  sort(unique(managerResults$ManagerID))
+  
+  library(sparkline)
+  
+  
+  ## want to add manager to standings
+  
+  sort(names(standings))
+  
+  # some sorrt of grid all dates
+  
+  sort(names(managers))
+  
+df <-  managers %>% 
+    select(ManagerID,Joined,Left)
+
+df[is.na(df$Left),]$Left <- Sys.Date()
+
+# also might want to reduce by team
+klopp <-managers %>% 
+  filter(ManagerID=="KloppJ")
+
+klopp[is.na(klopp$Left),]$Left <- Sys.Date()
+
+theTeam <-klopp$TEAMNAME
+from <-klopp$Joined
+to <-klopp$Left
+
+temp <-standings %>% 
+  arrange(gameDate) %>% 
+  filter(team==theTeam & gameDate>=from & gameDate<= to ) %>% 
+  mutate(GD=GF-GA) %>% 
+  .$GD %>%
+  sparkline(type="bar", width=180,height=60)
+  
+  managerResults %>% 
+    mutate(GD=GF-GA) %>% 
+    filter(ManagerID=="KloppJ") %>% 
+    .$GD %>%
+    sparkline(type="bar")
+  
+  
+# trying dev bookmark for individual page ---------------------------------
+# was 0.5.3
+  devtools::install_github("rstudio/shinydashboard@barbara/bookmark")
+  
+  on installation said was 
+  
+  
+  Listening on http://127.0.0.1:6418
+  Joining, by = "season"
+  Adding missing grouping variables: `team`
+  Joining, by = "PLAYERID"
+  [1] "enter observeEvent(input$teamA,{"
+  [1] "Arsenal"
+  [1] "Arsenal managers"
+  Joining, by = c("name", "ManagerTeam")
+  [1] "enter observeEvent(input$teamA,{"
+  [1] "Aston Villa"
+  [1] "Aston Villa managers"
+  Joining, by = c("name", "ManagerTeam")
+  Warning: Error in value[[3L]]: Failed to parse URL parameter "playerMilestones_search"
+  Stack trace (innermost first):
+    1: shiny::runApp
+  Warning: Error in value[[3L]]: Failed to parse URL parameter "playerMilestones_search"
+  
+  # so is going to other page - confirmed with a call to a blackpool equiv
+  
+  
+  playerMilestones_search (not in code)
+  
+  http://127.0.0.1:6418/?_inputs_&.clientValue-default-plotlyCrosstalkOpts=%7B%22on%22%3A%22plotly_selected%22%2C%22off%22%3A%22plotly_relayout%22%2C%22persistent%22%3Afalse%2C%22dynamic%22%3Afalse%2C%22color%22%3A%7B%7D%2C%22selectize%22%3Afalse%2C%22defaultValues%22%3A%7B%7D%2C%22opacityDim%22%3A0.2%2C%22hoverinfo%22%3A%7B%7D%2C%22showInLegend%22%3Afalse%7D&boxButton=0&bp_Country=%22England%22&bp_fullScale=%22No%22&bp_Teams=%22All%20Teams%22&goalA=20&goalsSinceCat=%22Goals%20For%22&goalsSinceCount=5&itemExpanded=%22shiny-tab-managers%22&managerGames=5&method=%22Method%22&pcPlGoals=50&pcPlGoalsCat=%22Long%20Range%22&player_tc=%22AGUEROS%22&playerMilestones_cell_clicked=%7B%7D&playerMilestones_rows_all=%5B1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%5D&playerMilestones_rows_current=%5B1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%5D&playerMilestones_rows_selected=null&playerMilestones_search=%22%22&playerMilestones_state=null&result=%22Win%22&sbMenu=%22m_ppg%22&seasons=%22Single%22&seqPlVenue=%22All%22&seqVenue=%22All%22&sidebarCollapsed=%22expanded%22&sp_pcFullGames=50&sp_pcFullGamsTeams=%22All%20Teams%22&spanA=10&spanVenue=%22All%22&st_boxGames=27&st_boxPositions=%5B1%2C20%5D&team_cpc=%22Tottenham%20H%22&team_fp=%22Leicester%20C%22&teamA=%22Blackpool%22&teamD=%22West%20Ham%20U%22&teamE=%22All%20Teams%22&teamSeqCurrent_cell_clicked=%7B%7D&teamSeqCurrent_rows_all=%5B1%2C2%2C3%2C4%2C5%2C6%5D&teamSeqCurrent_rows_current=%5B1%2C2%2C3%2C4%2C5%2C6%5D&teamSeqCurrent_rows_selected=null&teamSeqCurrent_search=%22%22&teamSeqCurrent_state=null&tmGoals=%22For%22&twoTeams=%5B%22Chelsea%22%2C%22Tottenham%20H%22%5D&twoTeamsApp=%22Appeared%22&withClub=%22All%22&yronyrCat=%22Points%22&yronyrRound=27&yronyrTeam=%5B%22Arsenal%22%2C%22Chelsea%22%2C%22Liverpool%22%2C%22Man.%20Utd.%22%5D
+  
+  there is a playerMilestones.R and DT
+
+  output$playerMilestones <- DT::renderDataTable({
+    #   print("enter playerMilestones")
+    #   print(glimpse(milestones))
+    milestones %>% 
+      filter(category!="Apps") %>% ## temp measure
+      DT::datatable(rownames=FALSE,class='compact stripe hover row-border',
+                    colnames=c('','Category','Count'),
+                    options= list(paging = FALSE, searching = FALSE,info=FALSE))
+    
+  }) 
+  
+  #looks a little funny , colnames - no a reactive - tried taking out of ui see what happens
+  http://127.0.0.1:6418/?_inputs_&.clientValue-default-plotlyCrosstalkOpts=%7B%22on%22%3A%22plotly_selected%22%2C%22off%22%3A%22plotly_relayout%22%2C%22persistent%22%3Afalse%2C%22dynamic%22%3Afalse%2C%22color%22%3A%7B%7D%2C%22selectize%22%3Afalse%2C%22defaultValues%22%3A%7B%7D%2C%22opacityDim%22%3A0.2%2C%22hoverinfo%22%3A%7B%7D%2C%22showInLegend%22%3Afalse%7D&boxButton=0&bp_Country=%22England%22&bp_fullScale=%22No%22&bp_Teams=%22All%20Teams%22&goalA=20&goalsSinceCat=%22Goals%20For%22&goalsSinceCount=5&itemExpanded=%22shiny-tab-managers%22&managerGames=5&method=%22Method%22&pcPlGoals=50&pcPlGoalsCat=%22Long%20Range%22&player_tc=%22AGUEROS%22&result=%22Win%22&sbMenu=%22m_ppg%22&seasons=%22Single%22&seqPlVenue=%22All%22&seqVenue=%22All%22&sidebarCollapsed=%22expanded%22&sp_pcFullGames=50&sp_pcFullGamsTeams=%22All%20Teams%22&spanA=10&spanVenue=%22All%22&st_boxGames=27&st_boxPositions=%5B1%2C20%5D&team_cpc=%22Tottenham%20H%22&team_fp=%22Leicester%20C%22&teamA=%22Birmingham%20C%22&teamD=%22West%20Ham%20U%22&teamE=%22All%20Teams%22&tmGoals=%22For%22&twoTeams=%5B%22Chelsea%22%2C%22Tottenham%20H%22%5D&twoTeamsApp=%22Appeared%22&withClub=%22All%22&yronyrCat=%22Points%22&yronyrRound=27&yronyrTeam=%5B%22Arsenal%22%2C%22Chelsea%22%2C%22Liverpool%22%2C%22Man.%20Utd.%22%5D
+  
+  ## no longer an error but still opens at front page
+  
+  #enableBookmarking(store = "url")
+  
+  enableBookmarking(store = "server") # no diff
+  
+  devtools::install_github("rstudio/shinydashboard@barbara/bookmark", force=TRUE)
+  
+  
+  
+  
+# summing w/d/l within standings ------------------------------------------
+
+  sort(names(standings))
+  
+  
+  standings %>% 
+    select(team,tmYrGameOrder,season,res) %>% 
+    arrange(season,tmYrGameOrder) %>% 
+    spread(key=res, value=result)
+  
+  
+  library(dplyr)
+  stocks <- data.frame(
+    time = as.Date('2009-01-01') + 0:9,
+    X = rnorm(10, 0, 1),
+    Y = rnorm(10, 0, 2),
+    Z = rnorm(10, 0, 4)
+  )
+  stocksm <- stocks %>% gather(stock, price, -time)
+  stocksm %>% spread(stock, price)
+  stocksm %>% spread(time, price)
+  
+  
+  
+  
+  
+# another look at time between goals assists--------------------------------------------
+  
+  
+  ### team
+  
+  sort(names(goals))
+  # [1] "GOALS"             "METHOD"            "PLACE"            
+  # [4] "PLAY"              "PLAYER_MATCH"      "PLAYER_MATCH_GOAL"
+  # [7] "TEAMMATCHID"       "TIME"   
+  # not sure what goals is
+  ## start with just time and goals
+  
+  head(goals)
+  
+  sort(names(standings))
+  > sort(names(standings))
+  # [1] "allGames"      "cumGA"         "cumGD"         "cumGF"         "cumPts"       
+  # [6] "final_Pos"     "GA"            "gameDate"      "GF"            "MATCHID"      
+  # [11] "OppTeam"       "points"        "position"      "res"           "season"       
+  # [16] "team"          "tmGameOrder"   "tmYrGameOrder" "tt"            "venue"   
+  
+  sort(names(teamGames)) 
+
+  # [1] "CROWD"         "gameDate"      "GOALS"         "MATCHID"       "REFEREE"      
+  # [6] "season"        "TEAMID"        "TEAMMATCHID"   "TEAMNAME"      "tmGameOrder"  
+  # [11] "tmYrGameOrder" "venue" 
+  
+  
+  ## look at say manu
+  
+  MNU <- teamGames %>% 
+   # arrange(tmGameOrder) %>% 
+    filter(TEAMID=="MNU") %>% 
+    select(gameDate,TEAMMATCHID)
+  
+  gameTime <- c(1:90)
+  
+MNUmins <-  expand.grid(MNU$TEAMMATCHID,gameTime) %>% #85592 obs
+  rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+  left_join(goals) %>%  #class(MNUMins) # data.frame
+  as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+  left_join(MNU) %>% 
+  arrange(gameDate,TIME) %>% 
+  mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+  select(TEAMMATCHID,mins,score,mins) #1844
+# for some reason adding next causes issue
+
+test <-  do(subSeq(MNUmins$score)) # looks like uses rle function
+  
+  
+MNUmins <-  expand.grid(MNU$TEAMMATCHID,gameTime) %>% #85592 obs
+  rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+  left_join(goals) %>%  #class(MNUMins) # data.frame
+  as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+  left_join(MNU) %>% 
+  arrange(gameDate,TIME) %>% 
+  mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+  select(TEAMMATCHID,mins,score,mins) %>% 
+  filter(score==1) %>% 
+  mutate(minslag=lag(mins),gap=mins-minslag)
+
+
+
+MNUmins <-  expand.grid(MNU$TEAMMATCHID,gameTime) %>% #85592 obs
+  rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+  left_join(goals) %>%  #class(MNUMins) # data.frame
+  as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+  left_join(MNU) %>% 
+  arrange(desc(gameDate),desc(TIME)) %>% 
+  mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+  select(TEAMMATCHID,mins,score,mins) %>% 
+  filter(score==1) %>% 
+  mutate(minslag=lag(mins),gap=mins-minslag)
+
+MNUmins[1,]$gap <- MNUmins[1,]$mins
+
+MNUmins %>% 
+  mutate(goalOrder=-row_number()) %>% 
+  plot_ly(x=~-goalOrder,y=~gap) %>% 
+  add_bars()
+
+## just need to sort out order issues
+
+## this fits - most coomon is 4 min gap (though might be one as in 89é90)
+MNUmins %>% 
+  plot_ly(x=~gap) %>% 
+  add_histogram(autobinx=FALSE,xbins=list(start=1,end=400,size=5))
+
+MNUmins %>% 
+  group_by(gap) %>% 
+  count()
+
+#diff(c(0,setdiff(90*(df$game-1)+df$goaltime,NA),90*max(df$game)))
+
+teamGames %>% 
+  filter(TEAMMATCHID==33721)
+#  33721    5197     H     1 Man. Utd.    MNU 67959 A.D'Urso 2005-03-19 2004/05         498            30
+#correct but match indicates goal before drought
+
+## could look at fastest scoring spell eg sundrland palace
+
+
+## function to do all teams (maybe at different lags)
+
+MNU <- teamGames %>% 
+  # arrange(tmGameOrder) %>% 
+  filter(TEAMID=="MNU") %>% 
+  select(gameDate,TEAMMATCHID)
+
+gameTime <- c(1:90)
+
+MNUmins <-  expand.grid(MNU$TEAMMATCHID,gameTime) %>% #85592 obs
+  rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+  left_join(goals) %>%  #class(MNUMins) # data.frame
+  as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+  left_join(MNU) %>% 
+  arrange(desc(gameDate),desc(TIME)) %>% 
+  mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+  select(TEAMMATCHID,mins,score,mins) %>% 
+  filter(score==1) %>% 
+  mutate(minslag=lag(mins),gap=mins-minslag)
+
+MNUmins[1,]$gap <- MNUmins[1,]$mins
+
+## since goal - this works for one team (and is quick)
+goal_drought <- function(teamID="CRP"){
+  
+  x <- teamGames %>% 
+    # arrange(tmGameOrder) %>% 
+    filter(TEAMID==teamID) %>% 
+    select(gameDate,TEAMMATCHID)
+  
+  gameTime <- c(1:90)
+  
+  df <-  expand.grid(x$TEAMMATCHID,gameTime) %>% #85592 obs
+    rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+    left_join(goals) %>%  #class(MNUMins) # data.frame
+    as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+    left_join(x) %>% 
+    arrange(desc(gameDate),desc(TIME)) %>% 
+    mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+    select(TEAMMATCHID,mins,score,mins) %>% 
+    filter(score==1) %>% 
+    mutate(minslag=lag(mins),gap=mins-minslag)
+  df[1,]$gap <- df[1,]$mins
+  df$TEAMID <- teamID
+  df  # 
+}
+
+goal_drought("MNU")
+
+allTeams <- teamCodes$TEAMID
+i <-0
+
+i <- 0
+goal_drought <- function(teamID){
+  i <- i+1
+  print(i)
+  x <- teamGames %>% 
+    # arrange(tmGameOrder) %>% 
+    filter(TEAMID==teamID) %>% 
+    select(gameDate,TEAMMATCHID)
+  
+  gameTime <- c(1:90)
+  
+  df <-  expand.grid(x$TEAMMATCHID,gameTime) %>% #85592 obs
+    rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+    left_join(goals) %>%  #class(MNUMins) # data.frame
+    as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+    left_join(x) %>% 
+    arrange(desc(gameDate),desc(TIME)) %>% 
+    mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+    select(TEAMMATCHID,mins,score,mins) %>% 
+    filter(score==1) %>% 
+    mutate(minslag=lag(mins),gap=mins-minslag)
+  df[1,]$gap <- df[1,]$mins
+  df$TEAMID <- teamID
+  if (i>1) {
+    all <- rbind(all,df)
+  } else{
+    all <- df
+  }
+   all
+}
+
+
+goal_drought(c("MNU")) #1844
+goal_drought(c("MNU","ARS")) # has both MNU and ARS in it but only 1778
+
+
+or 
+for(i in seq_along(allTeams)) {
+  
+  x <- teamGames %>% 
+    # arrange(tmGameOrder) %>% 
+    filter(TEAMID==allTeams[i]) %>% 
+    select(gameDate,TEAMMATCHID)
+  
+  gameTime <- c(1:90)
+  
+  df <-  expand.grid(x$TEAMMATCHID,gameTime) %>% #85592 obs
+    rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+    left_join(goals) %>%  #class(MNUMins) # data.frame
+    as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+    left_join(x) %>% 
+    arrange(desc(gameDate),desc(TIME)) %>% 
+    mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+    select(TEAMMATCHID,mins,score,mins) %>% 
+    filter(score==1) %>% 
+    mutate(minslag=lag(mins),gap=mins-minslag)
+  df[1,]$gap <- df[1,]$mins
+  df$TEAMID <- allTeams[i]
+  if (i>1) {
+    all <- rbind(all,df)
+  } else{
+    all <- df
+  }
+
+  
+  
+}
+all 25498
+
+## current - curent teams
+
+currentTeams <- standings %>% 
+  filter(season=="2016/17") %>% 
+  select(TEAMNAME=team) %>% 
+  unique() %>% 
+  inner_join(teamCodes)
+
+ct <-all %>% 
+  group_by(TEAMID) %>% 
+  slice(1) %>% 
+  arrange(desc(gap)) %>% 
+  right_join(currentTeams) %>% 
+  select(team=TEAMNAME,mins=gap) %>% 
+  arrange(desc(mins)) %>% 
+  rename(current=mins)
+
+## all time
+
+at <-all %>% 
+  arrange(desc(gap)) %>% 
+  group_by(TEAMID) %>% 
+  slice(1) %>% 
+  right_join(currentTeams) %>% 
+  select(team=TEAMNAME,mins=gap) %>% 
+  arrange(desc(mins)) %>% 
+  rename(premier=mins)
+
+nowTeams <- currentTeams$TEAMID
+i <- 0
+## current season
+for(i in seq_along(nowTeams)) {
+  
+  x <- teamGames %>% 
+    filter(TEAMID==nowTeams[i]&gameDate>as.Date("2016-08-01")) %>% 
+    select(gameDate,TEAMMATCHID)
+  
+  gameTime <- c(1:90)
+  
+  df <-  expand.grid(x$TEAMMATCHID,gameTime) %>% #85592 obs
+    rename(TEAMMATCHID=Var1,TIME=Var2) %>% 
+    left_join(goals) %>%  #class(MNUMins) # data.frame
+    as.tbl() %>% #[1] "tbl_df"     "tbl"        "data.frame"
+    left_join(x) %>% 
+    arrange(desc(gameDate),desc(TIME)) %>% 
+    mutate(mins=row_number(),score=ifelse(!is.na(PLAYER_MATCH_GOAL),1,0)) %>% 
+    select(TEAMMATCHID,mins,score,mins) %>% 
+    filter(score==1) %>% 
+    mutate(minslag=lag(mins),gap=mins-minslag)
+  
+  df[1,]$gap <- df[1,]$mins
+  df$TEAMID <- nowTeams[i]
+  if (i>1) {
+    thisYear <- rbind(thisYear,df)
+  } else{
+    thisYear <- df
+  }
+}
+
+ty <-thisYear %>% 
+  arrange(desc(gap)) %>% 
+  group_by(TEAMID) %>% 
+  slice(1) %>% 
+  right_join(currentTeams) %>% 
+  select(team=TEAMNAME,mins=gap) %>% 
+  arrange(desc(mins)) %>% 
+  rename(year=mins)
+
+df <- at %>% 
+  inner_join(ty) %>% 
+  inner_join(ct)
+
+sort(names(df))
+[1] "current" "premier" "team"    "TEAMID"  "year"
+
+## looks good - do chart like 538
+
+myChart <- df %>%
+  # need to set a larger than default height to encompass all states
+  plot_ly(
+    x =  ~ premier,
+    y =  ~ team,
+    height = 800 
+  ) %>%
+  
+  # first put in all time premier
+  add_bars(color = I("#f2dfa8"),
+           name = "Premier",
+           width=0.8,
+           hoverinfo="text",
+           text=~paste0(premier," mins")
+           )%>% 
+# then add this year
+add_bars(width=0.5,
+         
+         x =  ~ year,
+         y =  ~ team,
+         color = I("#F6B900"),
+         name = "Season",
+         hoverinfo="text",
+         text=~paste0(year," mins") 
+) %>% 
+  add_bars(width=0.2,
+           
+           x =  ~ current,
+           y =  ~ team,
+           color = I("#2e00ff"),
+           name = "Current",
+           hoverinfo="text",
+           text=~paste0(current," mins") 
+  ) %>%  # make it an overlay barchart and inprove look
+layout(
+  barmode = "overlay",
+  title = "Longest Period between Goals. Current, This Year , PL Ever",
+  xaxis = list(title = "Minutes"),
+  yaxis = list(title = ""),
+  margin = list(l = 160)
+) %>%
+  config(displayModeBar = F, showLink = F)
+
+## try to get sort order correct 
+df$team <- factor(df$team, levels = unique(df$team)[order(df$current, decreasing = FALSE)])
+data$Animals <- factor(data$Animals, levels = unique(data$Animals)[order(data$Count, decreasing = TRUE)])
+
+df %>%
+  # need to set a larger than default height to encompass all states
+  plot_ly(
+    x =  ~ premier,
+    y =  ~ team,
+    height = 800 
+  ) %>%
+  
+  # first put in all time premier
+  add_bars(color = I("#f2dfa8"),
+           name = "Premier",
+           width=0.8,
+           hoverinfo="text",
+           text=~paste0(premier," mins")
+  )%>% 
+  # then add this year
+  add_bars(width=0.5,
+           
+           x =  ~ year,
+           y =  ~ team,
+           color = I("#F6B900"),
+           name = "Season",
+           hoverinfo="text",
+           text=~paste0(year," mins") 
+  ) %>% 
+  add_markers(
+           
+           x =  ~ current,
+           y =  ~ team,
+           color = I("#2e00ff"),
+           name = "Current",
+           hoverinfo="text",
+           text=~paste0(current," mins") 
+  ) %>%  # make it an overlay barchart and inprove look
+  layout(
+    barmode = "overlay",
+    title = "Longest Period between Goals. Current, This Year , PL Ever",
+    xaxis = list(title = "Minutes"),
+    yaxis = list(title = ""),
+    margin = list(l = 80)
+  ) %>%
+  config(displayModeBar = F, showLink = F)
+
+
+# goal/assist drought by player -------------------------------------------
+
+# ## lets start of with rahford. Given number of pllayers this is probably on-the-fly
+# library(purrr)
+# sort(names(playerGame))
+# 
+# temp <-playerGame %>% 
+#   filter(PLAYERID=="RASHFOM"&mins>0) %>% 
+#   select(PLAYERID,name,PLAYER_MATCH,START,on,off,gameDate,TEAMMATCHID) %>% 
+#   mutate(on=as.integer(on),off=as.integer(off)) %>% 
+#   mutate(on=ifelse(is.na(on),1,on),off=ifelse(is.na(off),90,off))
+# 
+# 
+# test <- temp[1,]
+# 
+# minPlayed <- function(player) {
+#   
+# expand.grid(c(game$on:game$off),game$PLAYER_MATCH)
+# }
+# 
+# users <- split(temp, 1:nrow(temp))
+# #x <-walk(users,minPlayed) x is list 33 not sure this helps
+# 
+# map_df(temp$PLAYER_MATCH, expand.grid)
+# 
+# 
+# ##  look at it the df way
+# 
+# for (i in 1:nrow(temp)) {
+#      
+#  df <- expand.grid(c(temp$on[i]:temp$off[i]),temp$PLAYER_MATCH[i])
+#  if (i!=1) {
+#    mins <- rbind(mins,df)
+#  } else {
+#    mins <- df
+#  }
+# }
+# 
+# names(mins) <- c("TIME","PLAYER_MATCH") # 2026 makre TIME same so can share
+# 
+# mins <-mins %>% 
+#   left_join(temp) %>% 
+#   select(TIME,PLAYER_MATCH,gameDate)
+# 
+# sort(names(goals))
+# 
+# # need to add other column as are matching on TIME
+# gls <- goals %>% 
+#   mutate(scored=1)
+# 
+# 
+# 
+# x <- mins %>% 
+#   left_join(gls)  %>% # up to 2106 joining by playe  - problem is when scored more than once
+#   #unique() makes no diff - maybe do before the expand grid?
+#   select(PLAYER_MATCH,TIME,gameDate,scored) %>% 
+#   arrange(gameDate,TIME) %>% 
+#   mutate(minOrder=row_number(),goal=ifelse(is.na(scored),0,1)) %>% 
+#   #select(TEAMMATCHID,mins,score,mins) %>% 
+#   filter(goal==1|minOrder==max(minOrder)) %>% # to take account of current spell
+#   mutate(minslag=lag(minOrder),gap=minOrder-minslag)
+# 
+# x[1,]$gap <- x[1,]$minOrder
+# 
+# x %>% 
+#   mutate(goalOrder=row_number()) %>% 
+#   plot_ly(x=~goalOrder, y=~gap) %>% 
+#   add_bars()
+# 
+# # need points to 
+# x %>% 
+#     plot_ly(x=~gameDate, y=~gap) %>% 
+#   add_markers()
+# 
+# 
+# 
+
+## lets start of with rahford. Given number of pllayers this is probably on-the-fly
+library(purrr)
+
+
+temp <-playerGame %>% 
+  filter(PLAYERID=="ROONEYX"&mins>0) %>% 
+  select(PLAYERID,name,PLAYER_MATCH,START,on,off,gameDate,TEAMMATCHID) %>% 
+  mutate(on=as.integer(on),off=as.integer(off)) %>% 
+  mutate(on=ifelse(is.na(on),1,on),off=ifelse(is.na(off),90,off))
+
+
+
+
+##  look at it the df way
+
+for (i in 1:nrow(temp)) {
+  
+  df <- expand.grid(c(temp$on[i]:temp$off[i]),temp$PLAYER_MATCH[i])
+  if (i!=1) {
+    mins <- rbind(mins,df)
+  } else {
+    mins <- df
+  }
+}
+
+names(mins) <- c("TIME","PLAYER_MATCH") # 2026 makre TIME same so can share
+
+mins <-mins %>% 
+  left_join(temp) %>% 
+  select(TIME,PLAYER_MATCH,gameDate)
+
+
+
+# need to add other column as are matching on TIME
+gls <- goals %>% 
+  mutate(scored=1)
+
+
+
+x <- mins %>% 
+  left_join(gls)  %>% 
+  select(PLAYER_MATCH,TIME,gameDate,scored) %>% 
+  arrange(gameDate,TIME) %>% 
+  mutate(minOrder=row_number(),goal=ifelse(is.na(scored),0,1)) %>% 
+  filter(goal==1|minOrder==max(minOrder)) %>% # to take account of current spell
+  mutate(minslag=lag(minOrder),gap=minOrder-minslag)
+
+x[1,]$gap <- x[1,]$minOrder
+
+x %>% 
+  mutate(goalOrder=row_number()) %>% 
+  plot_ly(x=~goalOrder, y=~gap) %>% 
+  add_bars() %>% 
+  layout(title="Scoring droughts in Premier League - Wayne Rooney",
+         xaxis=list(title= "Goal Order"),
+         yaxis=list(title="Minutes between Goals")
+         )
+
+## want to do as map
+
+df <- mtcars %>% slice_rows("cyl") # (attr(*,"vars"))=List of 1
+
+
+for (i in 1:nrow(temp)) {
+  
+  df <- expand.grid(c(temp$on[i]:temp$off[i]),temp$PLAYER_MATCH[i])
+  if (i!=1) {
+    mins <- rbind(mins,df)
+  } else {
+    mins <- df
+  }
+}
+
+#expand.grid(c(game$on:game$off),game$PLAYER_MATCH)
+myFun <- function(df) {
+  
+  expand.grid(c(df$on:temp$off),df$PLAYER_MATCH)
+  
+}
+  
+res <-map_df(temp,myFun) #Error in df$on : $ operator is invalid for atomic vectors
+
+res <-map_df(temp$PLAYER_MATCH,myFun) #Error in df$on : $ operator is invalid for atomic vectors
+
+res <-map_df(temp$PLAYERID,myFun) #Error in df$on : $ operator is invalid for atomic vectors
+
+ temp_list <- split(temp, 1:nrow(temp))
+
+ mins <-map_df(temp_list,myFun)
+ #warnings() #In df$on:temp$off :
+ #numerical expression has 122 elements: only the first used 50
+ 
+
+ 
+ names(mins) <- c("TIME","PLAYER_MATCH") # 2026 makre TIME same so can share
+ 
+ mins <-mins %>% 
+   left_join(temp) %>% 
+   select(TIME,PLAYER_MATCH,gameDate)
+ 
+ 
+ 
+ # need to add other column as are matching on TIME
+ gls <- goals %>% 
+   mutate(scored=1)
+ 
+ 
+ 
+ x <- mins %>% 
+   left_join(gls)  %>% 
+   select(PLAYER_MATCH,TIME,gameDate,scored) %>% 
+   arrange(gameDate,TIME) %>% 
+   mutate(minOrder=row_number(),goal=ifelse(is.na(scored),0,1)) %>% 
+   filter(goal==1|minOrder==max(minOrder)) %>% # to take account of current spell
+   mutate(minslag=lag(minOrder),gap=minOrder-minslag)
+ 
+ x[1,]$gap <- x[1,]$minOrder
+ 
+ x %>% 
+   mutate(goalOrder=row_number()) %>% 
+   plot_ly(x=~goalOrder, y=~gap) %>% 
+   add_bars() %>% 
+   layout(title="Scoring droughts in Premier League - Wayne Rooney",
+          xaxis=list(title= "Goal Order"),
+          yaxis=list(title="Minutes between Goals")
+   )
+ 
+ sort(names(x))
+ sort(names(playerGame))
+ 
+ 
+ x %>% 
+   left_join(playerGame) %>% 
+   mutate(goalOrder=row_number()) %>% 
+   plot_ly(x=~goalOrder, y=~gap) %>% 
+   add_bars(hoverinfo="text",
+            text=~paste0(gameDate,
+                         "<br>",TEAMNAME," v ",Opponents,
+            "<br>",gap," mins")) %>% 
+   layout(title="Hover bar for drought-ending game",
+          xaxis=list(title= "Goal Order"),
+          yaxis=list(title="Minutes between Goals")
+   )
+ 
+ 
+# assists
+ 
+ 
+ ## Minutes passed since a player has scored (can add assisted)
+ 
+ # Function to list every minute played
+ plDroughtFun <- function(df) {
+   expand.grid(c(df$on:df$off),df$PLAYER_MATCH)
+ }
+ 
+ sort(names(assists))
+ sort(names(goals))
+ 
+ assistGoals <- assists %>% 
+   rename(assistID=PLAYER_MATCH) %>% 
+   left_join(goals) %>% 
+   select(assistID,TEAMMATCHID,TIME) %>% 
+   mutate(assisted=1) %>% 
+   rename(PLAYER_MATCH=assistID)
+ 
+ 
+   
+   
+   # games actually played so can do above
+   games <-playerGame %>% 
+     filter(PLAYERID=="ROONEYX"&mins>0) %>% 
+     select(PLAYERID,name,PLAYER_MATCH,START,on,off,gameDate,TEAMMATCHID) %>% 
+     mutate(on=as.integer(on),off=as.integer(off)) %>% 
+     mutate(on=ifelse(is.na(on),1,on),off=ifelse(is.na(off),90,off))
+   
+   # create list so can apply function above with purrr
+   games_list <- split(games, 1:nrow(games))
+   mins <-map_df(games_list,plDroughtFun)
+   
+   
+   # rename columns and add gameDate
+   names(mins) <- c("TIME","PLAYER_MATCH") 
+   mins <-mins %>% 
+     left_join(games) %>% 
+     select(TIME,PLAYER_MATCH,gameDate)
+   
+   
+   
+   
+   
+   # create gaps between assists
+   assistData <- mins %>% 
+     left_join(assistGoals)  %>% 
+     select(PLAYER_MATCH,TIME,gameDate,assisted) %>% 
+     arrange(gameDate,TIME) %>% 
+     mutate(minOrder=row_number(),assist=ifelse(is.na(assisted),0,1)) %>% 
+     filter(assist==1|minOrder==max(minOrder)) %>% # to take account of current spell
+     mutate(minslag=lag(minOrder),gap=minOrder-minslag)
+   
+   # account for gap at beginning of career
+   assistData[1,]$gap <- assistData[1,]$minOrder
+   
+   
+   # combine back to playergame for team data and create plot
+   assistData %>% 
+     left_join(playerGame) %>% 
+     mutate(assistOrder=row_number()) %>% 
+     plot_ly(x=~assistOrder, y=~gap) %>% 
+     add_bars(hoverinfo="text",
+              text=~paste0(gameDate,
+                           "<br>",TEAMNAME," v ",Opponents,
+                           "<br>",gap," mins")) %>% 
+     layout(title="Hover bar for drought-ending game",
+            xaxis=list(title= "Assist Order"),
+            yaxis=list(title="Minutes between Assists")
+     ) %>%  config(displayModeBar = F,showLink = F)
+   
+   ## goal or assist
+   
+   sort(names(mins)) #"gameDate"     "PLAYER_MATCH" "TIME" 
+   sort(names(assistGoals)) #[1] "assisted"     "PLAYER_MATCH" "TEAMMATCHID"  "TIME"
+   
+   pointsData <- mins %>% 
+     #left_join(assistGoals) %>% 
+     left_join(gls) %>% 
+     select(PLAYER_MATCH,TIME,gameDate,assisted) %>% 
+     arrange(gameDate,TIME) %>% 
+     mutate(minOrder=row_number(),assist=ifelse(is.na(assisted),0,1)) %>% 
+     filter(assist==1|minOrder==max(minOrder)) %>% # to take account of current spell
+     mutate(minslag=lag(minOrder),gap=minOrder-minslag)
+   
+   # account for gap at beginning of career
+  pointsData[1,]$gap <- pointsData[1,]$minOrder
+   
+   
+   sort(names(a))
+  pointsData <- mins %>% 
+     left_join(gls)  %>% 
+     select(PLAYER_MATCH,TIME,gameDate,scored) %>% #35239
+    left_join(assistGoals) %>% 
+
+# elite players per season  -----------------------------------------------
+
+#Average 1 point every 90 minutes and 20 in tot
+   
+eliteSeasons <- playerGame %>% 
+     group_by(name,PLAYERID,season) %>% 
+     summarize(totMins=sum(mins,na.rm=TRUE),totGls=sum(Gls,na.rm=TRUE),totAssts=sum(Assists,na.rm=TRUE),
+               Points=totGls+totAssts,ppg=round(Points*90/totMins,2)) %>% 
+       filter(Points>=20&ppg>=1&PLAYERID!="OWNGOAL") %>% 
+     ungroup()
+   
+  # aguero 2013/14
+   
+   
+   # longer seasons not impactful
+temp <-   eliteSeasons %>% 
+     count(season, sort=TRUE)
+
+
+
+temp <-   eliteSeasons %>% 
+  count(name, sort=TRUE)
+
+# this year already shaping up - currently 9
+
+eliteSeasons <- playerGame %>% 
+  group_by(name,PLAYERID,season) %>% 
+  summarize(totMins=sum(mins,na.rm=TRUE),totGls=sum(Gls,na.rm=TRUE),totAssts=sum(Assists,na.rm=TRUE),
+            Points=totGls+totAssts,ppg=round(Points*90/totMins,2)) %>% 
+  filter(season=="2016/17"&PLAYERID!="OWNGOAL")
+  
+   
+test <-playerGame %>% 
+  group_by(name,PLAYERID,season) %>% 
+  filter(PLAYERID=="SCHWEIB"&season=="2016/17") %>% 
+  select(START,subOn,mins,gameDate) %>% 
+  summarise(totMins=sum(mins,na.rm=TRUE))
+ 
+ 
+ temp <- standings %>% 
+   arrange(desc(cumGF))
+ 
+ 
+ eliteSeasons <- playerGame %>% 
+   group_by(name,PLAYERID,season) %>% 
+   summarize(totMins=sum(mins,na.rm=TRUE),totGls=sum(Gls,na.rm=TRUE),totAssts=sum(Assists,na.rm=TRUE),
+             Points=totGls+totAssts,ppg=round(Points*90/totMins,2)) %>% 
+   filter(season=="2016/17"&PLAYERID!="OWNGOAL")
+ 
+ 
+ eliteSeasons <- df %>% 
+   group_by(name,PLAYERID,season) %>% 
+   summarize(totMins=sum(mins,na.rm=TRUE),totGls=sum(Gls,na.rm=TRUE),totAssts=sum(Assists,na.rm=TRUE),
+             Points=totGls+totAssts,ppg=round(Points*90/totMins,2)) %>% 
+   filter(PLAYERID!="OWNGOAL") %>% 
+   select(name,season,Points,ppg) %>% 
+   ungroup()
+ 
+ eliteSeasons %>% 
+   filter(season=="2016/17")
+
+
+
+# manager ppg by club spell -----------------------------------------------
+
+## spell part might cadge from prior code
+ 
+sort(names(managerGame))
+
+ 
+ houllier <-managerGame %>% 
+   filter(ManagerID=="HoullierG") %>% 
+   inner_join(allManagerStints)
+
+ 
+df <- houllier %>% 
+  group_by(ManagerTeam,TEAMNAME) %>% 
+  summarize(left=Left[1],join=Joined[1],games=n(),ppg=round(sum(points)/games,2)) 
+
+minY <- min(df$ppg)-0.1
+maxY <- max(df$ppg)+0.1
+
+%>% 
+  plot_ly()
+
+
+plot_ly(df, color = I("gray80")) %>%
+  add_segments(x = ~join, xend = ~left, y = ~ppg, yend = ~ppg, showlegend = FALSE) %>% 
+  add_markers(x = ~join, y = ~ppg,  color = I("green"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",TEAMNAME,"<br>From:",join,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>%
+  add_markers(x = ~left, y = ~ppg, color = I("blue"), showlegend = FALSE,
+              hoverinfo="text",
+              text=~paste0(" ",TEAMNAME,"<br>To:",left,"<br>Games:",games,
+                           "<br>ppg:",ppg)) %>%
+  
+  layout(
+    xaxis=list(title=""),
+    yaxis=list(title="Points per Game" ))
+
+
+  
+
+

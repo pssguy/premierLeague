@@ -3061,7 +3061,7 @@ temp <- standings %>%
     add_bars(x =~season, y= ~value) # works showing all seasons - could do a gris earlier (and prob should)
   
   plot_ly() %>% 
-    add_bars(data=subset(test,team=="Sunderland",x =~season, y= ~value)
+    add_bars(data=subset(test,team=="Sunderland",x =~season, y= ~value))
   
              test %>% 
             #   filter(team=="Sunderland") %>% 
@@ -3414,3 +3414,2151 @@ playerGame %>%
   filter(tGoals>0) %>% 
   mutate(rate=tMins/tGoals) %>% 
   arrange(rate)
+
+
+
+# rashford goals as sub ---------------------------------------------------
+
+sort(names(playerGame))
+
+r1 <-playerGame %>% 
+  filter(PLAYERID=="RASHFOM"&START>0) %>% 
+  summarize(sumMins=sum(mins),sumGoals=sum(Gls),sumAssists=sum(Assists))
+
+
+r2 <-playerGame %>% 
+  filter(PLAYERID=="RASHFOM"&subOn>0) %>% 
+  summarize(sumMins=sum(mins),sumGoals=sum(Gls),sumAssists=sum(Assists))
+
+playerGame %>% 
+  filter(PLAYERID=="RASHFOM") %>% 
+  arrange(desc(gameDate)) %>% 
+  select(START,mins,Gls,Assists) 
+
+
+# opta q more assits than goals -------------------------------------------
+
+temp <-playerGame %>% 
+  group_by(PLAYERID,name) %>% 
+summarise(Goals=sum(Gls),Assts=sum(Assists)) %>% 
+  filter(Goals>49&Assts>Goals) %>% 
+  arrange(desc(Assts)) %>% 
+  mutate(ratio=Assts/Goals) %>% 
+  ungroup() %>% 
+  arrange(desc(ratio)) %>% 
+  select(name, Goals,Assts) %>%
+  DT::datatable(width=250,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+# oldest assist -----------------------------------------------------------
+
+playerGame %>% 
+  filter(Assists>0) %>% 
+  arrange(desc(age))
+
+
+
+# DEENEYÉIGHALO -----------------------------------------------------------
+
+
+# PALACE LOSING RUN NOT RELEGATED -----------------------------------------
+
+
+
+
+# FIRST PLAYER TO 10 GOALS ------------------------------------------------
+
+sort(names(playerGame))
+
+toTen <-playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(PLAYERID!="OWNGOAL") %>% 
+  group_by(PLAYERID,season) %>% 
+  mutate(cumGls=cumsum(Gls)) %>% 
+  select(name,PLAYERID,season,cumGls,gameDate) %>% 
+  filter(cumGls>9) %>% 
+  group_by(season) %>% 
+  slice(1)
+
+playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(PLAYERID!="OWNGOAL"&season!="2016/17") %>% 
+  group_by(PLAYERID,season) %>% 
+  mutate(cumGls=cumsum(Gls)) %>% 
+  select(name,PLAYERID,season,cumGls,gameDate) %>% 
+ # group_by(PLAYERID,season) %>% 
+  arrange(desc(gameDate)) %>% 
+  slice(1) %>% 
+  inner_join(toTen,by=c("PLAYERID","season")) %>% 
+  ungroup() %>% 
+  select(name=name.x,tenth=gameDate.y,total=cumGls.x) %>% 
+  arrange(desc(tenth))%>%
+    DT::datatable(width= 300,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+  
+# defoe 150 ---------------------------------------------------------------
+
+
+# ford scored inside min - check earliest other teams ---------------------
+
+
+# number of changes between games - swansea -------------------------------
+
+
+# number of times unchaged chelsea ----------------------------------------
+
+
+
+
+
+# Oscar minutes leaving ---------------------------------------------------
+
+sort(names(playerGame))
+
+test <- playerGame %>% 
+  filter(season=="2016/17") %>% 
+  group_by(PLAYERID,name) %>% 
+  summarise(Mins=sum(mins)) %>% 
+  arrange(desc(Mins)) %>% 
+  ungroup() %>% 
+  select(name,Mins) %>%
+                         DT::datatable(width = 300,class='compact stripe hover row-border order-column',rownames=TRUE,options= list(paging = TRUE, searching = TRUE,info=FALSE))
+
+
+## looks good - just need to wait for latest update
+
+
+## eins at etihad
+
+
+
+standings %>% 
+  filter(season>"2002/03" & team =="Man. City" & OppTeam =="Arsenal"& venue=="H")
+
+
+# players with 3 assists in game ------------------------------------------
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(Assists>2) %>% 
+  arrange(desc(gameDate)) %>% 
+  select(name,gameDate) #396
+
+temp <- playerGame %>% 
+  filter(Assists>2)  %>% #396 occurrences
+  group_by(PLAYERID) %>% 
+  summarise(tot=n()) %>% #245
+  filter(tot==1) %>% 
+  arrange(PLAYERID)
+
+
+# man u previous times 41 points 22 games ---------------------------------
+sort(names(standings))
+
+thisYear <- standings %>% 
+  filter(team=="Man. Utd."&season=="2016/17")
+
+fortyOne <- standings %>% 
+  filter(team=="Man. Utd."&cumPts==41&tmYrGameOrder==22) %>% 
+  .$season
+
+fortyOneYears <- standings %>% 
+  filter(team=="Man. Utd."&season %in% fortyOne)
+
+
+gameThirtyEight <- standings %>% 
+  filter(team=="Man. Utd."&tmYrGameOrder==38&season %in% fortyOne)
+
+ p <- standings %>% 
+  filter(team=="Man. Utd.") %>% 
+  arrange(gameDate) %>% 
+ # group_by(season) %>% 
+  plot_ly(x=~tmYrGameOrder,y=~cumPts) %>% 
+  add_lines(color = ~season, colors = "black", alpha = 0.1)
+ 
+ ## highlights lines but they are still black
+q <-  p %>% 
+  add_lines(data=fortyOneYears,
+            x=~tmYrGameOrder,y=~cumPts,
+            color = ~season, alpha = 0.3) %>%
+    add_lines(data=thisYear, color = ~season,
+              x=~tmYrGameOrder,y=~cumPts
+              )
+ q %>% 
+   add_markers(data=gameThirtyEight,x=~tmYrGameOrder,y=~cumPts,
+               hoverinfo=text,
+               text=~paste0(season,"<br>points:",
+                            cumPts,"<br>Final:",
+                            final_Pos)) %>% 
+   layout(title="Cumulative Points by Season - Man. Utd.",
+          xaxis=list(title="Games Played"),
+          yaxis=list(title="Cumulative Points")) %>% 
+   config(displayModeBar = F,showLink = F)
+   
+ 
+
+  
+
+# goals between rooneys outside area --------------------------------------
+
+sort(names(goals))
+ sort(names(playerGame))
+ 
+ 
+ goals %>% 
+   filter(PLACE=="Long_Range") %>% 
+   left_join(playerGame) %>% 
+   select(name,gameDate,TIME) %>% 
+   arrange(desc(gameDate),desc(TIME)) %>% 
+   mutate(order=row_number()) %>% 
+   filter(name=="Wayne Rooney")
+ 
+ 
+ 
+ 
+# rodwell starter never wins ----------------------------------------------
+
+sort(names(playerGame))
+ 
+ sort(names(standings))
+ 
+ test <- playerGame %>% 
+   filter(PLAYERID=="RODWELJ") %>% 
+   group_by(TEAMNAME) %>% 
+   left_join(standings) %>% 
+   select(res,gameDate,START) %>% 
+   mutate(win=ifelse(res=="Win",1,0)) %>% 
+   #group_by(TEAMNAME) %>%
+   do(subSeq(.$win))
+ 
+ 
+ playerGame %>% 
+   filter(START>0) %>% 
+   group_by(PLAYERID,TEAMNAME,name) %>% 
+   left_join(standings) %>% 
+   select(res) %>% 
+   mutate(win=ifelse(res=="Win",1,0)) %>% 
+   #group_by(TEAMNAME) %>%
+   do(subSeq(.$win)) %>% 
+   filter(first==1,value==0) %>% 
+   arrange(desc(slength))
+ 
+ ## rodwell 5 wins in row
+ 
+ test <-playerGame %>% 
+   filter(START>0) %>% 
+   group_by(PLAYERID,TEAMNAME,name) %>% 
+   left_join(standings) %>% 
+   select(res) %>% 
+   mutate(win=ifelse(res=="Win",1,0)) %>% 
+   #group_by(TEAMNAME) %>%
+   do(subSeq(.$win)) %>% 
+   filter(first==1,value==1&slength>4) %>% 
+   arrange(desc(slength))
+ 
+ ## try map instead of do
+temp <- playerGame %>% 
+   filter(START>0) %>% 
+   group_by(PLAYERID,TEAMNAME,name) %>% 
+   left_join(standings) %>% 
+   select(res) %>% 
+   mutate(win=ifelse(res=="Win",1,0)) %>% 
+   nest() %>% 
+   purrr::map(.win, subSeq()) # not right see JB
+ 
+ 
+ by_am <- mtcars %>%
+   group_by(am) %>%
+   nest() %>%
+   mutate(model = purrr::map(data, ~ lm(mpg ~ wt, data = .)))
+ 
+ by_am %>%
+   unnest(model %>% purrr::map(tidy))
+ 
+ 
+   
+ 
+# rooney goals sinc e jan 2016 --------------------------------------------
+sort(names(playerGame))
+ 
+test <-playerGame %>% 
+   filter(gameDate>=as.Date("2016-02-17")) %>% 
+   group_by(PLAYERID) %>% 
+   summarise(tot=sum(Gls)) %>% 
+  arrange(desc(tot))
+
+
+# eriksen assists ---------------------------------------------------------
+
+temp <- playerGame %>% 
+  filter(Assists>3) %>% 
+  select(name,gameDate,TEAMNAME,Opponents)
+
+
+
+# player playing for 2 premier winning teams ------------------------------
+
+sort(names(playerGame))
+sort(names(standings))
+
+champs <- standings %>% 
+  filter(final_Pos==1&season<"2016/17") %>% 
+  select(team,season) %>% 
+  unique() 
+
+champPlayers <- playerGame %>% 
+  rename(team=TEAMNAME) %>% 
+  right_join(champs) %>% 
+  filter((START+subOn)>0) %>% 
+  group_by(name,PLAYERID,season,team) %>% 
+  count()
+
+multiples <- champPlayers %>% 
+  select(name,PLAYERID,team) %>% 
+  ungroup() %>% 
+  select(-season) %>% 
+  unique() %>% 
+  group_by(name,PLAYERID) %>% 
+  count() %>% 
+  filter(n>1)
+
+# name PLAYERID     n
+# <chr>    <chr> <int>
+#   1      Ashley Cole   COLEA2     2
+# 2     Carlos Tevez   TEVEZC     2
+# 3    Danny Simpson  SIMPSOD     2
+# 4      Gael Clichy  CLICHYG     2
+# 5     Henning Berg    BERGH     2
+# 6       Kolo Toure   TOUREK     2
+# 7  Nicholas Anelka  ANELKAN     2
+# 8  Owen Hargreaves  HARGREO     2
+# 9  Ritchie De Laet  DELAETR     2
+# 10     Robert Huth    HUTHR     2
+> 
+  
+
+temp <-multiples %>% 
+  select(-n) %>% 
+  left_join(champPlayers)
+
+
+most (inc single club)
+
+champPlayers %>% 
+  group_by(PLAYERID) %>% 
+  count(sort=TRUE) %>% 
+  arran
+
+# Kane goalscoring --------------------------------------------------------
+
+#consec 20 goal games - as many goals by his age/gmaes played 
+
+twenty <- playerGame %>% 
+  group_by(PLAYERID,season) %>% 
+  summarise(totGls=sum(Gls)) %>% 
+  filter(totGls>19&PLAYERID!="OWNGOAL") #65
+
+twenty %>% 
+  group_by(PLAYERID) %>% 
+  tally() %>% #38 players
+  filter(n>2)
+
+# Only 5 players Aguero, Ferdinand, Henrym Shearer and van Nistelrooy have done it on least three occasions with just 
+
+## age first goal
+
+maxAge <- playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(PLAYERID=="KANEH"&Gls>0) %>% 
+  slice(1) %>% 
+  .$age
+
+playerGame %>% 
+  filter(Gls>0&age<maxAge) %>% #1068
+  select(PLAYERID,name) %>% 
+  unique() #298 currently
+#Kyle Walker 1 day older??
+
+
+kane <-playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(Gls>0&PLAYERID=="KANEH") %>% 
+  slice(1)
+
+## look what age first
+
+playerGame %>% 
+  arrange(gameDate) %>% 
+  filter(Gls>0&PLAYERID!="OWNGOAL") %>% 
+  group_by(PLAYERID) %>% 
+  slice(1) %>% 
+  plot_ly(x=~gameDate,y=~age) %>% 
+  add_markers(name="All Scorers", opacity=0.5,
+              hoverinfo="text",
+              text=~paste0(name," ",round(age,2),'yrs')) %>% 
+  add_markers(data=kane, color=I('red'), name="Harry Kane",
+              hoverinfo="text",
+              text=~paste0(name," ",round(age,2),'yrs')) %>% 
+  layout(
+    title="Age scoring first EPL goal. Hover For Player info",
+    xaxis=list(title=""),
+    yaxis=list(title="Age")
+  )  %>% 
+  config(displayModeBar = F,showLink = F) # for some reason this is causing an issue
+
+kane$age #class(kane$age) #difftime causes isssues
+
+youngScorers <-playerGame %>% 
+  select(name,PLAYERID,Gls,age=as.numeric(age),mins,Assists) %>% 
+  group_by(PLAYERID) %>% 
+  mutate(cumAssists=cumsum(Assists),cumGls=cumsum(Gls),cumMins=cumsum(mins),mpg=round(cumMins/cumGls,1))
+
+topScorersAge <- temp %>% 
+  filter(age<=23.584&cumGls>=66) %>% 
+  select(PLAYERID,name) %>% 
+  unique() %>% 
+  .$PLAYERID
+
+playerGame %>% 
+  select(name,PLAYERID,Gls,age,mins,Assists) %>% 
+  group_by(PLAYERID) %>% 
+  mutate(cumAssists=cumsum(Assists),cumGls=cumsum(Gls),cumMins=cumsum(mins),mpg=round(cumMins/cumGls,1)) %>% 
+  filter(age<=23.584&cumGls>0) %>% 
+ # filter(cumGls>0) %>% 
+  select(PLAYERID) %>% 
+  unique() %>% 
+  .$PLAYERID
+    
+
+# ### need to check Gary Holt  confirm it should be Grant now corrected
+# 
+# prob <- playerGame %>% 
+#   arrange(gameDate) %>% 
+#   filter(Gls>0&PLAYERID=="HOLTG")
+    
+
+
+
+###
+
+sort(names(playerGame))
+
+temp <-playerGame %>% 
+select(name,PLAYERID,Gls,age,mins,Assists) %>% 
+group_by(PLAYERID) %>% 
+mutate(cumAssists=cumsum(Assists),cumGls=cumsum(Gls),cumMins=cumsum(mins),mpg=round(cumMins/cumGls,1)) #%>% 
+#filter(PLAYERID=="KANEH")
+
+# 20
+# Harry Kane
+# KANEH
+# 3
+# 23.583960757472
+# 85
+# 66
+# 8376
+
+topScorersAge <- temp %>% 
+  filter(age<=23.584&cumGls>=66) %>% 
+  select(PLAYERID) %>% 
+  unique() %>% 
+  .$PLAYERID
+
+temp %>% 
+  filter(PLAYERID %in% topScorersAge) %>% 
+  plot_ly(x=~age,y=~cumGls) %>% 
+ # add_markers(marker=list(size=2)) %>% 
+  add_lines(color=~name)
+
+
+
+
+
+topScorersMins <- temp %>% 
+  filter(cumMins<=8376&cumGls>=66&PLAYERID!="OWNGOAL") %>% 
+  select(PLAYERID) %>% 
+  unique() %>% 
+  .$PLAYERID
+
+temp %>% 
+  filter(PLAYERID %in% topScorersMins) %>% 
+  plot_ly(x=~cumMins,y=~cumGls) %>% 
+  # add_markers(marker=list(size=2)) %>% 
+  add_lines(color=~name)
+
+
+temp %>% 
+  filter(PLAYERID %in% topScorersMins) %>% 
+  plot_ly(x=~cumMins,y=~mpg) %>% 
+  # add_markers(marker=list(size=2)) %>% 
+  add_lines(color=~name)
+
+# above dows not look right
+temp %>% 
+  filter(PLAYERID %in% topScorersMins) %>% 
+  arrange(desc(age)) %>% 
+  group_by(PLAYERID) %>% 
+  slice(1)
+
+shearer <- temp %>% 
+  filter(PLAYERID =="SHEAREA")
+
+
+temp %>% 
+  filter(PLAYERID %in% topScorersMins) %>% 
+  plot_ly(x=~cumGls,y=~cumAssists)
+
+
+temp %>% 
+  filter(PLAYERID %in% topScorersMins) %>% 
+  arrange(desc(age)) %>% 
+  group_by(PLAYERID) %>% 
+  slice(1) %>% 
+  plot_ly(x=~cumGls,y=~cumAssists)
+
+## torres bes t assistor - who to?
+
+
+temp %>% 
+  filter((cumAssists+cumGls)>=91) %>% 
+  arrange(desc(age)) %>% 
+  group_by(PLAYERID) %>% 
+  slice(1) %>% 
+  plot_ly(x=~cumGls,y=~cumAssists,
+          hoverinfo="text",
+          text=~name)
+
+## think about penalties 12 
+## englishman who hadnt scored in prem league by his first age (cole??)
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(PLAYERID=="KANEH"&Gls>0) %>% 
+  arrange(mins) %>% 
+  select(mins,START)
+
+# mins START
+# <dbl> <int>
+#   1     34     0
+# 2     72     6
+
+asSub <- playerGame %>% 
+  filter(PLAYERID=="KANEH"&mins>0&START!=6) %>% 
+  arrange(mins) %>% 
+  select(mins,START,Gls,Assists)
+# 1 gl no assists in around 200 mins
+
+## look as results as starter
+
+sort(names(standings))
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="KANEH"&START==6) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+df <-table(outcome) #class(df)
+
+df <- as.data.frame(table(outcome)) #class(df)
+
+Gls  res Freq
+1    0 Draw   17
+2    1 Draw    7
+3    2 Draw    0
+4    3 Draw    0
+5    0 Loss   17
+6    1 Loss    2
+7    2 Loss    0
+8    3 Loss    0
+9    0  Win   16
+10   1  Win   18
+11   2  Win   13
+12   3  Win    4
+
+df <-df %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=(3*Win+Draw)/(Draw+Loss+Win), Games=(Draw+Loss+Win))
+
+
+
+Gls Draw Loss Win      ppg Games
+1   0   17   17  16 1.300000    50
+2   1    7    2  18 2.259259    27
+3   2    0    0  13 3.000000    13
+4   3    0    0   4 3.000000     4
+
+
+## only lost 2 games he has scored in (as starter)
+
+#extend to all other players
+
+#eg Aguero
+
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="AGUEROS"&START==6) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+
+
+df <- as.data.frame(table(outcome)) %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=(3*Win+Draw)/(Draw+Loss+Win), Games=(Draw+Loss+Win))
+
+#    Gls Draw Loss Win      ppg Games
+# 1   0   16   24  33 1.575342    73
+# 2   1    6    3  40 2.571429    49
+# 3   2    3    1  15 2.526316    19
+# 4   3    0    0   3 3.000000     3
+# 5   4    0    0   1 3.000000     1
+# 6   5    0    0   1 3.000000     1
+
+# aguero 4
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="SHEAREA"&START==6) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+
+
+df <- as.data.frame(table(outcome)) %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=(3*Win+Draw)/(Draw+Loss+Win), Games=(Draw+Loss+Win))
+
+# shearer 13 admittedly 3x as many but ppg if didnt only 1.02 - relegation form
+
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="KANEH"&(START+subOn)>0) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+
+
+df <- as.data.frame(table(outcome)) %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=(3*Win+Draw)/(Draw+Loss+Win), Games=(Draw+Loss+Win))
+
+
+## what about the most games in which player has scored and team never lost?
+
+
+outcome <-playerGame %>% 
+  filter((START+subOn)>0&Gls>0) %>% 
+  left_join(standings) %>% 
+  select(Gls,res,PLAYERID,name) %>% 
+  group_by(PLAYERID,name) %>% 
+  mutate(L=ifelse(res=="Loss",1,0)) %>% 
+  summarize(losses=sum(L),games=n()) %>% 
+  filter(losses<3) %>% 
+  arrange(desc(games))
+
+
+
+# Gls Draw Loss Win      ppg Games
+# 1   0   16   21  21 1.362069    58
+# 2   1   11    4  27 2.190476    42
+# 3   2    0    0   6 3.000000     6
+# 4   3    0    0   1 3.000000     1
+
+## who has kane assisted
+
+sort(names(goals))
+sort(names(assists))
+sort(names(playerGame))
+
+# goalscorer
+
+scorer <-goals %>% 
+  select(PLAYER_MATCH,PLAYER_MATCH_GOAL) %>% 
+  left_join(playerGame) %>% #25421
+  rename(scorer=name)
+
+assister <-assists %>% 
+    left_join(playerGame) %>%  #32097
+    select(assister=name,PLAYER_MATCH_GOAL) %>% 
+    left_join(scorer)
+
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(assister=="Harry Kane") %>% 
+  arrange(desc(n))
+
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(assister=="Sergio Aguero") %>% 
+  arrange(desc(n))
+
+## best combo all time
+
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(scorer=="Harry Kane") %>% 
+  arrange(desc(n))
+
+# assister           scorer     n
+# <chr>            <chr> <int>
+#   1  Steve McManaman    Robbie Fowler    33
+# 2    Thierry Henry     Robert Pires    33
+# 3    Frank Lampard  Didier Drogba      32
+# 4     Robert Pires    Thierry Henry    30
+# 5  Darren Anderton Teddy Sheringham    29
+# 6  Dennis Bergkamp    Thierry Henry    26
+# 7      David Silva    Sergio Aguero    25
+# 8       Ryan Giggs     Paul Scholes    25
+# 9       Ryan Giggs        Andy Cole    23
+# 10   David Beckham    Ole Solskjaer    22
+  
+
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(scorer=="Harry Kane") %>% 
+  arrange(desc(n))
+
+# Deli
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(assister=="Dele Alli") %>% 
+  arrange(desc(n))
+
+
+assister %>% 
+  group_by(assister,scorer) %>% 
+  count() %>% 
+  filter(assister=="Paul Pogba") %>% 
+  arrange(desc(n))
+
+
+## leading goals coe since firts harry kane goal 7th aprilm 2014 or 2nd nov
+
+playerGame %>% 
+  filter(gameDate>=as.Date("2014-04-07")) %>% 
+  group_by(PLAYERID) %>% 
+  summarise(totGls=sum(Gls)) %>% 
+  arrange(desc(totGls)) 
+
+playerGame %>% 
+  filter(gameDate>=as.Date("2014-04-07")&TEAMNAME=="Tottenham H") %>% 
+  group_by(PLAYERID) %>% 
+  summarise(totGls=sum(Gls)) %>% 
+  arrange(desc(totGls)) 
+
+## Henry
+topScorersMins <- cum_data %>% 
+  filter(PLAYERID=="HENRYT")
+
+
+# time to get to 6 assits -------------------------------------------------
+
+temp <-playerGame %>% 
+  filter(TEAMNAME=="Man. Utd.") %>% 
+  arrange(gameDate) %>% 
+  group_by(PLAYERID,season) %>% 
+  mutate(totAss=cumsum(Assists)) %>% 
+  select(season,gameDate,name,Assists,totAss) %>% 
+  filter(totAss>5) %>% 
+  group_by(season) %>% 
+  slice(1)
+
+#paul ince 1993/4
+
+playerGame %>% 
+  filter(PLAYERID=="INCEP"&season=="1993/94") %>% 
+  select(gameDate,Assists)
+
+
+
+# time taken to exceed previous years pointcount - chelsea ----------------
+
+
+
+
+# CPFC back to back unbeaten ----------------------------------------------
+
+
+
+    
+
+# time of mane's goals and assists ----------------------------------------
+
+sort(names(goals))
+scorer <-goals %>% 
+  select(PLAYER_MATCH,PLAYER_MATCH_GOAL,TIME) %>% 
+  left_join(playerGame) %>% #25421
+  rename(scorer=name)
+
+topPlayers <- c("MANES")
+
+sort(names(scorer))
+scorer %>% 
+  filter(PLAYERID %in% topPlayers&season=="2016/17") %>% 
+  plot_ly(x=~jitter(TIME),y=~PLAYERID) %>% 
+  add_markers(color=I("red"),opacity=0.5,name="Goals") %>% 
+  add_markers(data=assister,color=I("blue"),opacity=0.5,name="Assists")
+
+plot_ly(data=assister[assister$PLAYERID %in% topPlayers&assister$season=="2016/17",],x=~jitter(TIME),y=~PLAYERID,color=I("blue"),opacity=0.5,name="Assists", type="scatter")
+
+
+sort(names(assister))
+# assister <-assists %>% 
+#   left_join(playerGame) %>%  #32097
+#   select(assister=name,PLAYER_MATCH_GOAL) %>% 
+#   left_join(scorer)
+
+# sort(names(assister))
+# 
+# assister %>% 
+#   filter(PLAYERID=="MANES"&season=="2016/17") %>% 
+#   plot_ly(x=~jitter(TIME),y=~PLAYERID) %>% 
+#   add_markers()
+
+topPlayers <- c("MANES","SANCHEA","HAZARDE","ALLID","LUKAKUR","DEBRUYK","KANEH")
+
+scorer %>% 
+  filter(PLAYERID %in% topPlayers&season=="2016/17") %>% 
+  plot_ly(x=~jitter(TIME),y=~PLAYERID) %>% 
+  add_markers(color=I("red"),opacity=0.5,name="Goals") %>% 
+  add_markers(data=assister[assister$PLAYERID %in% topPlayers&assister$season=="2016/17",],x=~jitter(TIME),y=~PLAYERID,color=I("blue"),opacity=0.5,name="Assists")
+
+## dont look like enough assists - need to do a bit more work
+temp <- assister[assister$PLAYERID %in% topPlayers&assister$season=="2016/17",]
+## here assister$Playerid is that of goalscorer
+
+
+sort(names(assists)) "PLAYER_MATCH"      "PLAYER_MATCH_GOAL"
+sort(names(goals))
+assister <- assists %>% 
+  left_join(playerGame) %>% 
+  select(name,PLAYERID,season,Opponents,PLAYER_MATCH_GOAL) %>% 
+  inner_join(goals,by=c("PLAYER_MATCH_GOAL"))
+  
+scorer <-goals %>% 
+  select(PLAYER_MATCH,PLAYER_MATCH_GOAL,TIME) %>% 
+  left_join(playerGame) %>% #25421
+  rename(scorer=name)
+
+
+scorer %>% 
+  filter(PLAYERID %in% topPlayers&season=="2016/17") %>% 
+    plot_ly(x=~jitter(TIME),y=~scorer) %>% 
+  add_markers(color=I("red"),opacity=0.5,name="Goals",
+              hoverInfo="text",
+              text=~paste0("Time: ",TIME," min",
+                           "<br>Opps: ",Opponents)) %>% 
+  add_markers(data=assister[assister$PLAYERID %in% topPlayers&assister$season=="2016/17",],x=~jitter(TIME),y=~name,color=I("blue"),opacity=0.5,name="Assists",
+              hoverInfo="text",
+              text=~paste0("Time: ",TIME," min",
+                           "<br>Opps: ",Opponents)) %>% 
+ # add_lines(x=c(45,45),y=c(topPlayers[1],topPlayers[7])) %>% prob could improve with name in
+  layout(title="2016/7 EPL Leading Players - Timing of Goals and Assists",
+         xaxis=list(title="Minutes"),
+         yaxis=list(title=""),
+         margin = list(l = 100)
+         ) %>%  config(displayModeBar = F,showLink = F)
+
+# 10 assist and 10 goalscorer ---------------------------------------------
+
+## maybe have a list column by year
+
+playerGame %>% 
+  group_by(PLAYERID,TEAMNAME,season,name) %>% 
+  summarize(goals=sum(Gls),assists=sum(Assists)) %>% 
+  filter(goals>9&assists>9) %>% 
+  ungroup() %>% 
+  select(season,TEAMNAME) %>% 
+  unique() %>% 
+  filter(TEAMNAME=="Man. Utd.") %>% 
+  arrange(season)
+
+
+
+# Longest unbeaten run in season - final position -------------------------
+
+L <-standings %>% 
+  ungroup() %>% 
+  filter(team==input$teamA) %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmGameOrder) %>% 
+  mutate(cat=ifelse(res=="Loss",1,0)) %>% 
+  do(subSeq(.$cat))
+
+L <-standings %>% 
+  ungroup() %>% 
+  filter(team=="Man. Utd.") %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmGameOrder) %>% 
+  mutate(cat=ifelse(res=="Loss",1,0)) %>% 
+  do(subSeq(.$cat))
+# current 0 =16 looks right - longest is 2 of 29  - now look at group by season (should also look at map)
+
+L <-standings %>% 
+  ungroup() %>% 
+  filter(team=="Man. Utd.") %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmYrGameOrder,season) %>% 
+  group_by(season) %>% 
+  mutate(cat=ifelse(res=="Loss",1,0)) %>% 
+  do(subSeq(.$cat))  # also looks good
+
+L <-standings %>% 
+  ungroup() %>% 
+  #filter(team=="Man. Utd.") %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmYrGameOrder,season,team) %>% 
+  group_by(season,team) %>% 
+  mutate(cat=ifelse(res=="Loss",1,0)) %>% 
+  do(subSeq(.$cat))  # also looks good
+
+## do best by season (now inc all teams)
+
+bestBySeason <- L %>% 
+  filter(value==0) %>% 
+  arrange(desc(slength)) %>% 
+  group_by(season,team) %>% 
+  slice(1)
+
+pos <- standings %>% 
+ # filter(team=="Man. Utd.") %>% 
+  select(final_Pos,season,team) %>% 
+  unique() %>% 
+  inner_join(bestBySeason) %>% 
+  select(team,season,best=slength,pos=final_Pos) %>% 
+  arrange(season) 
+
+
+standings %>% 
+  filter(team=="Man. Utd.") %>% 
+  select(final_Pos,season) %>% 
+  unique() %>% 
+  inner_join(bestBySeason) %>% 
+  select(season,best=slength,pos=final_Pos) %>% 
+  arrange(season) %>% 
+  plot_ly(x=)
+
+pos[pos$season=="2016/17",]$best <- 17
+
+pos %>%
+  arrange(desc(best)) %>% 
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+## most draws by season
+
+sort(names(standings))
+
+standings %>% 
+  filter(team=="Man. Utd."&res=="Draw") %>% 
+  group_by(season) %>% 
+  tally() %>% 
+  arrange(desc(n))
+
+## those of 20+ in premier league
+
+finish <-standings %>% 
+  # filter(team=="Man. Utd.") %>% 
+  select(final_Pos,season,team) %>% 
+  unique()
+
+top20 <- L %>% 
+  filter(slength>19) %>% 
+  left_join(finish) %>% 
+  ungroup() %>% 
+  arrange(desc(slength)) %>% 
+  select(team,season,run=slength,Position=final_Pos) %>%
+                         DT::datatable(width=300,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+  
+
+
+levels <- top20 %>% 
+  arrange(desc(slength)) %>% 
+  select(team) %>% 
+  .$team
+
+top20 %>% 
+  arrange(desc(slength)) %>% 
+  mutate(ts=paste0(team,season)) %>% 
+  plot_ly(x=~slength,y=~ts)
+  
+  ppg %>%
+  arrange(average) %>%
+  gather(venue, value, away, home, average) %>%
+  mutate(teamName=factor(team, levels = levels)) %>% 
+  group_by(team) %>% 
+  plot_ly(x = ~value, y = ~teamName,width=800, height= 900) %>% 
+  add_markers
+
+
+# age 150th app -----------------------------------------------------------
+
+playerGame %>% 
+  filter((START+subOn)>0) %>% 
+group_by(PLAYERID) %>% 
+  mutate(order=row_number()) %>% 
+  filter(order==150) %>% 
+  arrange(age)
+
+
+
+# time since scoring ------------------------------------------------------
+#wk11 annualcode
+a <- teamGames %>% 
+  
+  filter(TEAMNAME=="Crystal P"&season=="2017/18") %>% 
+ # filter(TEAMNAME=="Crystal P") %>% not sure this is right
+  select(TEAMMATCHID,gameDate) %>% 
+  mutate(totMins=90*(row_number()-1)) %>% # want to start with 0 to make subsequent addition easier
+  left_join(goals) %>% 
+  arrange(gameDate,TIME) %>% 
+  select(totMins,TIME,TEAMMATCHID) 
+
+## duplicate last row ? should do better
+
+a <- rbind(a,tail(a,1))
+a[nrow(a),]$TIME <- 90
+
+a <-a %>% 
+  filter(!is.na(TIME)) %>% # this gets rid of games with no goals against NB not good for latest result
+  mutate(cumTime=totMins+TIME,lagtime=(lag(cumTime)),leadtime=(lead(cumTime))) %>% 
+  mutate(lagtime=ifelse(is.na(lagtime),0,lagtime),leadtime=ifelse(is.na(leadtime),totMins+90,leadtime)) %>% 
+  mutate(cumdiff=cumTime-lagtime,goalOrder=row_number())
+a %>% 
+  plot_ly(x=~goalOrder, y=~ cumdiff) %>% 
+  add_bars(color= ~ as.factor(TEAMMATCHID)) %>% 
+  layout(showlegend=FALSE,
+         height = 350,
+         autosize = F,
+         title="Time between Goals",
+         xaxis=list(title="Goal order"),
+         yaxis=list(title="Minutes")) %>% 
+  config(displayModeBar = F,showLink = F)
+
+-- might wan to loook diff - can do for players not scoring droughts
+
+
+# win% manu  --------------------------------------------------------------
+
+sort(names(standings))
+
+temp <-standings %>% 
+  mutate(category=ifelse(res=="Win",1,0)) %>% 
+  group_by(team,season) %>% 
+  summarize(wins=sum(category),games=n(),win_pc=round(100*wins/games)) %>% 
+  filter(team=="Man. Utd.") %>% 
+  arrange(win_pc)
+
+
+# Best finish by player ---------------------------------------------------
+
+sort(names(playerGame)) 
+sort(names(standings))
+
+temp <-playerGame %>% 
+  filter((START+subOn)>0&season<"2016/17") %>% 
+  left_join(standings,by=c("MATCHID","TEAMNAME"="team")) %>% 
+  select(name,PLAYERID,season=season.x,final_Pos,TEAMNAME) %>%   ## could be 2 teams
+    unique() #13731
+
+#individ player
+temp %>% 
+ filter(PLAYERID=="WHELANP") %>% #16 19 22 12 14
+  plot_ly(x=~final_Pos) %>% 
+  add_histogram(xbins=list(size=1))
+
+# looks good
+temp %>% 
+#  filter(PLAYERID=="WHELANP") %>% 
+  group_by(name,final_Pos,PLAYERID) %>% 
+  tally() %>% 
+  filter(PLAYERID=="WARDJ") %>% 
+  plot_ly(x=~final_Pos,y=~n) %>% 
+  add_bars()
+
+# all best finishes
+allTimeBest <-temp %>% 
+  #  filter(PLAYERID=="WHELANP") %>% 
+  group_by(name,PLAYERID) %>% 
+ # tally() %>% 
+  arrange(final_Pos) %>% 
+  slice(1)
+
+allTime %>% #3827
+  group_by(final_Pos) %>% 
+  tally() %>% 
+  plot_ly(x=~final_Pos,y=~n) %>% 
+  add_bars()
+  
+allTimeBest %>% 
+  filter(final_Pos>17&season>"1994/95"|final_Pos>19&season<"1994/95")
+
+
+
+# conte record cf last mourinho -------------------------------------------
+
+#chelsea 27 66 points
+
+sort(names(standings))
+
+temp <- standings %>% 
+  filter(gameDate <"2015-12-18"&team=="Chelsea") %>% 
+  arrange(desc(gameDate)) %>% 
+  select(gameDate,OppTeam,points) %>% 
+  mutate(cumPoints=cumsum(points))
+
+#last 40 66 points 1.65
+
+#currently 49 from 26 1.88
+
+
+# Rashford performance ----------------------------------------------------
+
+
+# rle functom -------------------------------------------------------------
+
+
+
+# played only one game ----------------------------------------------------
+
+sort(names(playerGame))
+
+temp <-playerGame %>% 
+  filter((START+subOn)>0) %>% 
+           group_by(PLAYERID,name,COUNTRY) %>% 
+           tally() %>% 
+  filter(n==1) %>% #280
+  group_by(COUNTRY) %>% 
+  tally()
+           
+
+# spanish players for liverpool -------------------------------------------
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(TEAMNAME=="Liverpool"&mins>0&COUNTRY=="Spain") %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(totmins=sum(mins)) %>% 
+  ungroup() %>% 
+  select(-PLAYERID,name,mins=totmins) %>%
+  arrange(desc(mins))
+ DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+ 
+ 
+
+# Man u gf by season by game played ---------------------------------------
+
+sort(names(standings))
+ 
+ 
+allYears <- standings %>% 
+  filter(team=="Man. Utd.") %>% 
+  group_by(season)  
+
+p <-allYears %>% 
+  plot_ly(x=~tmYrGameOrder,y=~cumGF) %>% 
+  add_lines(color=I('lightgrey'), name="Premier Seasons")
+p
+
+allYears <-allYears %>% 
+  filter(season=="2015/16") %>% 
+  add_lines(color=I('blue'), name="2015/16")
+
+allYears %>% 
+  filter(season=="2016/17") %>% 
+  add_lines(color=I('red'), name="2016/17")
+
+
+
+layer_season <- function(plot, name) {
+  plot %>% filter(season == name) %>% add_lines(name = name,
+                                                hoverinfo="text",
+                                                text=~paste0(season,
+                                                             "<br>Pl: ",tmYrGameOrder,
+                                                             "<br>Gls: ",cumGF))
+}
+
+allYears <- standings %>% 
+  filter(team=="Man. Utd.") %>% 
+  group_by(season)  
+
+p <-allYears %>% 
+  plot_ly(x=~tmYrGameOrder,y=~cumGF) %>% 
+  add_lines(color=I('lightgrey'), name="EPL Seasons",
+            hoverinfo="text",
+            text=~paste0(season,
+                         "<br>Pl: ",tmYrGameOrder,
+                         "<br>Gls: ",cumGF)) %>% 
+  add_fun(layer_season,"2015/16") %>% 
+  add_fun(layer_season,"2016/17") %>% 
+  layout(hovermode="closest",
+    title="Man. Utd. Cumulative Goals For by Game by PL Season",
+         xaxis=list(title="Games Played"),
+         yaxis=list(title="Goals Scored")) %>% 
+   config(displayModeBar = F,showLink = F)
+
+p
+rangeslider(p)
+
+## check how many titles they have won
+
+standings %>% 
+  filter(final_Pos==1) %>% 
+  select(team,season) %>% 
+  unique() %>% 
+  group_by(team) %>% 
+  tally()
+  select
+  
+  
+
+# 1st 2nd pos after 30 games ----------------------------------------------
+  
+  sort(names(standings))
+
+standings %>% 
+    filter(tmYrGameOrder==30&position %in% c(1,2)) %>% 
+    group_by(position) %>% 
+    plot_ly(x=~season,y=~cumPts) %>% 
+  add_markers(color=~position,  showlegend = FALSE) %>% 
+  layout(showlegend=FALSE)
+
+
+# alli start --------------------------------------------------------------
+
+
+sort(names(playerGame))
+
+alliAge <-playerGame %>% 
+  filter(PLAYERID=="ALLID") %>% 
+  .$age %>% 
+  max %>% 
+  parse_number()
+  
+
+playerGame %>% 
+  filter(age<=alliAge) %>% 
+  group_by(name,PLAYERID) %>% 
+  summarise(mins=sum(mins),goals=sum(Gls),assists=sum(Assists),points=goals+assists,ppg=points*90/mins) %>% 
+  arrange(desc(points))
+
+
+# fabregas yellow ---------------------------------------------------------
+
+sort(names(playerGame))
+
+table(playerGame$CARD)
+
+
+playerGame %>% 
+  filter(CARD>="1") %>% 
+  group_by(PLAYERID,name) %>% 
+ tally() %>% 
+  arrange(desc(n))
+
+temp <-playerGame %>% 
+  filter(CARD>="1") %>% 
+  group_by(PLAYERID,name) %>% 
+  summarise(tot=n(),mins=sum(mins),mpc=mins/tot) %>% 
+  arrange(mpc) %>% 
+  filter(tot>49)
+
+temp <-playerGame %>% 
+  filter(CARD>="1") %>% 
+  group_by(PLAYERID,name,season) %>% 
+  summarise(tot=n(),mins=sum(mins),mpc=mins/tot) %>% 
+  arrange(mpc) %>% 
+  filter(tot>6)
+
+
+# Spurs run 7 wins --------------------------------------------------------
+
+# in season
+W <-standings %>% 
+  ungroup() %>% 
+  #filter(team=="Man. Utd.") %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmYrGameOrder,season,team) %>% 
+  group_by(season,team) %>% 
+  mutate(cat=ifelse(res=="Win",1,0)) %>% 
+  do(subSeq(.$cat)) %>% 
+  filter(team=="Tottenham H"&value==1) %>% 
+  arrange(desc(slength),desc(season)) %>% 
+  ungroup() %>% 
+  select(season,run=slength) %>% 
+  filter(run>4)%>%
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+W
+
+# overlap
+
+W <-standings %>% 
+  ungroup() %>% 
+  #filter(team=="Man. Utd.") %>% 
+  arrange(tmGameOrder) %>% 
+  select(res,tmYrGameOrder,season,team) %>% 
+  group_by(team) %>% 
+  mutate(cat=ifelse(res=="Win",1,0)) %>% 
+  do(subSeq(.$cat)) %>% 
+  filter(team=="Tottenham H"&value==1) %>% 
+  arrange(desc(slength))
+W
+
+
+# players scoring since allardyce joined ----------------------------------
+
+playerGame %>% 
+  filter(gameDate>=as.Date("2016-12-23")&Gls>0) %>% 
+  group_by(PLAYERID,name,TEAMNAME) %>% 
+  summarise(Goals=sum(Gls)) %>% 
+  filter(TEAMNAME=="Crystal P")
+
+
+# fabregas assists --------------------------------------------------------
+
+# look at top 5
+
+playerGame %>% 
+  group_by(PLAYERID,name) %>% 
+  summarize(sumAssists=sum(Assists,na.rm=T)) %>% 
+  select(name,sumAssists) %>% 
+  arrange(desc(sumAssists)) 
+  
+
+# teams relegated without away win ----------------------------------------
+
+sort(names(standings))
+
+temp <- standings %>% 
+  filter(venue=="A") %>% 
+  group_by(team,season,final_Pos) %>% 
+  select(res) %>% 
+  mutate(count=ifelse(res=="Win",1,0)) %>% 
+  summarize(tot=sum(count),Pl=n()) %>% 
+  filter(tot==0) %>% 
+  arrange(final_Pos,desc(Pl)) 
+
+temp[2,3] <- 16
+  
+temp %>% 
+  select(team,season,Games=Pl,Position=final_Pos)%>%
+                         DT::datatable(width=300,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+# sequence of away game runs without losing by nore than one --------------
+
+# Burnley
+
+sort(names(standings))
+
+temp <- standings %>% 
+  filter(season=="2016/17"&venue=="A") %>% 
+  arrange(gameDate) %>% 
+    mutate(cat=ifelse(GA-GF<=1,1,0)) 
+
+temp %>% 
+group_by(team) %>% 
+  do(subSeq(.$cat)) %>% 
+  arrange(desc(slength)) %>% 
+  slice(1) %>% 
+  arrange(desc(slength)) %>% 
+  select(team, run=slength)%>%
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+# compaing top arsenal players --------------------------------------------
+
+## like playerComparisons.R which also ought to change to plotly
+
+plIds <- c("BERGKAD","OZILM","SANCHEA","PIRESR")
+
+playerGame %>% 
+  filter((START+subOn>0)&PLAYERID %in% plIds) %>% 
+  select(name,PLAYERID,Gls,Assists,age,gameDate) %>% 
+  arrange(gameDate) %>% 
+  group_by(name,PLAYERID) %>% 
+  mutate(gameOrder=row_number(),points=Assists+Gls,
+         cumGoals=cumsum(Gls),cumAssists=cumsum(Assists),cumPoints=cumsum(points)) %>% 
+     plot_ly(x=~gameOrder,y=~cumPoints,color=~name) %>% 
+  add_lines() %>% 
+  layout(title="Arsenal Players - Cumulative Goals and Assists Premier League",
+    xaxis=list(title="Games Played"),
+    yaxis=list(title="Goals+Assists(up to 2 allowed per goal)")) %>% 
+    config(displayModeBar = F,showLink = F)
+ 
+
+# Giroud as sub -----------------------------------------------------------
+
+# all players by season
+
+head(playerGame)
+
+playerGame %>% 
+  filter(subOn>0&Gls>0) %>% 
+  group_by(name,PLAYERID,season) %>% 
+  summarize(totGls=sum(Gls)) %>% 
+  arrange(desc(totGls))
+
+
+# 50 goal scoers by club --------------------------------------------------
+
+sanchez joins lots at arsenal
+
+# Number of weeks at specific position ------------------------------------
+
+manu at 6
+
+
+
+# Man U lineup experience -------------------------------------------------
+
+
+
+# Number of weeks at one position -----------------------------------------
+
+sort(names(standings))
+
+temp <- standings %>% 
+  group_by(season,position,team) %>% 
+  tally() %>% 
+  ungroup() %>% 
+  group_by(position) %>% 
+  arrange(desc(n)) %>% 
+  slice(1)
+## just add in final_pos as well
+
+
+# points gap between teams at end of year -----------------------------------------
+
+
+
+# Wilshere playing or not -------------------------------------------------
+
+
+# most goals by day/round
+
+standings %>% 
+  group_by(gameDate) %>% 
+  summarize(gls=sum(GF)) %>% 
+  arrange(desc(gls)) %>%
+  rename(date=gameDate,Goals=gls) %>% 
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+# peak was 1993-05-08
+
+## 
+
+temp <- standings %>%
+  filter(gameDate=="2008-01-01")
+
+standings[standings$gameDate=="2008-01-01",]
+
+## consistently giving 0
+
+glimpse(standings)
+
+standings$gameDate
+
+# number of teenager per game
+
+sort(names(playerGame))
+
+playerGame %>% 
+  filter(age<21) %>% 
+  group_by(gameDate,TEAMNAME) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+  filter(TEAMNAME=='Man. Utd.')
+
+
+playerGame %>% 
+  filter(TEAMNAME=='Man. Utd.') %>% 
+  select(name,age,gameDate) %>% 
+  arrange(desc(gameDate,age)) %>% 
+  head(18)
+
+
+
+
+# Players whose last game in PL was final game of a season ----------------
+
+
+
+# top goal scorer - wordt gf by team --------------------------------------
+
+pl <- playerGame %>% 
+  group_by(season,name,PLAYERID) %>% 
+  summarize(goals=sum(Gls)) %>% 
+  filter(PLAYERID!="OWNGOAL") %>% 
+  ungroup() %>% 
+  arrange(desc(goals)) %>% 
+  group_by(season) %>% 
+  slice(1)
+
+
+tm <- standings %>% 
+  group_by(season) %>% 
+  filter(tmYrGameOrder==max(tmYrGameOrder)) %>% 
+  select(team,season,final_Pos,cumGF) %>% 
+#  ungroup() %>% 
+  arrange(cumGF) %>% 
+  group_by(season) %>% 
+  slice(1) %>% 
+  inner_join(pl) %>% 
+  select(season,team,tm_goals=cumGF,name,pl_goals=goals) %>%
+
+                         DT::datatable(width=500,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+# wilshere with without ---------------------------------------------------
+
+#adapt this some sort of 
+outcome <-playerGame %>% 
+  filter(PLAYERID=="KANEH"&(START+subOn)>0) %>% 
+left_join(standings) %>% 
+  select(Gls,res)
+
+
+
+as.data.frame(table(outcome)) %>% 
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2), Games=(Draw+Loss+Win)) %>%
+  select(Goals_Scored=Gls,Win,Draw,Loss,ppg,Games) %>% 
+  DT::datatable(width=400,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+sort(names(playerGame))
+outcome <-playerGame %>% 
+  filter(PLAYERID=="KANEH"&(START+subOn)>0) %>% 
+  left_join(standings) %>% 
+  select(Gls,res)
+
+sort(names(playerGame))
+
+
+outcome <-playerGame %>% 
+  filter(PLAYERID=="WORTHIM"&(START+subOn)>0&season=="2016/17"&TEAMNAME=="Bournemouth") %>% 
+  left_join(standings) %>% 
+  select(gameDate,res,name) #27 could also look as starter
+
+  player<- unique(outcome$name)
+
+as.data.frame(table(outcome)) %>% #81 = 3 poss results x27
+  spread(key=res,value=Freq) %>% ## if say only draws then
+  mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2), Games=(Draw+Loss+Win)) %>%
+  select(Win,Draw,Loss,ppg,Games) %>% 
+  DT::datatable(width=400,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+temp <-as.data.frame(table(outcome)) %>% #81 = 3 poss results x27
+  spread(key=res,value=Freq) %>% 
+  mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2)) %>% 
+  summarize(games=n(),av_ppg=mean(ppg))   #games   av_ppg 1    27 1.185185
+  df <- bind_cols(temp,player=player)
+  
+  unique(pla)
+  
+    pl <- playerGame %>% 
+    filter((START+subOn)>0&season=="2016/17"&TEAMNAME=="Bournemouth") %>% 
+    .$PLAYERID %>% 
+      unique() #27 looks good
+
+    ppg <- function(x) {
+      print(x)
+    outcome <-playerGame %>% 
+      filter(PLAYERID==x) %>% 
+      left_join(standings) %>% 
+      select(gameDate,res,name) #27 could also look as starter
+    
+    player<- unique(outcome$name)
+    print(player)
+    temp <-as.data.frame(table(outcome)) %>% #81 = 3 poss results x27
+      spread(key=res,value=Freq) %>% 
+      mutate(ppg=round((3*Win+Draw)/(Draw+Loss+Win),2)) %>% 
+      summarize(games=n(),av_ppg=mean(ppg))   #games   av_ppg 1    27 1.185185
+    print(temp)
+    bind_cols(temp,player=player)
+    
+    }
+
+dataOneYear <-map_df(pl, ppg)
+
+
+as.data.frame(table(outcome)) %>% 
+  mutate(ppg=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+  summarize(games=n(),av_ppg=mean(ppg))
+
+#####
+pl <- playerGame %>% 
+  filter((START+subOn)>0&season=="2016/17"&TEAMNAME=="Crystal P") %>% 
+  .$PLAYERID %>% 
+  unique()
+
+dataOneYear <- NULL
+ppg <- function(x) {
+  
+  outcome <-playerGame %>% 
+    filter(PLAYERID==x&(START+subOn)>0&season=="2016/17"&TEAMNAME=="Crystal P") %>% 
+    left_join(standings) %>% 
+    select(gameDate,res,name) #27 could also look as starter
+  
+ 
+  
+  player<- unique(outcome$name)
+ 
+  #temp <-as.data.frame(table(outcome)) %>% 
+outcome %>% 
+    mutate(ppg=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+    summarize(games=n(),av_ppg=round(mean(ppg),2)) %>% cbind(player)
+  #print(temp)
+ # bind_cols(temp,player=player)
+  
+}
+
+dataOneYear <-map_df(pl, ppg)
+# this does not give results of games not appearing in
+
+library(forcats)
+
+levels <- dataOneYear %>% 
+  arrange(games) %>% 
+  #select(team,average) %>% 
+  .$player
+
+dataOneYear %>% 
+  mutate(name=factor(player, levels = levels)) %>% 
+  plot_ly(x=~av_ppg,y=~name,width=800, height= 700) %>% 
+  add_markers(color = I("blue"),
+              hoverinfo="text",
+              text=~paste0(name,"<br>Apps:",games,
+                           "<br>ppg: ",av_ppg)) %>% 
+ # add_lines(x = ~av_ppg, y = ~name, showlegend = F, line = list(color = "gray", width=1)) %>% 
+  layout(hovermode = "closest",  
+         title = "Average points per PL game played in <br> Ordered by Appearances - Hover for Info",
+         xaxis = list( title = "Points per Game"),
+         yaxis = list(title = ""),
+         margin = list(l = 130)
+  ) %>% 
+  config(displayModeBar = F,showLink = F)
+
+
+
+##### starts only
+pl <- playerGame %>% 
+  filter(START>0&season=="2016/17"&TEAMNAME=="Bournemouth") %>% 
+  .$PLAYERID %>% 
+  unique()
+
+dataOneYear <- NULL
+ppg <- function(x) {
+  
+  outcome <-playerGame %>% 
+    filter(PLAYERID==x&START>0&season=="2016/17"&TEAMNAME=="Bournemouth") %>% 
+    left_join(standings) %>% 
+    select(gameDate,res,name) #27 could also look as starter
+  
+  
+  
+  player<- unique(outcome$name)
+  
+  #temp <-as.data.frame(table(outcome)) %>% 
+  outcome %>% 
+    mutate(ppg=ifelse(res=="Win",3,ifelse(res=="Draw",1,0))) %>% 
+    summarize(games=n(),av_ppg=round(mean(ppg),2)) %>% cbind(player)
+  #print(temp)
+  # bind_cols(temp,player=player)
+  
+}
+
+dataOneYear <-map_df(pl, ppg)
+# this does not give results of games not appearing in
+
+# average points
+mean(dataOneYear$av_ppg) #1.161304
+ l <- round(weighted.mean(dataOneYear$av_ppg, dataOneYear$games),2) #1.210048
+ 
+ 
+ 
+
+library(forcats)
+
+levels <- dataOneYear %>% 
+  arrange(games) %>% 
+  #select(team,average) %>% 
+  .$player
+
+# set levels for vertical line
+a <-levels[1] #"Ryan Allsopp"
+b <- levels[length(levels)] #"Artur Boruc"
+
+dataOneYear %>% 
+  mutate(name=factor(player, levels = levels)) %>% 
+  plot_ly(x=~av_ppg,y=~name,width=800, height= 700) %>% 
+  add_markers(color = I("blue"),
+              hoverinfo="text",
+              text=~paste0(name,"<br>Starts:",games,
+                           "<br>ppg: ",av_ppg)) %>% 
+  # add_lines(x = ~av_ppg, y = ~name, showlegend = F, line = list(color = "gray", width=1)) %>% 
+ # add_lines(x = c(l, l), y= c(a, b), mode = "lines") %>% # player order gets screwed
+  add_lines(x = c(l, l), y= c(~min(name), ~max(name)), mode = "lines") %>% 
+  layout(hovermode = "closest",  
+         title = "Average points per PL game started in <br> Ordered by Starts - Hover for Info",
+         xaxis = list( title = "Points per Game"),
+         yaxis = list(title = ""),
+         margin = list(l = 130)
+  ) %>% 
+  config(displayModeBar = F,showLink = F)
+
+
+## getting problem with line
+
+df <- data.frame(id=c("a","b","c"),s=c(1,3,2),t=c(3,2,1))
+
+levels <- df %>% 
+  arrange(s) %>% 
+  .$id #[1] a c b
+
+class(levels[1]) #factor
+levels[length(levels)]
+
+df %>% 
+  mutate(id=factor(id, levels = levels)) %>% 
+plot_ly(x=~t,y=~id) %>% 
+ 
+  add_markers() 
+
+
+  theMin <- levels[1] # factor
+theMax <-levels[length(levels)]
+
+line <- weighted.mean(df$t,df$s)
+  
+df %>% 
+  plot_ly(x=~t,y=~id) %>% 
+  mutate(id=factor(id, levels = levels)) %>% 
+  add_markers() %>% 
+  add_lines(x=c(line,line), y=c(theMin,theMax))
+
+
+
+p <- df %>% 
+  mutate(id=factor(id, levels = levels)) %>% 
+  plot_ly(x=~t,y=~id) %>% 
+ 
+  add_markers()
+p
+
+x_values <- c(mean(df$t) - 0.5 * line, mean(df$t) + 0.5 * line)
+
+
+x_values <- weighted.mean(df$t,df$s)
+y_values <- c('a', 'c') # [1] "a" "c"class(y_values) character
+
+y_values <- c(as.character(levels[1]), as.character(levels[length(levels)])) # 1 2
+
+p <- add_lines(p, 
+               x = x_values, 
+               y = y_values)
+p
+
+
+
+
+# leading scorer by nationality -------------------------------------------
+
+sort(names(playerGame))
+
+df <- playerGame %>% 
+  filter(PLAYERID!="OWNGOAL") %>% 
+  group_by(name,PLAYERID,COUNTRY) %>% 
+  summarize(sumGoals=sum(Gls)) %>% 
+  arrange(desc(sumGoals)) %>% 
+  group_by(COUNTRY) %>% 
+  slice(1) %>% 
+  select(name,Country=COUNTRY,Goals=sumGoals) %>%
+  DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+second <- playerGame %>% 
+  filter(PLAYERID!="OWNGOAL") %>% 
+  group_by(name,PLAYERID,COUNTRY) %>% 
+  summarize(sumGoals=sum(Gls)) %>% 
+  arrange(desc(sumGoals)) %>% 
+  filter(sumGoals>0) %>% 
+  group_by(COUNTRY) %>% 
+  slice(2) %>% 
+  select(name,Country=COUNTRY,Goals=sumGoals) %>%
+   DT::datatable(class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+# How did players fare boight last summer ---------------------------------
+
+sort(names(playerClub))
+
+df <-playerClub %>% 
+  filter(JOINED>"2016-05-15"&JOINED<="2016-09-01"&FEE!=99) %>% 
+  left_join(summary) %>% 
+  filter(season=="2016/17") %>% 
+  plot_ly(x=~FEE,y=~mins,color=~TEAMID,
+          hoverinfo="text",
+          text=~PLAYERID) 
+
+## need to link to names and teamnames e.g boasie
+
+resuce to 20mill - give names
+
+
+# Rooney PL imortance to United -------------------------------------------
+
+sort(names(playerGame))
+
+goaly <- c("G","Goalkeeper")
+
+df <-playerGame %>% 
+  filter(TEAMNAME=="Man. Utd."& !POSITION %in% goaly) %>% 
+  group_by(season,name,PLAYERID) %>% 
+  summarize(totMins=sum(mins)) %>% 
+  arrange(desc(totMins)) %>% 
+  group_by(season) %>% 
+  mutate(minOrder=row_number())
+
+df %>% 
+  filter(PLAYERID=="ROONEYX") %>% 
+  plot_ly(x=~season,y=~minOrder) %>% 
+  add_markers(color=I("red")) %>% 
+  #add_lines(color=I("lightgrey")) %>% 
+  layout(showlegend=FALSE,margin=list(b=80),
+         title="Rooney ranking in PL minutes played <br>for Man Utd by season",
+         yaxis=list(autorange="reversed",title="Rank"),
+         xaxis=list(title="")
+  )
+
+
+
+#  manu u starting with no big assisters ----------------------------------
+
+sort(names(summary))
+
+
+ summary %>% 
+   filter(season=="2016/17"&TEAMNAME=="Man. Utd.") %>% 
+   mutate(Gls=StGls+subGls,Pts=Gls+Assists,per90Mins=round(Pts*90/mins,2)) %>% 
+   select(name,Gls,Assts=Assists,Pts,mins,per90Mins) %>% 
+   arrange(desc(per90Mins)) %>% 
+   head(6) %>% 
+   datatable()
+ 
+ 
+ summary %>% 
+   filter(season=="2016/17"&TEAMNAME=="Everton") %>% 
+   mutate(Gls=StGls+subGls,Pts=Gls+Assists,per90Mins=round(Pts*90/mins,2)) %>% 
+   select(name,Gls,Assts=Assists,Pts,mins,per90Mins) %>% 
+   arrange(desc(per90Mins)) %>% 
+   head(6) %>% 
+   datatable()
+ 
+ summary %>% 
+   filter(season=="2016/17"&TEAMNAME=="Crystal P") %>% 
+   mutate(Gls=StGls+subGls,Pts=Gls+Assists,per90Mins=round(Pts*90/mins,2)) %>% 
+   select(name,Gls,Assts=Assists,Pts,mins,per90Mins) %>% 
+   arrange(desc(per90Mins)) %>% 
+   head(6) %>% 
+   datatable()
+ 
+ 
+ test <-summary %>% 
+   filter(season=="2016/17"&POSITION=="Midfielder") %>% 
+   mutate(Gls=StGls+subGls,Pts=Gls+Assists,per90Mins=round(Pts*90/mins,2)) %>% 
+   select(name,Gls,Assts=Assists,Pts,mins,per90Mins,age=floor(as.numeric(difftime(Sys.Date(),born,units="days"))/365.25)) %>% 
+   arrange(desc(per90Mins)) %>% 
+   head(6) %>% 
+   datatable()
+glimpse(summary)
+
+class(Sys.Date()-summary$born[1])
+floor(as.numeric(difftime(Sys.Date(),summary$born[1],units="days"))/365.25)
+
+ 
+ there have been 506 starting lineups for 1st game of #premierleague seasons
+ How many times have these played the most for their club that season
+ 
+
+# 2 SUBS SCORING ----------------------------------------------------------
+
+ sort(names(playerGame))
+ 
+  playerGame %>% 
+   filter(subOn>0&Gls>0) %>% 
+   group_by(TEAMMATCHID,gameDate,TEAMNAME) %>% 
+   tally()%>% 
+     filter(n>1) %>% 
+    arrange(desc(n),TEAMNAME) %>% 
+    ungroup() %>% 
+    group_by(TEAMNAME) %>% 
+    tally() %>% 
+    DT::datatable()
+ 
+def image possibility
+
+sort(names(teamGames))
+head(teamGames)
+
+
+sevens <- teamGames %>% 
+  ungroup() %>% 
+  filter(tmYrGameOrder==1) %>% 
+  group_by(MATCHID) %>% 
+  summarize(totGls=sum(GOALS)) %>% 
+  arrange(desc(totGls)) %>% 
+  filter(totGls==7) %>% 
+  pull(MATCHID)
+
+teamGames %>% 
+  ungroup() %>% 
+  filter(MATCHID %in% sevens) %>% 
+  arrange(MATCHID,desc(venue)) %>% 
+  select(MATCHID,season,venue,TEAMNAME,GOALS) 
+@ would be nice to tidy up
+
+
+# 2017-8 possibilities ----------------------------------------------------
+
+crowd changes
+foreignerd - uddersfield - german born # could do both week 1 and season average
+time taken for 3 goal away win prem
+
+
+
+sort(names(teamGames))
+sort(names(playerGame))
+sort(names(standings))
+
+library(plotly)
+
+## crowd mean of first 2 rounds  - might be better after next week
+teamGames %>% 
+  ungroup() %>% 
+  filter(tmYrGameOrder<3) %>% 
+  group_by(season) %>% 
+  select(season,CROWD) %>% 
+  summarise(games=n(),avCrowd=sum(CROWD)/(2*games)) %>% 
+  plot_ly(x=~season,y=~avCrowd) %>% 
+  add_lines()
+
+## dropped last year but smaller clubs in and NEW out - start graph from zero
+# mebbe look at boxplot as well
+
+## foreign
+
+games <- teamGames %>% 
+  ungroup() %>% 
+  filter(tmYrGameOrder==1) %>% 
+  pull(MATCHID)
+
+playerGame %>% 
+  filter(MATCHID %in% games&START>0) %>% 
+  group_by(season,COUNTRY) %>% 
+  summarise(tot=n()) %>% 
+  group_by(season) %>% 
+  mutate(pc=round(100*tot/sum(tot),1)) %>% 
+  filter(COUNTRY=="England") %>% 
+  ungroup() %>% 
+  plot_ly(x=~season,y=~pc) %>% 
+  add_lines()
+# maybe look at just G1
+
+## away games no big win - check how many teams alltogether unique(standings$team)
+
+allTeams <-standings %>% 
+  arrange(gameDate) %>% 
+  filter(venue=="A") %>% 
+  group_by(team) %>% 
+  mutate(awayGameOrder=row_number()) %>% 
+    filter((GF-GA)>=3) %>% 
+  group_by(team) 
+  
+
+
+#allTeamsAway <- allTeams
+
+## want somehow to add in number of games by teams that never did it - come back to
+didIt <-allTeams %>% 
+    slice(1) #39
+
+didIt %>% 
+    select(team,awayGameOrder) %>% 
+    plot_ly(x=~awayGameOrder,y=~team)
+
+setdiff(unique(standings$team),unique(didIt$team))
+
+never <-setdiff(unique(standings$team),unique(didIt$team))
+[1] "Sheff. Utd."  "Oldham"       "Swindon T"    "Birmingham C" "Watford"      "Wolves"       "Bradford C"  
+[8] "Cardiff C"    "Barnsley"     "Huddersfield" "Brighton" 
+sort(names(standings))
+neverTeams <- standings %>% 
+  filter(team %in% never&venue=="A") %>% 
+  group_by(team) %>% 
+  arrange(tmGameOrder) %>% 
+  mutate(awayGameOrder=row_number()) %>% 
+  arrange(desc(awayGameOrder)) %>% 
+  slice(1) %>% 
+  select(team,awayGameOrder) %>% 
+  mutate(ever="Never")
+
+didItTeams <- didIt %>% 
+  select(team,awayGameOrder) %>% 
+  mutate(ever="First")
+
+df <- rbind(neverTeams,didItTeams)
+
+## for chart
+df$team <-  factor(df$team, levels = df$team[order(df$awayGameOrder)])
+
+str(df)
+  
+df %>% 
+  plot_ly(x=~awayGameOrder,y=~team,height=1000) %>% 
+  add_bars(color=~ever) %>% 
+  layout(title=" EPL Away Games before 3 goal victory",
+         margin=list(l=120),
+         xaxis=list(title="Games"),
+         yaxis=list(title="")
+         
+         ) %>%  config(displayModeBar = F,showLink = F)
+
+
+
+# just need stidying up
+standings %>% 
+  
+  filter(venue=="A" & team %in% never) %>% 
+  count(team)
+
+Birmingham 1337 seasons
+## followin manu 
+test <-standings %>% 
+  arrange(gameDate) %>% 
+  group_by(team) %>% 
+    filter((GF-GA)>=4) %>% 
+  group_by(team) %>% 
+  tally() %>% 
+  arrange(desc(n))
+  
+mnu <- standings %>% 
+  arrange(gameDate) %>% 
+  group_by(team) %>% 
+  filter((GF-GA)>=4&team=="Man. Utd.") %>% 
+  select(gameDate,tmGameOrder) %>% 
+  mutate(last=lag(tmGameOrder)) %>% 
+  mutate(last=(ifelse(is.na(last),0,last)),diff=tmGameOrder-last,order=row_names()-1) %>% 
+  plot_ly(x=~order,y=~diff) %>% 
+  add_bars(color=I("red")) %>% 
+  layout(title="Man Utd sequences between 4 goal victories",
+         xaxis=list(title=""),
+         axis=list(title="")) %>%  config(displayModeBar = F,showLink = F)
+
+
+# most goals as sub -------------------------------------------------------
+
+asSub <- playerGame %>% 
+  filter(START==0&PLAYERID=="DEFOEJ") %>% 
+  group_by(name,PLAYERID,TEAMNAME) %>% 
+  summarise(sub=sum(Gls)) 
+
+asStarter<- playerGame %>% 
+  filter(START!=0&PLAYERID=="DEFOEJ") %>% 
+  group_by(name,PLAYERID,TEAMNAME) %>% 
+  summarise(starter=sum(Gls)) %>% 
+  right_join(asSub) %>% 
+  ungroup() %>% 
+  select(team=TEAMNAME,starter,sub)   %>%
+
+                         DT::datatable(width=200,class='compact stripe hover row-border order-column',rownames=FALSE,options= list(paging = FALSE, searching = FALSE,info=FALSE))
+
+
+
+# winning without Zaha ----------------------------------------------------
+
+
+
+sort(names(playerGame))
+sort(names(standings))
+
+zaha <- playerGame %>% 
+  filter(PLAYERID=="ZAHAW"&mins>0&TEAMNAME=="Crystal P")
+
+test <-standings %>% 
+  filter(team=="Crystal P"&gameDate>="2014-08-30") %>% 
+  left_join(zaha) %>% 
+  select(name,team,res,gameDate,tmGameOrder)
+ arrange(desc(gameDate))
+
+ # actually not too bad without him
+ 
+
+# eriksen lst -------------------------------------------------------------
+
+ sort(names(goals))
+sort(names(playerGame))
+
+goals %>% 
+  left_join(playerGame) %>% 
+  filter(PLAYERID=="ERIKSEC"&PLAY=="Direct_FK") %>% 
+  select(gameDate)
+
+
+
+# headed goals by season --------------------------------------------------
+
+sort(names(teamGames))
+
+temp <- goals %>% 
+  left_join(playerGame) %>% 
+  left_join(teamGames) %>% 
+  filter(tmYrGameOrder<8) %>% 
+  group_by(season) %>% 
+  tally()
+
+
+temp <- standings %>% 
+  filter(tmYrGameOrder<=7) %>% 
+  group_by(season) %>% 
+  summarise(gls=sum(GF))
+## 173 in total to date
+
+x <- goals %>% 
+  left_join(playerGame) %>% 
+  left_join(teamGames,by="TEAMMATCHID") %>% 
+  select(season.x,METHOD,tmYrGameOrder) %>% 
+  filter(tmYrGameOrder<=7) %>%
+  select(season.x,METHOD) %>% 
+  group_by(season.x,METHOD) %>% 
+  tally()  #173
+
+
+y <- goals %>% 
+  left_join(playerGame) %>% 
+  filter(season=="2016/17"&METHOD=="Head") %>% 
+  count(PLAYERID, sort=TRUE)
+
+
+# ROONEY OUTSIDE AREA -----------------------------------------------------
+
+
+
+test <-goals %>% 
+  left_join(playerGame) %>% 
+  filter(PLAYERID=="ROONEYX") %>% 
+  arrange(desc(gameDate))
+
+## not that long ago
+

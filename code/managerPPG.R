@@ -70,7 +70,7 @@ output$managerPPGbyTeam <- renderPlotly({
     filter(name==input$manager) %>% 
     inner_join(allManagerStints)
   
-  (glimpse(houllier))
+  #(glimpse(houllier))
   
   
   df <- data %>% 

@@ -227,7 +227,7 @@ dashboardPage(
                     solidHeader = TRUE,status = 'warning',title="Latest Blog Post - Access every week via Eplweekly category on mytinyshinys.com site",
                     
                     
-                    tags$iframe(src="https://www.mytinyshinys.com/2017/11/06/epl2018-wk11/", height=600, width=950, frameborder=0)
+                    tags$iframe(src="https://www.mytinyshinys.com/2017/12/05/epl-week-15/", height=600, width=950, frameborder=0)
                   )
                   
                 )

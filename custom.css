@@ -1,0 +1,65 @@
+.information {
+  background-color: #FFE5B4;
+}
+
+.addpad {
+  padding-left:20px;
+   padding-right:5px;
+}
+.addpad2 {
+ 
+   padding-right:5px;
+}
+
+.btn-primary {
+  padding-left: 12px; /* is only for padding within div - want it in the div really*/
+  background-color: #00a65a;
+  border-color: #00a65a; /* might want to change from red #dd4b39 */
+}
+
+.shiny-input-panel {
+  background-color: #00a65a; /* this is green from mainlyMaps but comes out correct yellow/orange??
+  /*border-color: #1e282c; */
+}
+
+.shiny-input-panel {
+/*  background-color: #F39C12; */
+/*  border-color: #F39C12; */
+/*background: rgb(221, 75, 57);  /*Fall-back for browsers that don't
+                                    support rgba */
+/*    background: rgba(221, 75, 57, .5); */
+/*  background:   rgba(255,0,0,0.5) */
+  
+  /* for red headers eg climate see dashboard tips*/
+  background-color:  #f39c12;
+  border-color: #fff;  
+  
+}
+
+/* need to make viewable
+/*downloads {
+     background: rgb(221, 75, 57);  /*Fall-back for browsers that don't support rgba
+                                    
+    background: rgba(221, 75, 57, .5);
+   
+}
+ */
+ 
+ /* chnage from color blue to the same as box headers success green also said no need to use li.active */
+ /* did not work */
+ .nav-tabs-custom>.nav-tabs>li.active {
+    border-top-color: #00A65A; /*#3c8dbc; 3cbc3e did in browser not quite correct*/
+}
+
+
+#hl_compBtn {
+  margin-top: 20px;
+}
+
+
+.vis-timeline {
+  border: 2px solid purple;
+  font-family:  purisa, 'comic sans', cursive;
+  font-size: 12pt;
+  background: #ffecea;
+}
