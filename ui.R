@@ -139,7 +139,9 @@ dashboardPage(
                     width = 12,
                     status = "warning",solidHeader = TRUE,title = "Not Just Another Soccer site ",
                     collapsible = T,collapsed = F,
-                    includeMarkdown("frontPage.md")
+                    includeMarkdown("frontPage.md"),
+                    selectInput("bookmark",label="Team Layout",teamsChoice)#,
+                    #actionButton("bookmarkButton","Go")
                   ),
                   
                   box(

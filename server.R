@@ -4,6 +4,7 @@ values <- reactiveValues()
 # values$playerID <- "BENTD" # no longer takes effect is this shiny ( no looks like putting front page on for player droughts is reason that stays
  values$TEAMNAME <- "Chelsea" # does take effect
  values$playerID <- "BENTD"
+ values$managerID <- "Arsene Wenger"
 # values$TEAMNAME <- NULL
  values$Opponents <- NULL
  values$MATCHID <- NULL
@@ -14,6 +15,92 @@ values <- reactiveValues()
  
 shinyServer(function(input, output, session) {
   
+  
+  ## looking at specific team pages via 
+  # this works
+  # observeEvent(input$bookmark, {
+  #   print(input$bookmark)
+  # values$TEAMNAME <- input$bookmark 
+  # values$playerID <- "OZILM"
+  # })
+  
+  
+  observeEvent(input$bookmark, {
+
+    values$TEAMNAME <- input$bookmark
+    values$playerID =
+    case_when(
+      input$bookmark=="Arsenal" ~  "OZILM", 
+      input$bookmark=="Aston Villa" ~ "AGBONLG",
+      input$bookmark=="Barnsley" ~  "READFERN", 
+      input$bookmark=="Birmingham C" ~ "LARSSOS",
+      input$bookmark=="Blackburn" ~  "SUTTONC", 
+      input$bookmark=="Blackpool" ~ "ADAMC",
+      input$bookmark=="Bolton" ~  "DAVIESK", 
+      input$bookmark=="Bournemouth" ~ "KINGJ",
+      input$bookmark=="Bradford C" ~  "BEAGRIP", 
+      input$bookmark=="Brighton" ~ "GROSSP",
+      input$bookmark=="Burnley" ~  "BARNESA", 
+      input$bookmark=="Cardiff C" ~ "MUTCHJ",
+      input$bookmark=="Charlton" ~  "EUELLJ", 
+      input$bookmark=="Chelsea" ~ "HAZARDE",
+      input$bookmark=="Coventry C" ~  "DUBLIND", 
+      input$bookmark=="Crystal P" ~ "ZAHAW",
+      input$bookmark=="Everton" ~  "BAINESL", 
+      input$bookmark=="Derby Co." ~ "STURRID",
+      input$bookmark=="Fulham" ~  "DEMPSEC", 
+      input$bookmark=="Huddersfield" ~ "INCET",
+      input$bookmark=="Hull C" ~  "HUDDLET", 
+      input$bookmark=="Ipswich T" ~ "KIWOMYC",
+      input$bookmark=="Leeds U" ~  "KEWELLH", 
+      input$bookmark=="Leicester C" ~ "VARDYJ",
+      input$bookmark=="Liverpool" ~  "COUTINP", 
+      input$bookmark=="Man. City" ~ "AGUEROS",
+      input$bookmark=="Man. Utd." ~  "CARRICM", 
+      input$bookmark=="Middlesbro" ~ "DOWNINS",
+      input$bookmark=="Newcastle U" ~  "SHEAREA", 
+      input$bookmark=="Norwich C" ~ "HOOLAHW",
+      input$bookmark=="Nottm Forest" ~  "STONES", 
+      input$bookmark=="Oldham" ~ "SHARPG",
+      input$bookmark=="Portsmouth" ~  "TAYLORM7", 
+      input$bookmark=="QPR"  ~ "FERDINL",
+      input$bookmark=="Reading" ~  "DOYLEK", 
+      input$bookmark=="Sheff. Utd." ~ "GILLESK",
+      input$bookmark=="Sheff. Wed." ~  "BRIGHTM", 
+      input$bookmark=="Southampton" ~ "LETISSM",
+      input$bookmark=="Stoke C" ~  "CROUCHP", 
+      input$bookmark=="Sunderland"  ~ "PHILLIK",
+      input$bookmark=="Swansea" ~  "SIGURDG", 
+      input$bookmark=="Swindon T"  ~ "MONCURJ",
+      input$bookmark=="Tottenham H" ~  "KANEH", 
+      input$bookmark=="Watford" ~ "DEENEYT",
+      input$bookmark=="West Brom" ~  "BRUNTC", 
+      input$bookmark=="West Ham U" ~ "NOBLEM",
+      input$bookmark=="Wigan Ath." ~  "RODALLH", 
+      input$bookmark=="Wimbledon" ~ "EARLER",
+      input$bookmark=="Wolves"  ~  "JARVISM" 
+      
+    )
+    
+  })
+  
+  
+  # observeEvent(input$bookmark, {
+  #   
+  #   values$TEAMNAME <- input$bookmark 
+  #  
+  #   if(input$bookmark=="Arsenal") values$playerID <- "OZILM"
+  #   if(input$bookmark=="Aston Villa") values$playerID <-  "AGBONLG",
+  # })
+  
+  
+  x <- 1:50
+  case_when(
+    x %% 35 == 0 ~ "fizz buzz",
+    x %% 5 == 0 ~ "fizz",
+    x %% 7 == 0 ~ "buzz",
+    TRUE ~ as.character(x)
+  )
   
   # Need to exclude the buttons from themselves being bookmarked -https://shiny.rstudio.com/articles/bookmarking-state.html
   setBookmarkExclude(c("b_1","b_2","b_3","b_4"))  # just b_4 for sidebar so saves whole site from first state
@@ -66,9 +153,10 @@ shinyServer(function(input, output, session) {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
                  sliderInput("managerGames", label="Min games in Stint", min=1,max=100,value=5))
     } else if (input$sbMenu=="m_players") {
-      inputPanel(selectInput("manager", label=NULL,selected="Jose Mourinho", choices=managerChoice))
+      print(values$managerID)
+      inputPanel(selectInput("manager", label=NULL,selected=values$managerID, choices=managerChoice))
     } else if (input$sbMenu=="t_ppg") {
-      inputPanel(selectInput("manager", label=NULL,selected="Jose Mourinho", choices=managerChoice))
+      inputPanel(selectInput("manager", label=NULL,selected=values$managerID, choices=managerChoice))
       # specials 
     } else if (input$sbMenu=="sp_playerByTeamPPG") {
       inputPanel(selectInput("teamA", label=NULL,selected=values$TEAMNAME, teamsChoice),
@@ -709,6 +797,7 @@ shinyServer(function(input, output, session) {
   source("code/specials/vTopClubs.R", local=TRUE)
   source("code/playerDroughts.R", local=TRUE)
   source("code/assistScorerCombo.R", local=TRUE)
+ # source("code/bookmark.R", local=TRUE)
   
   ##  observeevent for clicking on a row and jumping to a players
   ## record 
