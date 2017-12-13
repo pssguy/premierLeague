@@ -13,12 +13,13 @@ output$st_BoxAll <- renderPlotly({
   
   df %>% 
     plot_ly() %>% 
-  add_boxplot(y=~cumPts,x=~season,  key=~season) %>%
-  layout(hovermode = "closest", autosize= F, width=800, ## width does not seem to have effect
+  add_boxplot(y=~cumPts,x=~season,  key=~season, width=300) %>%  # is bigger than 300 but now fits
+  layout(hovermode = "closest", autosize= F,## width does not seem to have effect
          title = ~paste0("Points after ",input$st_boxGames," Games"),
-         xaxis = list(title = "",tickfont=list(size=10)),
+         xaxis = list(title = ""),
          yaxis = list(title="")
-  )
+  ) %>%  config(displayModeBar = F,showLink = F)
+  
   
 })
 
@@ -59,7 +60,8 @@ output$st_BoxSeason <- renderPlotly({
            xaxis = list( title = "",tickfont=list(size=0,color="#fff")),
            yaxis = list(title = ""),
            legend=list(y=1,font=list(size=12))
-    )
+    ) %>%  config(displayModeBar = F,showLink = F)
+    
   
 })
 

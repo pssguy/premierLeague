@@ -17,7 +17,7 @@ dashboardPage(
     
     sidebarMenu(
       id = "sbMenu",
-      
+      menuItem(selectInput("bookmark",label="Site Layout",teamsChoice_3)),
       menuItem("Front Page",tabName = "frontPage"),
       menuItem(
         "Managers", tabName = "managers",icon = icon("table"),
@@ -139,9 +139,8 @@ dashboardPage(
                     width = 12,
                     status = "warning",solidHeader = TRUE,title = "Not Just Another Soccer site ",
                     collapsible = T,collapsed = F,
-                    includeMarkdown("frontPage.md"),
-                    selectInput("bookmark",label="Team Layout",teamsChoice)#,
-                    #actionButton("bookmarkButton","Go")
+                    includeMarkdown("frontPage.md")#,
+                    #selectInput("bookmark",label="Site Layout",teamsChoice_3)
                   ),
                   
                   box(
@@ -229,7 +228,7 @@ dashboardPage(
                     solidHeader = TRUE,status = 'warning',title="Latest Blog Post - Access every week via Eplweekly category on mytinyshinys.com site",
                     
                     
-                    tags$iframe(src="https://www.mytinyshinys.com/2017/12/05/epl-week-15/", height=600, width=950, frameborder=0)
+                    tags$iframe(src="https://www.mytinyshinys.com/2017/12/11/epl-week-16/", height=600, width=950, frameborder=0)
                   )
                   
                 )
@@ -611,7 +610,7 @@ dashboardPage(
       tabItem(
         "st_boxplot",
         box(
-          width = 6, height = 600,
+          width = 6, height = 700,
           collapsed = F,collapsible = T,
           title = "Points Range by Games played - Click plot for Season standings",solidHeader = TRUE,status = 'success',
           div(
