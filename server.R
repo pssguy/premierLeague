@@ -2,9 +2,9 @@
 ## needs to have an observeevent as well
 values <- reactiveValues()
 # values$playerID <- "BENTD" # no longer takes effect is this shiny ( no looks like putting front page on for player droughts is reason that stays
- values$TEAMNAME <- "Chelsea" # does take effect
- values$playerID <- "BENTD"
- values$managerID <- "Arsene Wenger"
+ values$TEAMNAME <- "Man. City" # does take effect
+ values$playerID <- "KANEH"
+ values$managerID <- "Jose Mourinho"
 # values$TEAMNAME <- NULL
  values$Opponents <- NULL
  values$MATCHID <- NULL
@@ -27,9 +27,15 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$bookmark, {
 
-    values$TEAMNAME <- input$bookmark
+    #values$TEAMNAME <- input$bookmark
+    values$TEAMNAME = ifelse(input$bookmark=="Default","Man. City",input$bookmark)
+      # case_when(
+      #   input$bookmark=="Default" ~  "Man. City",
+      # )
+    
     values$playerID =
     case_when(
+      input$bookmark=="Default" ~  "KANEH",
       input$bookmark=="Arsenal" ~  "OZILM", 
       input$bookmark=="Aston Villa" ~ "AGBONLG",
       input$bookmark=="Barnsley" ~  "READFERN", 
@@ -81,6 +87,63 @@ shinyServer(function(input, output, session) {
       input$bookmark=="Wolves"  ~  "JARVISM" 
       
     )
+    
+    
+    values$managerID =
+      case_when(
+        input$bookmark=="Default" ~  "Jose Mourinho",
+        input$bookmark=="Arsenal" ~  "Arsene Wenger", 
+        input$bookmark=="Aston Villa" ~  "Martin  O'Neill",
+        input$bookmark=="Barnsley" ~  "Danny  Wilson", 
+        input$bookmark=="Birmingham C" ~ "Steve Bruce",
+        input$bookmark=="Blackburn" ~  "Mark Hughes", 
+        input$bookmark=="Blackpool" ~ "Ian Holloway",
+        input$bookmark=="Bolton" ~  "Owen Coyle", 
+        input$bookmark=="Bournemouth" ~ "Eddie Howe",
+        input$bookmark=="Bradford C" ~  "Paul  Jewell", 
+        input$bookmark=="Brighton" ~ "Chris Hughton",
+        input$bookmark=="Burnley" ~  "Sean Dyche", 
+        input$bookmark=="Cardiff C" ~ "Malky Mackay",
+        input$bookmark=="Charlton" ~  "Alan  Curbishley", 
+        input$bookmark=="Chelsea" ~ "Antonio Conte",
+        input$bookmark=="Coventry C" ~  "Gordon Strachan", 
+        input$bookmark=="Crystal P" ~ "Roy Hodgson",
+        input$bookmark=="Everton" ~  "Sam Allardyce", 
+        input$bookmark=="Derby Co." ~ "Jim Smith",
+        input$bookmark=="Fulham" ~  "Chris Coleman", 
+        input$bookmark=="Huddersfield" ~ "David Wagner",
+        input$bookmark=="Hull C" ~  "Phil Brown", 
+        input$bookmark=="Ipswich T" ~ "John  Lyall",
+        input$bookmark=="Leeds U" ~  "Howard Wilkinson", 
+        input$bookmark=="Leicester C" ~ "Claude Puel",
+        input$bookmark=="Liverpool" ~  "Jurgen Klopp", 
+        input$bookmark=="Man. City" ~ "	Pep Guardiola",
+        input$bookmark=="Man. Utd." ~  "Jose Mourinho", 
+        input$bookmark=="Middlesbro" ~ "Steve McClaren",
+        input$bookmark=="Newcastle U" ~  "Bobby Robson", 
+        input$bookmark=="Norwich C" ~ "Mike Walker",
+        input$bookmark=="Nottm Forest" ~  "Frank Clark", 
+        input$bookmark=="Oldham" ~ "Joe Royle",
+        input$bookmark=="Portsmouth" ~  "Harry Redknapp", 
+        input$bookmark=="QPR"  ~ "Gerry Francis",
+        input$bookmark=="Reading" ~  "Steve  Coppell", 
+        input$bookmark=="Sheff. Utd." ~ "Dave Bassett",
+        input$bookmark=="Sheff. Wed." ~  "Trevor Francis", 
+        input$bookmark=="Southampton" ~ "Mauricio Pellegrino",
+        input$bookmark=="Stoke C" ~  "Mark Hughes", 
+        input$bookmark=="Sunderland"  ~ "Peter  Reid",
+        input$bookmark=="Swansea" ~  "	Paul Clement", 
+        input$bookmark=="Swindon T"  ~ "John Gorman",
+        input$bookmark=="Tottenham H" ~  "Mauricio Pochettino", 
+        input$bookmark=="Watford" ~ "Marco Silva",
+        input$bookmark=="West Brom" ~  "Alan Pardew", 
+        input$bookmark=="West Ham U" ~ "	David Moyes",
+        input$bookmark=="Wigan Ath." ~  "Roberto Martinez", 
+        input$bookmark=="Wimbledon" ~ "Joe Kinnear",
+        input$bookmark=="Wolves"  ~  "Mick McCarthy" 
+        
+        
+      )
     
   })
   
@@ -213,6 +276,14 @@ shinyServer(function(input, output, session) {
     print(values$TEAMNAME)
     
   }) # if add once = TRUE the reverst back to default afeter one change - prob dont want
+  
+  
+  ## managers
+  observeEvent(input$manager,{
+    #print("enter observeEvent(input$playerA,{")
+    values$managerID <- input$manager
+    #print(values$playerID)
+  })
   
   
   # observeEvent(input$teamYears,{

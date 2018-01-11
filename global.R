@@ -112,6 +112,7 @@ names(playerChoice) <- pgMini$name
 
 teamsChoice <- sort(unique(playerGame$TEAMNAME))
 teamsChoice_2 <- c("All Teams",teamsChoice)
+teamsChoice_3 <- c("Default",teamsChoice)
 
 managers <- managers %>% 
   mutate(name=paste0(FirstName," ",Lastname))
@@ -125,6 +126,15 @@ seasonChoice_2 <- c("All Seasons",seasonChoice)
 
 countryChoice <- sort(unique(playerGame$COUNTRY))
 countryChoice_2 <- c("All Countries",countryChoice)
+
+
+# bookmarkCodes <- teamCodes %>% 
+#   filter(!is.na(bookmark)) %>% 
+#   mutate(link = paste0("<a href=", bookmark, ">", TEAMNAME, "</a>"))
+# 
+# 
+# bookmarkChoice <- bookmarkCodes$link
+# names(bookmarkChoice) <- bookmarkCodes$TEAMNAME 
 
 currentYear <-max(standings$season)
 currentRound <-max(standings[standings$season==currentYear,]$tmYrGameOrder)

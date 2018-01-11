@@ -1,6 +1,7 @@
 
 
 ## goal assists by player chart - originally week 11
+## look at reiprocal
 
 
 assister <- assists %>% 
@@ -11,7 +12,7 @@ assister <- assists %>%
 
 scorer <- goals %>% 
   left_join(playerGame) %>% 
-  select(scorer=name,scorerID=PLAYERID,PLAYER_MATCH_GOAL)
+  select(scorer=name,scorerID=PLAYERID,PLAYER_MATCH_GOAL,theDate=gameDate)
 
 output$asstScorer_pl <- renderPlotly({
   
@@ -31,8 +32,6 @@ output$asstScorer_pl <- renderPlotly({
     head(1) %>% 
     pull(name)
   
- 
-  
   assister %>% 
     filter(PLAYERID==player) %>% 
     arrange(gameDate) %>% 
@@ -49,5 +48,50 @@ output$asstScorer_pl <- renderPlotly({
            xaxis=list(title="Goal Order"),
            yaxis=list(title="")) %>%  config(displayModeBar = F,showLink = F)
   
+
+  
 })
+
+
+output$scorerAssist_pl <- renderPlotly({
+  
+  player <- input$playerA
+  #player <- "KANEH"
+  
+  ## sum for player 
+  scorerOrder <- scorer %>% 
+    filter(scorerID==player) %>% 
+    left_join(assister) %>% 
+    filter(!is.na(PLAYERID)) %>% #no assists on goal - maybe add unassisted??
+    group_by(PLAYERID,name) %>% 
+    tally() %>% 
+    arrange(desc(n))
+  
+  
+  playerName<- assister %>% 
+    filter(PLAYERID==player) %>% 
+    head(1) %>% 
+    pull(name)
+  
+  
+  ## issue where many scorers not all get shown
+  scorer %>% 
+    filter(scorerID==player) %>% 
+    arrange(theDate) %>% 
+    mutate(order=row_number()) %>% 
+    left_join(assister) %>% # join individ
+    #filter(!is.na(PLAYERID)) %>% 
+    left_join(scorerOrder) %>% #join sum
+    plot_ly(x=~order,y=~fct_reorder(name, n),
+            hoverInfo="text",
+            text=~paste0(gameDate,
+                         "<br>v ",Opponents)) %>% 
+    add_markers(color=~season, size=I(8)) %>% 
+    layout(margin=list(l=120),autosize = TRUE,height=900,
+           title= glue("{playerName}'s Goals by Assister<br>(excludes Goals without an Assist) "),
+           xaxis=list(title="Goal Order"),
+           yaxis=list(title="")) %>%  config(displayModeBar = F,showLink = F)
+  
+})
+
   

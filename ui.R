@@ -43,7 +43,7 @@ dashboardPage(
       menuItem(
         "Players", tabName = "players",icon = icon("table"),
         menuSubItem("At A Glance", tabName = "pl_glance"),
-        menuSubItem("Assists by Scorer", tabName = "pl_asstScorer", icon = icon("star")),
+        menuSubItem("Scorer/Assist Combo", tabName = "pl_asstScorer", icon = icon("star")),
         menuSubItem("By Opposition",tabName = "pl_opponent"),
         menuSubItem("Career Summary", tabName = "pl_career"),
         menuSubItem("Droughts", tabName = "pl_droughts"),
@@ -228,7 +228,7 @@ dashboardPage(
                     solidHeader = TRUE,status = 'warning',title="Latest Blog Post - Access every week via Eplweekly category on mytinyshinys.com site",
                     
                     
-                    tags$iframe(src="https://www.mytinyshinys.com/2017/12/11/epl-week-16/", height=600, width=950, frameborder=0)
+                    tags$iframe(src="https://www.mytinyshinys.com/2018/01/09/epl-week-21/", height=600, width=950, frameborder=0)
                   )
                   
                 )
@@ -794,12 +794,19 @@ dashboardPage(
       tabItem(
         "pl_asstScorer",
         box(
-          width = 12,title = "Player Assists by Scorer",solidHeader = TRUE,status = 'success',height=1000,
+          width = 6,title = "Player Assists by Scorer",solidHeader = TRUE,status = 'success',height=1000,
           collapsible = FALSE, collapsed = FALSE,
           plotlyOutput("asstScorer_pl")
-          #,bookmarkButton(id = "b_2")
+         
+        ),
+        box(
+          width = 6,title = "Player Goals by Assister",solidHeader = TRUE,status = 'success',height=1000,
+          collapsible = FALSE, collapsed = FALSE,
+          plotlyOutput("scorerAssist_pl")
+          
         )
       ),
+     
       
       tabItem(
         "pl_career",

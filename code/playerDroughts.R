@@ -61,12 +61,13 @@ output$goalDrought_pl <- renderPlotly({
   # combine back to playergame for team data and create plot
   goalData %>% 
     left_join(playerGame) %>% 
+     
     mutate(goalOrder=row_number(),tooltip=ifelse(is.na(scored),paste0("Current Run =",gap," mins"),paste0(gameDate,
                                                                                                           "<br>",TEAMNAME," v ",Opponents,
                                                                                                           "<br>",gap," mins"))) %>% 
     plot_ly(x=~goalOrder, y=~gap, height= 300) %>% 
-    add_bars(hoverinfo="text",
-             text= ~tooltip)%>% 
+    add_bars(hoverinfo="text", color=~ season,
+             text= ~tooltip) %>% 
     layout(title="Hover bar for drought-ending game",
            xaxis=list(title= "Goal Order"),
            yaxis=list(title="Minutes between Goals")
@@ -127,6 +128,7 @@ output$goalDrought_pl_front <- renderPlotly({
   # combine back to playergame for team data and create tooltip taking account of openended last value
   df <- goalData %>%
     left_join(playerGame) %>%
+    
     mutate(goalOrder=row_number(),tooltip=ifelse(is.na(scored),paste0("Current Run = ",gap," mins"),paste0(gameDate,
                                                                                                            "<br>",TEAMNAME," v ",Opponents,
                                                                                                            "<br>",gap," mins"))) 
@@ -212,11 +214,12 @@ output$assistDrought_pl <- renderPlotly({
   # combine back to playergame for team data and create plot
   assistData %>% 
     left_join(playerGame) %>% 
+   
     mutate(assistOrder=row_number(),tooltip=ifelse(is.na(assisted),paste0("Current Run =",gap," mins"),paste0(gameDate,
                                                                                                               "<br>",TEAMNAME," v ",Opponents,
                                                                                                               "<br>",gap," mins"))) %>% 
     plot_ly(x=~assistOrder, y=~gap, height=300) %>% 
-    add_bars(hoverinfo="text",
+    add_bars(hoverinfo="text",color= ~season,
              text= ~tooltip)%>% 
     layout(title="Hover bar for drought-ending game",
            xaxis=list(title= "Assist Order (up to 2 assists allowed per goal)"),

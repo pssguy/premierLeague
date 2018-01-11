@@ -2,7 +2,7 @@
   # might want to look at tidyverse alt e.g odbc/dbi
     
     #NB change milestone date each week and should be first date of round as we are using it for less than
-    milestoneDate <- "2017-11-18"
+    milestoneDate <- "2018-01-01"
     
     library(RODBC)
     
@@ -900,7 +900,7 @@
     allMatches <-oppGames[oppGames$TEAMNAME!=oppGames$OppTeam,]
     
     allMatches <- allMatches %>%
-      select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID,OppTeam) # addded Oppteam march 2017
+      select(season,team=TEAMNAME,GF=GOALS,GA,gameDate,tmGameOrder,tmYrGameOrder,venue,MATCHID,OppTeam,TEAMMATCHID) # addded Oppteam march 2017 addded TEAMMATCHID dec 2017
     allMatches$points <- 3
     allMatches[allMatches$GF==allMatches$GA,]$points <- 1
     allMatches[allMatches$GF<allMatches$GA,]$points <- 0
@@ -1902,7 +1902,7 @@
         select(TEAMNAME,TEAMID,bookmark) 
       saveRDS(teamCodes,"teamCodes.rds")
       
-      ## scoelines - takes 10 mins
+      ## scoelines - takes 10 mins (NB look at moer efficient way of doing this)
       
       mins <- 1:90
       myFun <- function(x) {
